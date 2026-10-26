@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>Coins à champi</title>
+<meta name="description" content="Le jeu des chasseurs de champignons en Moselle : carte des coins, sorties en groupe en direct, trouvailles en photo, Mycodex et défis.">
+<meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#161C18" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="48x48" href="icons/favicon-48.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="vendor/leaflet.css">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<noscript><p style="padding:16px">Cette appli a besoin de JavaScript.</p></noscript>
+<div class="app" id="app">
+  <header class="top">
+    <div class="top-row">
+      <div class="brand"><span class="brand-name">Coins à champi</span><span class="brand-place">Moselle</span></div>
+      <div class="seg" role="tablist" aria-label="Mode d'affichage">
+        <button id="mode-pot" role="tab" aria-selected="true">Potentiel</button>
+        <button id="mode-bio" role="tab" aria-selected="false">Biotope</button>
+      </div>
+      <button class="icon-btn" id="btn-menu" aria-label="Menu : recherche, couches, hors-ligne">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+    <nav class="rail" id="rail" aria-label="Choisir un champignon"></nav>
+    <div class="sortie-bar" id="sortie-bar" hidden>
+      <div class="sb-stats"><b id="sb-time">0:00</b><span id="sb-dist">0 m</span><span id="sb-finds">0 trouvaille</span><span id="sb-live" class="live" hidden>en direct</span></div>
+      <div class="sb-actions"><button id="sb-car">Voiture</button><button id="sb-alert">Alerte</button><button id="sb-end" class="danger">Terminer</button></div>
+    </div>
+  </header>
+
+  <main class="stage" id="stage">
+    <div id="map" class="mode-pot" role="application" aria-label="Carte des coins à champignons"></div>
+    <div class="fabs" id="fabs">
+      <button class="fab" id="zin" aria-label="Zoomer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+      <button class="fab" id="zout" aria-label="Dézoomer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"/></svg></button>
+      <button class="fab" id="locate" aria-label="Me localiser"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="8"/></svg></button>
+    </div>
+    <div class="banner" id="banner" hidden></div>
+    <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+    <div class="blocked" id="blocked" role="alert" hidden>
+      <h2>La carte ne peut pas s'afficher ici</h2>
+      <p>Cet aperçu bloque le fond de carte IGN et les données forestières. Ouvrez l'appli dans Chrome ou Samsung Internet.</p>
+      <button class="btn small" data-act="hideblocked">Fermer</button>
+    </div>
+    <div class="placing" id="placing" hidden><div class="cross"></div><div class="bar"><button class="btn" data-act="place-cancel">Annuler</button><button class="btn primary" data-act="place-ok">Placer ici</button></div></div>
+
+    <section class="sheet" id="sheet" data-state="peek" aria-label="Infos et conditions">
+      <button class="handle" id="handle" aria-expanded="false" aria-controls="more" aria-label="Afficher ou masquer les détails"><span></span></button>
+      <div class="peek" id="peek">
+        <div class="peek-row"><div class="peek-title" id="peek-title">Coins à champi</div><span class="pill off" id="peek-pill">…</span></div>
+        <div class="status" id="status">Chargement…</div>
+      </div>
+      <div class="more" id="more">
+        <div class="sec" id="sec-point" hidden></div>
+        <div class="sec" id="sec-wx"></div>
+        <div class="sec" id="sec-sp"></div>
+        <div class="sec" id="sec-legend"></div>
+      </div>
+    </section>
+    <section class="panel" id="panel" hidden><div class="panel-inner" id="panel-inner"></div></section>
+  </main>
+
+  <nav class="tabs" id="tabs" aria-label="Navigation">
+    <button data-tab="carte" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14M15 6v14"/></svg>Carte</button>
+    <button data-tab="groupe"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.6 3.3-5.5 6.5-5.5s5.9 1.9 6.5 5.5"/><circle cx="17.5" cy="9" r="2.5"/><path d="M16 14.6c2.8.1 4.9 1.9 5.5 4.9"/></svg>Groupe</button>
+    <button class="tab-find" id="btn-find" aria-label="Nouvelle trouvaille"><span class="fab-cam"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.6"/></svg></span>Trouvaille</button>
+    <button data-tab="mycodex"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M4 5c3-1.5 5.5-1.5 8 0v15c-2.5-1.5-5-1.5-8 0z"/><path d="M12 5c2.5-1.5 5-1.5 8 0v15c-3-1.5-5.5-1.5-8 0"/></svg>Mycodex</button>
+    <button data-tab="profil"><img id="tab-avatar" alt="" src="data:image/gif;base64,R0lGODlhAQABAAAAACw="><span>Profil</span></button>
+  </nav>
+</div>
+
+<div class="modal" id="modal" hidden><div class="modal-card" id="modal-card" role="dialog" aria-modal="true"></div></div>
+<div class="scrim" id="scrim" hidden></div>
+<aside class="drawer" id="drawer" hidden aria-label="Menu">
+  <div class="drawer-head"><h2>Coins à champi</h2><button class="icon-btn" id="btn-close" aria-label="Fermer le menu"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  <section>
+    <h3>Aller à une commune</h3>
+    <input class="input" id="q" type="search" placeholder="Bitche, Dabo, Gorze…" autocomplete="off" aria-label="Rechercher une commune de Moselle">
+    <div class="results" id="results"></div>
+    <div class="massifs" id="massifs"></div>
+  </section>
+  <section>
+    <h3>Fond de carte</h3>
+    <label class="opt"><input type="radio" name="base" value="plan" id="base-plan"> Plan IGN</label>
+    <label class="opt"><input type="radio" name="base" value="photo" id="base-photo"> Photos aériennes IGN</label>
+    <label class="opt"><input type="radio" name="base" value="osm" id="base-osm"> OpenStreetMap</label>
+  </section>
+  <section>
+    <h3>Calques</h3>
+    <label class="opt"><input type="checkbox" id="lyr-low"> <span>Zones « possibles »<small>Le niveau le plus faible, en jaune</small></span></label>
+    <label class="opt"><input type="checkbox" id="lyr-fog"> <span>Brouillard d'exploration<small>Seules les zones parcourues en sortie sont dévoilées</small></span></label>
+    <label class="opt"><input type="checkbox" id="lyr-tracks"> <span>Traces des sorties<small>Les vôtres et celles du groupe</small></span></label>
+    <label class="opt"><input type="checkbox" id="lyr-soil"> <span>Sol estimé (contours)<small>Grès, calcaires, marnes, à l'échelle des communes</small></span></label>
+    <label class="opt"><input type="checkbox" id="lyr-geol"> <span>Carte géologique BRGM<small>Pour vérifier le sous-sol réel</small></span></label>
+    <label class="opt"><input type="checkbox" id="lyr-onf"> <span>Forêts publiques (ONF)<small>Domaniales et communales</small></span></label>
+  </section>
+  <section>
+    <h3>Hors réseau</h3>
+    <p class="note" style="margin:0 0 10px">Avant de partir, cadrez la forêt sur la carte puis téléchargez-la : fond de carte et peuplements resteront disponibles sans réseau. Les trouvailles se synchronisent au retour du réseau.</p>
+    <div class="actions" style="margin-top:0"><button class="btn small" id="dl-zone">Télécharger cette zone</button><button class="btn small" id="dl-clear">Vider le cache</button></div>
+    <p class="note" id="dl-status" style="margin:8px 0 0"></p>
+  </section>
+  <section class="prose">
+    <h3>Comment c'est calculé</h3>
+    <p>La carte croise les peuplements forestiers de la BD Forêt V2 de l'IGN (chargés en direct), un sol estimé d'après la géologie de la Moselle et la distance aux lisières. Chaque champignon a ses préférences d'arbres, de sol et de position. La météo des 14 derniers jours (Open-Meteo) donne une indication de pousse.</p>
+    <p class="note">C'est un potentiel d'habitat : il resserre la zone de recherche sans garantir la présence. Sol estimé par commune, pas encore de pente ni de cours d'eau, coupes récentes absentes de la BD Forêt.</p>
+  </section>
+  <section class="prose">
+    <h3>Prudence et règles</h3>
+    <p><b>Ne mangez jamais un champignon sans identification certaine.</b> En cas de doute, montrez votre panier à un pharmacien ou à une société mycologique. En cas de malaise après un repas de champignons : appelez le 15 ou un centre antipoison.</p>
+    <p>Les champignons appartiennent au propriétaire du terrain. En forêt privée, demandez l'autorisation. En forêt publique, la cueillette familiale est en général tolérée ; au-delà de 10 litres, c'est un délit.</p>
+    <p>Votre position n'est partagée qu'avec votre groupe, pendant une sortie, si vous l'avez choisi. Les photos sont réenregistrées sans leurs métadonnées.</p>
+  </section>
+  <section>
+    <h3>Diagnostic</h3>
+    <div class="diag" id="diag">—</div>
+    <div class="actions"><button class="btn small" id="diag-copy">Copier le diagnostic</button><button class="btn small" id="diag-retry">Recharger les forêts</button></div>
+  </section>
+  <section class="prose">
+    <h3>Sources</h3>
+    <p class="note">BD Forêt® V2, Plan IGN, photos aériennes et altitude © IGN — Géoplateforme (licence ouverte). Carte géologique © BRGM. Météo Open-Meteo.com (CC BY 4.0). Fond © contributeurs OpenStreetMap. Contours communaux : france-geojson. Moteur 3D three.js, carte Leaflet.</p>
+  </section>
+</aside>
+
+<script>
+  (function () { var framed = false; try { framed = window.top !== window.self; } catch (e) { framed = true; } if (framed) document.getElementById('blocked').hidden = false; })();
+</script>
+<script src="vendor/leaflet.js"></script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

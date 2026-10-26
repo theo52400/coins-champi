@@ -1,0 +1,18 @@
+{
+  "name": "Coins à champi — Moselle",
+  "short_name": "Coins à champi",
+  "description": "Le jeu des chasseurs de champignons en Moselle : carte des coins, sorties en groupe en direct, trouvailles en photo, Mycodex et défis.",
+  "lang": "fr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FFFFFF",
+  "theme_color": "#FFFFFF",
+  "categories": ["games", "navigation", "sports"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
