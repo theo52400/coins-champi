@@ -36,7 +36,9 @@ N = 200                                    # cases par degré (0,005°)
 LON0, LON1, LAT0, LAT1 = -6, 10, 41, 52    # emprise de la grille nationale, en degrés entiers
 W, H = (LON1 - LON0) * N, (LAT1 - LAT0) * N
 BBOX = (-5.5, 41.25, 10.0, 51.25)          # France métropolitaine et Corse, avec les frontières
-URL = 'https://tiles.macrostrat.org/carto/{z}/{x}/{y}.mvt'
+URL = 'https://tiles.macrostrat.org/carto/{z}/{x}/{y}.mvt'                 # toutes les cartes, assemblées
+URL_BRGM = 'https://tiles.macrostrat.org/map/{z}/{x}/{y}?source_id=249'     # la seule carte du BRGM
+LEGEND_BRGM = 'https://macrostrat.org/api/v2/geologic_units/map/legend?source_id=249'
 UA = 'CoinsAChampi/1.0 (+https://github.com/theo52400/coins-champi)'
 SRC = 'Carte géologique de la France au 1/1 000 000 (BRGM, 2017) via Macrostrat, CC BY 4.0'
 
@@ -367,12 +369,12 @@ def tile_range(z):
     return [(z, x, y) for x in range(tx(BBOX[0]), tx(BBOX[2]) + 1) for y in range(ty(BBOX[3]), ty(BBOX[1]) + 1)]
 
 
-def fetch(t, from_dir):
+def fetch(t, from_dir, url_t=URL):
     z, x, y = t
     if from_dir:
         p = os.path.join(from_dir, str(z), str(x), str(y) + '.mvt')
         return t, (open(p, 'rb').read() if os.path.exists(p) else b''), None
-    url = URL.format(z=z, x=x, y=y)
+    url = url_t.format(z=z, x=x, y=y)
     err = None
     for attempt in range(8):
         try:
@@ -404,28 +406,13 @@ def to_grid(coords, z, tx, ty, ext):
     return (lon - LON0) * N, (LAT1 - lat) * N
 
 
-def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument('out')
-    ap.add_argument('--zoom', type=int, default=10)
-    ap.add_argument('--from-dir')
-    ap.add_argument('--workers', type=int, default=8)
-    ap.add_argument('--limit', type=int, default=0)
-    ap.add_argument('--diag', help='dossier des images de contrôle (sources, classes)')
-    a = ap.parse_args()
-    os.makedirs(a.out, exist_ok=True)
-    grid = np.zeros((H, W), np.uint16)
-    sgrid = np.zeros((H, W), np.uint8)
-    sids = {}
-    todo = tile_range(a.zoom)
-    if a.limit:
-        todo = todo[:a.limit]
-    print('Tuiles Macrostrat à lire : %d (zoom %d)' % (len(todo), a.zoom), flush=True)
+def read_layer(label, url_t, only, todo, a, grid, sgrid, sids, legend_brgm):
+    print('\n%s : %d tuiles Macrostrat à lire (zoom %d)' % (label, len(todo), a.zoom), flush=True)
     t0 = time.time()
-    done = empty = feats = cells = 0
+    done = empty = feats = 0
     failed = []
     with ThreadPoolExecutor(max_workers=a.workers) as ex:
-        for fut in as_completed([ex.submit(fetch, t, a.from_dir) for t in todo]):
+        for fut in as_completed([ex.submit(fetch, t, a.from_dir, url_t) for t in todo]):
             (z, tx, ty), data, err = fut.result()
             done += 1
             if data is None:
@@ -445,8 +432,13 @@ def main():
                 continue
             ext = lay.get('extent', 4096)
             for f in lay['features']:
-                props = f.get('properties') or {}
+                props = dict(f.get('properties') or {})
                 sid = str(props.get('source_id'))
+                if only and sid != only:
+                    continue
+                if not props.get('lith') and str(props.get('legend_id')) in legend_brgm:
+                    e = legend_brgm[str(props.get('legend_id'))]
+                    props['lith'], props['age'] = e.get('lith'), e.get('age')
                 SOURCES[sid] += 1
                 si = SOURCE_INFO.setdefault(sid, {'t': (props.get('ref_title') or props.get('ref_name') or '')[:90], 'y': props.get('ref_year'), 'bb': [999, 999, -999, -999]})
                 lon_c, lat_c = (tx + 0.5) / 2 ** z * 360 - 180, math.degrees(math.atan(math.sinh(math.pi * (1 - 2 * (ty + 0.5) / 2 ** z))))
@@ -464,15 +456,48 @@ def main():
                             rings.append(rg)
                 if rings:
                     feats += 1
-                    cells += fill(grid, rings, lid, sgrid, sids.setdefault(sid, len(sids) + 1))
-            if done % 200 == 0:
+                    fill(grid, rings, lid, sgrid, sids.setdefault(sid, len(sids) + 1))
+            if done % 400 == 0:
                 print('  %d/%d tuiles, %d unités, %.0f s' % (done, len(todo), feats, time.time() - t0), flush=True)
-    print('Lu : %d tuiles (%d vides, %d en échec), %d polygones, %.0f s' % (done, empty, len(failed), feats, time.time() - t0))
+    print('%s : %d tuiles (%d vides, %d en échec), %d polygones, %.0f s' % (label, done, empty, len(failed), feats, time.time() - t0))
     for t, e in failed[:20]:
         print('  échec', t, e)
-    if len(failed) > max(10, len(todo) // 20):
-        print('Trop d\'échecs : rien n\'est écrit.')
-        sys.exit(1)
+    return failed
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument('out')
+    ap.add_argument('--zoom', type=int, default=10)
+    ap.add_argument('--from-dir')
+    ap.add_argument('--workers', type=int, default=8)
+    ap.add_argument('--limit', type=int, default=0)
+    ap.add_argument('--diag', help='dossier des images de contrôle (sources, classes)')
+    a = ap.parse_args()
+    os.makedirs(a.out, exist_ok=True)
+    grid = np.zeros((H, W), np.uint16)
+    sgrid = np.zeros((H, W), np.uint8)
+    sids = {}
+    todo = tile_range(a.zoom)
+    if a.limit:
+        todo = todo[:a.limit]
+    # 1) toutes les cartes assemblées par Macrostrat (la France et ses voisins), 2) par-dessus, la carte du BRGM
+    # seule : sans elle, Macrostrat montre l'Est de la France d'après les cartes allemande et suisse.
+    legend_brgm = {}
+    if not a.from_dir:
+        try:
+            req = urllib.request.Request(LEGEND_BRGM, headers={'User-Agent': UA})
+            with urllib.request.urlopen(req, timeout=120) as r:
+                j = json.loads(r.read())
+            legend_brgm = {str(e['legend_id']): e for e in j['success']['data']}
+        except Exception as e:
+            print('Légende du BRGM indisponible :', e)
+    print('Légende de la carte du BRGM : %d unités' % len(legend_brgm))
+    for label, url_t, only in (('toutes cartes', URL, None), ('carte du BRGM', URL_BRGM, '249')):
+        failed = read_layer(label, url_t, only, todo, a, grid, sgrid, sids, legend_brgm)
+        if len(failed) > max(10, len(todo) // 20):
+            print('Trop d\'échecs : rien n\'est écrit.')
+            sys.exit(1)
 
     # tuiles de 1°
     tiles, h = [], hashlib.sha1()
