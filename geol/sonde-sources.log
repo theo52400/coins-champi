@@ -1,0 +1,137 @@
+
+== https://tiles.macrostrat.org/openapi.json 200 application/json 294463
+chemins : 
+  /cache/footprints/{z}/{x}/{y}
+  /cache/refresh/carto
+  /cache/refresh/{prefix}
+  /carto/rotation-models
+  /cog/bbox/{minx},{miny},{maxx},{maxy}.{format}
+  /cog/bbox/{minx},{miny},{maxx},{maxy}/{width}x{height}.{format}
+  /cog/feature
+  /cog/feature.{format}
+  /cog/feature/{width}x{height}.{format}
+  /cog/info
+  /cog/info.geojson
+  /cog/point/{lon},{lat}
+  /cog/preview
+  /cog/preview.{format}
+  /cog/preview/{width}x{height}.{format}
+  /cog/statistics
+  /cog/tiles
+  /cog/tiles/{tileMatrixSetId}
+  /cog/tiles/{tileMatrixSetId}/{z}/{x}/{y}
+  /cog/tiles/{tileMatrixSetId}/{z}/{x}/{y}.{format}
+  /cog/tiles/{tileMatrixSetId}/{z}/{x}/{y}@{scale}x
+  /cog/tiles/{tileMatrixSetId}/{z}/{x}/{y}@{scale}x.{format}
+  /cog/{tileMatrixSetId}/map.html
+  /cog/{tileMatrixSetId}/tilejson.json
+  /dev/carto/{z}/{x}/{y}
+  /dev/topology/elements/{map_layer}/{z}/{x}/{y}
+  /dev/topology/elements/{z}/{x}/{y}
+  /dev/topology/errors
+  /dev/topology/faces/{map_layer}/{z}/{x}/{y}
+  /dev/topology/faces/{z}/{x}/{y}
+  /dev/topology/info
+  /dev/topology/layers
+  /dev/topology/maps/{map_layer}/{z}/{x}/{y}
+  /dev/topology/maps/{z}/{x}/{y}
+  /health
+  /ingestion/bounds/{z}/{x}/{y}
+  /ingestion/{slug}/tilejson.json
+  /ingestion/{slug}/{z}/{x}/{y}
+  /integrations/magic/geomag_sites/tiles/{z}/{x}/{y}
+  /integrations/{organization}/{type}/tiles/{z}/{x}/{y}
+  /map/{slug}/tilejson.json
+  /map/{slug}/{z}/{x}/{y}
+  /maps/bounds/{slug}/{z}/{x}/{y}
+  /maps/bounds/{z}/{x}/{y}
+  /measurements/tile/{z}/{x}/{y}
+  /pbdb/fossils/{z}/{x}/{y}
+  /rasters/emit-minerals/WMTSCapabilities.xml
+  /rasters/emit-minerals/bbox/{minx},{miny},{maxx},{maxy}/assets
+  /rasters/emit-minerals/footprints
+  /rasters/emit-minerals/footprints/{z}/{x}/{y}
+  /rasters/emit-minerals/info
+  /rasters/emit-minerals/info.geojson
+  /rasters/emit-minerals/layer
+  /rasters/emit-minerals/point/{lon},{lat}
+  /rasters/emit-minerals/point/{lon},{lat}/assets
+  /rasters/emit-minerals/refresh
+  /rasters/emit-minerals/tiles
+  /rasters/emit-minerals/tiles/{tileMatrixSetId}
+  /rasters/emit-minerals/tiles/{tileMatrixSetId}/{z}/{x}/{y}
+  /rasters/emit-minerals/tiles/{tileMatrixSetId}/{z}/{x}/{y}.{format}
+  /rasters/emit-minerals/tiles/{tileMatrixSetId}/{z}/{x}/{y}/assets
+  /rasters/emit-minerals/tiles/{tileMatrixSetId}/{z}/{x}/{y}@{scale}x
+  /rasters/emit-minerals/tiles/{tileMatrixSetId}/{z}/{x}/{y}@{scale}x.{format}
+  /rasters/emit-minerals/{tileMatrixSetId}/tilejson.json
+  /search/{model}/tiles/{z}/{x}/{y}
+  /stats/rockd/dashboard/{z}/{x}/{y}
+  /stats/tileserver/{z}/{x}/{y}
+  /stats/web/{slug}/{z}/{x}/{y}
+  /v2/{compilation}/{z}/{x}/{y}
+  /version
+  /{layer}/tilejson.json
+  /{layer}/{z}/{x}/{y}
+
+== https://tiles.macrostrat.org/ 200 text/html; charset=utf-8 12001
+b'<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="utf-8">\n  <title>Macrostrat Tiles</title>\n  <meta name="description" content="">\n  <meta name="author" content="">\n  <meta name="viewport" content="width=device-width, initial-scale=1">\n\n  <link rel="preconnect" href="https://fonts.googleapis.com">\n  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n  <link href="https://fonts.googleapis.com/css2?family=Domine:wght@400..700&family=Geologica:wght@500..800&display=swap" rel="stylesheet">\n  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css">\n\n  <style>\n    body {\n      font-family: "Domine", "Times New Roman", serif;\n    }\n\n    h1, h2, h3, h4, h5, h6 {\n      font-family: "Geologica", "Arial", sans-serif;\n      font-weight: 500;\n    }\n\n    pre {\n      margin: 0;\n    }\n    .footer-links {\n      list-style: none;\n      text-decoration: none;\n    }\n    .footer-link-container {\n      height: 100%;\n      width: 100%;\n      display: flex;\n      align-items: center;\n      justify-content: center;\n      font-size: 12px;\n      color: #000;\n    }\n    .border-row {\n      border-top: 1px solid #eee;\n      padding-top: 15px;\n      padding-bottom: 15px;\n      display: flex;\n    }\n    .border-row > .five {\n      display: flex;\n      align-items: center;\n      justify-content: center;\n    }\n\n    .footer {\n      height: 40%;\n      color: #777;\n    }\n    .footer a {\n      color: #000;\n      text-decoration: none;\n    }\n    '
+
+== https://tiles.macrostrat.org/carto/10/530/352.mvt 200 application/x-protobuf 10368 {'units': (29, [('94', 19), ('249', 10)]), 'lines': (8, [('249', 8)])}
+
+== https://tiles.macrostrat.org/carto/10/530/352.mvt?source_id=249 200 application/x-protobuf 10368 {'units': (29, [('94', 19), ('249', 10)]), 'lines': (8, [('249', 8)])}
+
+== https://tiles.macrostrat.org/map/10/530/352.mvt?source_id=249 200 application/x-protobuf 2813 {'units': (10, [('249', 10)]), 'lines': (4, [('249', 4)])}
+
+== https://tiles.macrostrat.org/map/10/530/352?source_id=249 200 application/x-protobuf 2813 {'units': (10, [('249', 10)]), 'lines': (4, [('249', 4)])}
+
+== https://tiles.macrostrat.org/maps/249/10/530/352.mvt 404 application/json 22 b'{"detail":"Not Found"}'
+
+== https://tiles.macrostrat.org/maps/249/10/530/352 404 application/json 22 b'{"detail":"Not Found"}'
+
+== https://tiles.macrostrat.org/map/249/10/530/352.mvt 401 application/json 49 b'{"detail":"tiles:map requires a delegated token"}'
+
+== https://tiles.macrostrat.org/maps/10/530/352.mvt?source_id=249 404 application/json 36 b'{"detail":"Layer \'maps\' not found."}'
+
+== https://tiles.macrostrat.org/all-maps/10/530/352.mvt 500 application/json 47 b'{"detail":"column \\"expanded\\" does not exist"}'
+
+== https://tiles.macrostrat.org/maps/france_1m/10/530/352 404 application/json 22 b'{"detail":"Not Found"}'
+
+== https://tiles.macrostrat.org/map-ingestion/249/10/530/352 404 application/json 22 b'{"detail":"Not Found"}'
+
+== https://tiles.macrostrat.org/sources/249/10/530/352.mvt 404 application/json 22 b'{"detail":"Not Found"}'
+
+== https://macrostrat.org/api/v2/geologic_units/map?lat=48.8&lng=6.5&scale=medium 200 application/json; charset=utf-8 1824
+  éléments : 3 [('94', 1), ('1056', 1), ('249', 1)]
+    {'map_id': '2600832', 'source_id': '94', 'name': '', 'lith': 'Dolomitic, gravelly or clayey marlstone, claystone and sandstone with gypsum and anhydrite', 'scale': 'medium'} 
+    {'map_id': '4155616', 'source_id': '1056', 'name': 'Impure carbonate sedimentary rock, Upper Triassic', 'lith': 'impure carbonate sedimentary rock', 'scale': 'medium'} 
+    {'map_id': '3473832', 'source_id': '249', 'name': '', 'lith': 'clay [5.0%..50.0%]; dolomite [5.0%..50.0%]; impure Carbonate [50.0%..95.0%]; sandstone [5.0%..50.0%]', 'scale': 'medium'} 
+
+== https://macrostrat.org/api/v2/geologic_units/map?lat=48.8&lng=6.5 200 application/json; charset=utf-8 3091
+  éléments : 5 [('94', 1), ('249', 1), ('1056', 1), ('147', 1), ('154', 1)]
+    {'map_id': '2600832', 'source_id': '94', 'name': '', 'lith': 'Dolomitic, gravelly or clayey marlstone, claystone and sandstone with gypsum and anhydrite', 'scale': 'medium'} 
+    {'map_id': '3473832', 'source_id': '249', 'name': '', 'lith': 'clay [5.0%..50.0%]; dolomite [5.0%..50.0%]; impure Carbonate [50.0%..95.0%]; sandstone [5.0%..50.0%]', 'scale': 'medium'} 
+    {'map_id': '4155616', 'source_id': '1056', 'name': 'Impure carbonate sedimentary rock, Upper Triassic', 'lith': 'impure carbonate sedimentary rock', 'scale': 'medium'} 
+
+== https://macrostrat.org/api/v2/geologic_units/map?shape=POLYGON((6.4%2048.7,6.6%2048.7,6.6%2048.9,6.4%2048.9,6.4%2048.7))&scale=medium&format=geojson_bare 500 application/json; charset=utf-8 64
+{'error': {'message': 'No valid parameters passed'}}
+
+== https://macrostrat.org/api/v2/geologic_units/map?shape=POLYGON((6.4%2048.7,6.6%2048.7,6.6%2048.9,6.4%2048.9,6.4%2048.7))&source_id=249&format=geojson_bare 500 application/json; charset=utf-8 64
+{'error': {'message': 'No valid parameters passed'}}
+
+== https://macrostrat.org/api/v2/geologic_units/map?shape=POLYGON((6.4%2048.7,6.6%2048.7,6.6%2048.9,6.4%2048.9,6.4%2048.7))&source_id=249 500 application/json; charset=utf-8 64
+{'error': {'message': 'No valid parameters passed'}}
+
+== https://macrostrat.org/api/v2/geologic_units/map/legend?source_id=249 200 application/json; charset=utf-8 453265
+  éléments : 507 [('249', 507)]
+    {'legend_id': '87356', 'source_id': '249', 'scale': 'medium', 'age': 'Oligocene - Miocene', 'lith': 'basanite [50.0%..95.0%]; tephrite [5.0%..50.0%]; trachytoid [5.0%..50.0%]', 'area': '1148.963'} 
+    {'legend_id': '87300', 'source_id': '249', 'scale': 'medium', 'age': 'Middle Jurassic', 'lith': 'dolomite [5.0%..50.0%]; impure Carbonate [5.0%..50.0%]; limestone [50.0%..95.0%]', 'area': '2985.15'} 
+    {'legend_id': '87195', 'source_id': '249', 'scale': 'medium', 'age': 'Ediacaran - Cambrian', 'lith': 'metamorphic rock [50.0%..95.0%]; orthogneiss [5.0%..50.0%]', 'area': '111.831'} 
+
+== https://macrostrat.org/api/v2/defs/sources?source_id=94 200 application/json; charset=utf-8 473
+  éléments : 1 [('94', 1)]
+    {'source_id': '94', 'name': 'Germany 1:1M', 'ref_title': 'Geological Map of Germany 1:M', 'scale': 'medium', 'features': '22749', 'area': '563483'} 
+
+== https://macrostrat.org/api/v2/defs/sources?source_id=249&format=geojson_bare 200 application/json; charset=utf-8 519
+  éléments : 1 [('249', 1)]
+    {'source_id': '249', 'name': 'France, 1M', 'ref_title': '1:1M-scale surface Geologic Units, INSPIRE Lithology portrayal', 'scale': 'medium', 'features': '19696', 'area': '548833'} géométrie
