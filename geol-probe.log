@@ -1,0 +1,33 @@
++ for u in "https://infoterre.brgm.fr/telechargements/BDCharm50/GEO050K_HARM_057.zip" "http://infoterre.brgm.fr/telechargements/BDCharm50/GEO050K_HARM_057.zip"
++ curl -sSIL --max-time 60 https://infoterre.brgm.fr/telechargements/BDCharm50/GEO050K_HARM_057.zip
++ grep -iE '^HTTP|content-length|content-type|location'
++ head -12
+curl: (7) Failed to connect to infoterre.brgm.fr port 443 after 498 ms: Couldn't connect to server
++ for u in "https://infoterre.brgm.fr/telechargements/BDCharm50/GEO050K_HARM_057.zip" "http://infoterre.brgm.fr/telechargements/BDCharm50/GEO050K_HARM_057.zip"
++ curl -sSIL --max-time 60 http://infoterre.brgm.fr/telechargements/BDCharm50/GEO050K_HARM_057.zip
++ grep -iE '^HTTP|content-length|content-type|location'
++ head -12
+curl: (7) Failed to connect to infoterre.brgm.fr port 80 after 488 ms: Couldn't connect to server
++ curl -sSL --max-time 900 -o /tmp/g57.zip https://infoterre.brgm.fr/telechargements/BDCharm50/GEO050K_HARM_057.zip
+curl: (7) Failed to connect to infoterre.brgm.fr port 443 after 518 ms: Couldn't connect to server
++ curl -sSL --max-time 900 -o /tmp/g57.zip http://infoterre.brgm.fr/telechargements/BDCharm50/GEO050K_HARM_057.zip
+curl: (7) Failed to connect to infoterre.brgm.fr port 80 after 629 ms: Couldn't connect to server
++ ls -la /tmp/g57.zip
+ls: cannot access '/tmp/g57.zip': No such file or directory
++ file /tmp/g57.zip
+/tmp/g57.zip: cannot open `/tmp/g57.zip' (No such file or directory)
++ unzip -l /tmp/g57.zip
++ head -60
+unzip:  cannot find or open /tmp/g57.zip, /tmp/g57.zip.zip or /tmp/g57.zip.ZIP.
++ mkdir -p /tmp/g57
++ unzip -q -o /tmp/g57.zip -d /tmp/g57
+unzip:  cannot find or open /tmp/g57.zip, /tmp/g57.zip.zip or /tmp/g57.zip.ZIP.
++ find /tmp/g57 -iname '*.shp'
++ head -30
+++ find /tmp/g57 -iname '*S_FGEOL*.shp'
+++ head -2
+++ find /tmp/g57 -iname '*S_FGEOL*.shp'
+++ head -1
++ curl -sS --max-time 60 'https://geoservices.brgm.fr/geologie?SERVICE=WFS&REQUEST=GetCapabilities'
++ grep -oE '<(wfs:)?Name>[^<]*</(wfs:)?Name>'
++ head -60
