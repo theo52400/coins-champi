@@ -1093,23 +1093,32 @@ function stopRoute() {
   setTimeout(() => M.map.invalidateSize(), 50);
 }
 const polyLen = pts => { let d = 0; for (let i = 1; i < pts.length; i++) d += Game.haversine(pts[i - 1], pts[i]); return d; };
+// Graphes piétons de l'IGN (BD TOPO, chemins et sentiers compris) : le premier qui répond est retenu pour la suite
+const ROUTE_RES = ['bdtopo-pgr', 'bdtopo-valhalla'];
 async function fetchPath(a, b) {
   const direct = Game.haversine([a.lat, a.lng], [b.lat, b.lng]);
   if (direct < 80) return null;
-  const url = 'https://data.geopf.fr/navigation/itineraire?resource=bdtopo-osrm&profile=pedestrian&optimization=fastest&start=' + a.lng.toFixed(6) + ',' + a.lat.toFixed(6) + '&end=' + b.lng.toFixed(6) + ',' + b.lat.toFixed(6) + '&geometryFormat=geojson&getSteps=false&getBbox=false';
-  const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 12000);
-  try {
-    const r = await fetch(url, { signal: ctl.signal });
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    const j = await r.json();
-    let g = j.geometry; if (typeof g === 'string') g = JSON.parse(g);
-    if (!g || !Array.isArray(g.coordinates) || g.coordinates.length < 2) throw new Error('réponse sans tracé');
-    const pts = g.coordinates.map(p => [p[1], p[0]]);
-    const len = polyLen(pts);
-    if (len > direct * 4 + 2000) throw new Error('détour trop long (' + Math.round(len) + ' m)');
-    return pts;
-  } catch (e) { log('Itinéraire IGN : ' + (e.name === 'AbortError' ? 'délai dépassé' : e.message)); return null; }
-  finally { clearTimeout(t); }
+  const pref = store.get('cc.routeRes', null), order = pref && ROUTE_RES.includes(pref) ? [pref, ...ROUTE_RES.filter(x => x !== pref)] : ROUTE_RES;
+  for (const res of order) {
+    const url = 'https://data.geopf.fr/navigation/itineraire?resource=' + res + '&profile=pedestrian&optimization=shortest&start=' + a.lng.toFixed(6) + ',' + a.lat.toFixed(6) + '&end=' + b.lng.toFixed(6) + ',' + b.lat.toFixed(6) + '&geometryFormat=geojson&getSteps=false&getBbox=false&distanceUnit=meter&timeUnit=second';
+    const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 12000);
+    try {
+      const r = await fetch(url, { signal: ctl.signal });
+      if (!r.ok) throw new Error('HTTP ' + r.status + ' ' + (await r.text().catch(() => '')).slice(0, 120));
+      const j = await r.json();
+      let g = j.geometry; if (typeof g === 'string') g = JSON.parse(g);
+      if (!g || !Array.isArray(g.coordinates) || g.coordinates.length < 2) throw new Error('réponse sans tracé');
+      store.set('cc.routeRes', res);
+      const pts = g.coordinates.map(p => [p[1], p[0]]);
+      const len = polyLen(pts);
+      if (len > direct * 4 + 2000) { log('Itinéraire IGN : détour trop long (' + Math.round(len) + ' m)'); return null; }
+      return pts;
+    } catch (e) {
+      log('Itinéraire IGN (' + res + ') : ' + (e.name === 'AbortError' ? 'délai dépassé' : e.message));
+      if (e.name === 'AbortError' || navigator.onLine === false) return null;
+    } finally { clearTimeout(t); }
+  }
+  return null;
 }
 function fitRoute() {
   const d = Route.dest, me = GPS.fix; if (!d) return;
@@ -1354,9 +1363,12 @@ function search(q) {
     const seq = ++searchSeq;
     el.innerHTML = '<p class="note">Recherche…</p>';
     try {
-      const r = await fetch('https://geo.api.gouv.fr/communes?nom=' + encodeURIComponent(txt) + '&fields=nom,code,centre,bbox,departement&boost=population&limit=8');
+      const r = await fetch('https://geo.api.gouv.fr/communes?nom=' + encodeURIComponent(txt) + '&fields=nom,code,centre,bbox,departement,population&boost=population&limit=12');
       if (!r.ok) throw new Error('HTTP ' + r.status);
-      const res = await r.json();
+      // d'abord le nom exact, puis les noms qui commencent par la saisie, chaque fois les plus peuplées en tête
+      const norm = v => v.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[-'’\s]+/g, ' ').trim(), qn = norm(txt);
+      const rank = c => { const n = norm(c.nom); return n === qn ? 0 : n.startsWith(qn) ? 1 : n.split(' ').some(w => w.startsWith(qn)) ? 2 : 3; };
+      const res = (await r.json()).map((c, i) => ({ c, i, k: rank(c) })).sort((x, y) => x.k - y.k || (y.c.population || 0) - (x.c.population || 0) || x.i - y.i).slice(0, 8).map(x => x.c);
       if (seq !== searchSeq) return;
       S.searchRes = res;
       el.innerHTML = res.length ? res.map((c, i) => '<button data-act="gocommune" data-i="' + i + '">' + esc(c.nom) + ' <small>· ' + esc(c.departement ? c.departement.nom + ' (' + c.departement.code + ')' : c.code) + '</small></button>').join('') : '<p class="note">Aucune commune ne correspond.</p>';

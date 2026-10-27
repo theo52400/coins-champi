@@ -120,7 +120,7 @@ await step('Itinéraire', async () => {
   R.routeTries = await page.evaluate(async () => {
     const base = 'https://data.geopf.fr/navigation/itineraire?start=7.5200,49.0400&end=7.5310,49.0452';
     const out = [];
-    for (const q of ['&resource=bdtopo-osrm&profile=pedestrian&optimization=fastest&geometryFormat=geojson&getSteps=false&getBbox=false', '&resource=bdtopo-osrm&profile=pedestrian&optimization=fastest', '&resource=bdtopo-osrm&profile=car&optimization=fastest&geometryFormat=geojson', '&resource=bdtopo-pgr&profile=pedestrian&optimization=shortest&geometryFormat=geojson', '&resource=bdtopo-pgr&profile=pedestrian&optimization=fastest&geometryFormat=geojson', '&resource=bdtopo-valhalla&profile=pedestrian&optimization=fastest&geometryFormat=geojson', '&resource=bdtopo-valhalla&profile=pedestrian&optimization=shortest&geometryFormat=geojson']) {
+    for (const q of ['&resource=bdtopo-pgr&profile=pedestrian&optimization=shortest&geometryFormat=geojson', '&resource=bdtopo-valhalla&profile=pedestrian&optimization=shortest&geometryFormat=geojson']) {
       try { const r = await fetch(base + q); const t = await r.text(); let n = null; try { const j = JSON.parse(t); n = j.geometry && j.geometry.coordinates ? j.geometry.coordinates.length : null; } catch (e) { /* texte */ } out.push({ q, status: r.status, points: n, corps: n ? undefined : t.slice(0, 300) }); }
       catch (e) { out.push({ q, err: e.message }); }
     }
@@ -128,7 +128,7 @@ await step('Itinéraire', async () => {
   });
   console.log('Itinéraire, variantes :', JSON.stringify(R.routeTries).slice(0, 2000));
   const direct = await page.evaluate(async () => {
-    const u = 'https://data.geopf.fr/navigation/itineraire?resource=bdtopo-osrm&profile=pedestrian&optimization=fastest&start=7.5200,49.0400&end=7.5310,49.0452&geometryFormat=geojson&getSteps=false&getBbox=false';
+    const u = 'https://data.geopf.fr/navigation/itineraire?resource=bdtopo-pgr&profile=pedestrian&optimization=shortest&start=7.5200,49.0400&end=7.5310,49.0452&geometryFormat=geojson&getSteps=false&getBbox=false&distanceUnit=meter&timeUnit=second';
     try { const r = await fetch(u); const t = await r.text(); let j = {}; try { j = JSON.parse(t); } catch (e) { /* texte */ } return { status: r.status, n: j.geometry && j.geometry.coordinates && j.geometry.coordinates.length, distance: j.distance, duration: j.duration, unite: j.distanceUnit, corps: r.ok ? undefined : t.slice(0, 400) }; }
     catch (e) { return { err: e.message }; }
   });
