@@ -1,13 +1,14 @@
-https://theo52400.github.io/coins-champi/ — 2026-10-27T23:22:26.937Z
-11/15 vérifications réussies
+https://theo52400.github.io/coins-champi/ — 2026-10-27T23:25:23.330Z
+12/15 vérifications réussies
 
 OK     L'appli démarre
          {"version":"v2026-10-27-34852dd5"}
 OK     Connexion au serveur du jeu (Firebase, compte anonyme)
-         {"kind":"firebase","uid":"Nr4Ucp","banner":null}
+         {"kind":"firebase","uid":"n7RVna","banner":null}
 OK     Écriture et relecture dans Firestore (puis effacement)
-         {"ecriture":true,"relu":"Vérification","ms":2359}
-ÉCHEC  Ma position s'affiche sur la carte
+         {"ecriture":true,"relu":"Vérification","ms":2115}
+OK     Ma position s'affiche sur la carte
+         "point (pas encore de profil)"
 OK     Sous-sol chargé et cohérent (grès, calcaire, craie, sables, granite)
          ["Vosges du Nord : Grès, conglomérats et quartzites [1]","Forêt de Haye : Calcaires et calcaires marneux [3]","Champagne : Craie, calcaires et calcaires marneux [3]","Landes : Sables, argiles et graviers [1]","Limousin : Granite [1]"]
 OK     Peuplements forestiers IGN chargés et grille de potentiel calculée
@@ -15,7 +16,7 @@ OK     Peuplements forestiers IGN chargés et grille de potentiel calculée
 OK     Fiche d'un point : peuplement, sol, sous-sol, commune, altitude
          "CE POINT Peuplement Forêt fermée de chênes décidus purs (Chênes décidus) Sol estimé Sol acide Sous-sol Grès, conglomérats et quartzites (Trias inférieur) Commune Bitche Lisière à ≈ 679 m · transition de peuplements Altitude 305 m Distance 991 m de vous Cèpes 77 Girolles 74 Pieds de mouton 72 Pieds b"
 ÉCHEC  Service d'itinéraire piéton IGN joignable depuis le site (CORS)
-         {"status":400}
+         {"status":400,"corps":"{\"error\":{\"message\":\" Parameter 'resource' is invalid: it does not exist on this service \"}}"}
 ÉCHEC  Itinéraire tracé dans l'appli (chemin IGN + ligne directe)
          {"dist":"991 m","sub":"Vers ce point (Bitche) · 14 min à pied · tout droit, cap nord-est","calques":2}
 OK     Mode poche
@@ -30,86 +31,559 @@ OK     Météo Open-Meteo
 OK     Aucune erreur JavaScript
          []
 
-Requêtes réussies : {"sous-sol":42,"Firebase":13,"météo":7,"tuiles IGN":34,"communes":8,"BD Forêt (WFS)":19,"altitude IGN":1}
+Requêtes réussies : {"Firebase":22,"sous-sol":42,"météo":7,"tuiles IGN":34,"communes":9,"BD Forêt (WFS)":17,"altitude IGN":1,"itinéraire IGN":4}
+
+Itinéraire, capacités : [
+ {
+  "id": "bdtopo-pgr",
+  "ops": [
+   {
+    "id": "route",
+    "params": [
+     "resource=[\"bdtopo-pgr\"]",
+     "start={\"bbox\":\"-63.28125,-21.421484375,55.8984375,51.27109375\"}",
+     "end={\"bbox\":\"-63.28125,-21.421484375,55.8984375,51.27109375\"}",
+     "intermediates={\"bbox\":\"-63.28125,-21.421484375,55.8984375,51.27109375\"}",
+     "profile=[\"car\",\"pedestrian\"]",
+     "optimization=[\"fastest\",\"shortest\"]",
+     "getSteps=[true,false]",
+     "waysAttributes=[\"name\",\"insee_commune_droite\",\"restriction_de_poids_par_essieu\",\"nature\",\"importance\",\"insee_commune_gauche\",\"acces_pie",
+     "geometryFormat=[\"geojson\",\"polyline\",\"wkt\"]",
+     "getBbox=[true,false]",
+     "crs=[\"EPSG:4326\",\"EPSG:2154\",\"EPSG:4559\",\"EPSG:2972\",\"EPSG:2975\",\"EPSG:4471\",\"EPSG:3857\",\"EPSG:32620\",\"EPSG:4467\"]",
+     "timeUnit=[\"hour\",\"minute\",\"second\",\"standard\"]",
+     "distanceUnit=[\"meter\",\"kilometer\"]",
+     "constraints={\"keys\":[{\"key\":\"waytype\",\"availableConstraintType\":[\"banned\"],\"availableOperators\":[\"=\",\"!=\"],\"values\":[\"autoroute\",\"tu"
+    ]
+   },
+   {
+    "id": "isochrone",
+    "params": [
+     "resource=[\"bdtopo-pgr\"]",
+     "point={\"bbox\":\"-63.28125,-21.421484375,55.8984375,51.27109375\"}",
+     "costType=[\"time\",\"distance\"]",
+     "costValue={\"min\":null,\"max\":50000}",
+     "profile=[\"car\",\"pedestrian\"]",
+     "direction=[\"departure\",\"arrival\"]",
+     "projection=[\"EPSG:4326\",\"EPSG:2154\",\"EPSG:4559\",\"EPSG:2972\",\"EPSG:2975\",\"EPSG:4471\",\"EPSG:3857\",\"EPSG:32620\",\"EPSG:4467\"]",
+     "geometryFormat=[\"geojson\",\"polyline\",\"wkt\"]",
+     "timeUnit=[\"hour\",\"minute\",\"second\",\"standard\"]",
+     "distanceUnit=[\"meter\",\"kilometer\"]",
+     "constraints={\"keys\":[{\"key\":\"waytype\",\"availableConstraintType\":[\"banned\"],\"availableOperators\":[\"=\",\"!=\"],\"values\":[\"autoroute\",\"tu"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "bdtopo-valhalla",
+  "ops": [
+   {
+    "id": "route",
+    "params": [
+     "resource=[\"bdtopo-valhalla\"]",
+     "start={\"bbox\":\"-63.28125,-21.42148437,55.8984375,51.27109375\"}",
+     "end={\"bbox\":\"-63.28125,-21.42148437,55.8984375,51.27109375\"}",
+     "intermediates={\"bbox\":\"-63.28125,-21.42148437,55.8984375,51.27109375\"}",
+     "profile=[\"car\",\"pedestrian\"]",
+     "optimization=[\"fastest\",\"shortest\"]",
+     "getSteps=[true,false]",
+     "waysAttributes=[\"name\"]",
+     "geometryFormat=[\"geojson\",\"polyline\",\"wkt\"]",
+     "getBbox=[true,false]",
+     "crs=[\"EPSG:4326\",\"EPSG:2154\",\"EPSG:4559\",\"EPSG:2972\",\"EPSG:2975\",\"EPSG:4471\",\"EPSG:3857\",\"EPSG:32620\",\"EPSG:4467\"]",
+     "timeUnit=[\"hour\",\"minute\",\"second\",\"standard\"]",
+     "distanceUnit=[\"meter\",\"kilometer\"]",
+     "constraints={\"keys\":[{\"key\":\"waytype\",\"availableConstraintType\":[\"banned\"],\"availableOperators\":[\"=\"],\"values\":[\"autoroute\",\"pont\",\""
+    ]
+   },
+   {
+    "id": "isochrone",
+    "params": [
+     "resource=[\"bdtopo-valhalla\"]",
+     "point={\"bbox\":\"-63.28125,-21.42148437,55.8984375,51.27109375\"}",
+     "costType=[\"time\",\"distance\"]",
+     "costValue={\"min\":null,\"max\":50000}",
+     "profile=[\"car\",\"pedestrian\"]",
+     "direction=[\"departure\",\"arrival\"]",
+     "projection=[\"EPSG:4326\",\"EPSG:2154\",\"EPSG:4559\",\"EPSG:2972\",\"EPSG:2975\",\"EPSG:4471\",\"EPSG:3857\",\"EPSG:32620\",\"EPSG:4467\"]",
+     "geometryFormat=[\"geojson\",\"polyline\",\"wkt\"]",
+     "timeUnit=[\"hour\",\"minute\",\"second\",\"standard\"]",
+     "distanceUnit=[\"meter\",\"kilometer\"]",
+     "constraints={\"keys\":[{\"key\":\"waytype\",\"availableConstraintType\":[\"banned\"],\"availableOperators\":[\"=\"],\"values\":[\"autoroute\",\"pont\",\""
+    ]
+   }
+  ]
+ },
+ {
+  "id": "graphe_routier_r100_IGN",
+  "ops": [
+   {
+    "id": "route",
+    "params": [
+     "resource=[\"graphe_routier_r100_IGN\"]",
+     "start={\"bbox\":\"1.362304688,48.022753906,3.647460938,49.339648438\"}",
+     "end={\"bbox\":\"1.362304688,48.022753906,3.647460938,49.339648438\"}",
+     "intermediates={\"bbox\":\"1.362304688,48.022753906,3.647460938,49.339648438\"}",
+     "profile=[\"car\",\"pedestrian\"]",
+     "optimization=[\"fastest\",\"shortest\"]",
+     "getSteps=[true,false]",
+     "waysAttributes=[\"name\",\"insee_commune_droite\",\"restriction_de_poids_par_essieu\",\"nature\",\"importance\",\"insee_commune_gauche\",\"acces_pie",
+     "geometryFormat=[\"geojson\",\"polyline\",\"wkt\"]",
+     "getBbox=[true,false]",
+     "crs=[\"EPSG:4326\"]",
+     "timeUnit=[\"hour\",\"minute\",\"second\",\"standard\"]",
+     "distanceUnit=[\"meter\",\"kilometer\"]",
+     "constraints={\"keys\":[{\"key\":\"waytype\",\"availableConstraintType\":[\"banned\"],\"availableOperators\":[\"=\",\"!=\"],\"values\":[\"autoroute\",\"tu"
+    ]
+   },
+   {
+    "id": "isochrone",
+    "params": [
+     "resource=[\"graphe_routier_r100_IGN\"]",
+     "point={\"bbox\":\"1.362304688,48.022753906,3.647460938,49.339648438\"}",
+     "costType=[\"time\",\"distance\"]",
+     "costValue={\"min\":null,\"max\":50000}",
+     "profile=[\"car\",\"pedestrian\"]",
+     "direction=[\"departure\",\"arrival\"]",
+     "projection=[\"EPSG:4326\"]",
+     "geometryFormat=[\"geojson\",\"polyline\",\"wkt\"]",
+     "timeUnit=[\"hour\",\"minute\",\"second\",\"standard\"]",
+     "distanceUnit=[\"meter\",\"kilometer\"]",
+     "constraints={\"keys\":[{\"key\":\"waytype\",\"availableConstraintType\":[\"banned\"],\"availableOperators\":[\"=\",\"!=\"],\"values\":[\"autoroute\",\"tu"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "graphe_routier_r105_magellium_all_2026",
+  "ops": [
+   {
+    "id": "route",
+    "params": [
+     "resource=[\"graphe_routier_r105_magellium_all_2026\"]",
+     "start={\"bbox\":\"1.362304688,48.022753906,3.647460938,49.339648438\"}",
+     "end={\"bbox\":\"1.362304688,48.022753906,3.647460938,49.339648438\"}",
+     "intermediates={\"bbox\":\"1.362304688,48.022753906,3.647460938,49.339648438\"}",
+     "profile=[\"car\",\"pedestrian\"]",
+     "optimization=[\"fastest\",\"shortest\"]",
+     "getSteps=[true,false]",
+     "waysAttributes=[\"name\",\"insee_commune_droite\",\"restriction_de_poids_par_essieu\",\"nature\",\"importance\",\"insee_commune_gauche\",\"acces_pie",
+     "geometryFormat=[\"geojson\",\"polyline\",\"wkt\"]",
+     "getBbox=[true,false]",
+     "crs=[\"EPSG:4326\"]",
+     "timeUnit=[\"hour\",\"minute\",\"second\",\"standard\"]",
+     "distanceUnit=[\"meter\",\"kilometer\"]",
+     "constraints={\"keys\":[{\"key\":\"waytype\",\"availableConstraintType\":[\"banned\"],\"availableOperators\":[\"=\",\"!=\"],\"values\":[\"autoroute\",\"tu"
+    ]
+   },
+   {
+    "id": "isochrone",
+    "params": [
+     "resource=[\"graphe_routier_r105_magellium_all_2026\"]",
+     "point={\"bbox\":\"1.362304688,48.022753906,3.647460938,49.339648438\"}",
+     "costType=[\"time\",\"distance\"]",
+     "costValue={\"min\":null,\"max\":50000}",
+     "profile=[\"car\",\"pedestrian\"]",
+     "direction=[\"departure\",\"arrival\"]",
+     "projection=[\"EPSG:4326\"]",
+     "geometryFormat=[\"geojson\",\"polyline\",\"wkt\"]",
+     "timeUnit=[\"hour\",\"minute\",\"second\",\"standard\"]",
+     "distanceUnit=[\"meter\",\"kilometer\"]",
+     "constraints={\"keys\":[{\"key\":\"waytype\",\"availableConstraintType\":[\"banned\"],\"availableOperators\":[\"=\",\"!=\"],\"values\":[\"autoroute\",\"tu"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "graphe_routier_r115_magellium_all_2026",
+  "ops": [
+   {
+    "id": "route",
+    "params": [
+     "resource=[\"graphe_routier_r115_magellium_all_2026\"]",
+     "start={\"bbox\":\"1.362304688,48.022753906,3.647460938,49.339648438\"}",
+     "end={\"bbox\":\"1.362304688,48.022753906,3.647460938,49.339648438\"}",
+     "intermediates={\"bbox\":\"1.362304688,48.022753906,3.647460938,49.339648438\"}",
+     "profile=[\"car\",\"pedestrian\"]",
+     "optimization=[\"fastest\",\"shortest\"]",
+     "getSteps=[true,false]",
+     "waysAttributes=[\"name\",\"insee_commune_droite\",\"restriction_de_poids_par_essieu\",\"nature\",\"importance\",\"insee_commune_gauche\",\"acces_pie",
+     "geometryFormat=[\"geojson\",\"polyline\",\"wkt\"]",
+     "getBbox=[true,false]",
+     "crs=[\"EPSG:4326\"]",
+     "timeUnit=[\"hour\",\"minute\",\"second\",\"standard\"]",
+     "distanceUnit=[\"meter\",\"kilometer\"]",
+     "constraints={\"keys\":[{\"key\":\"waytype\",\"availableConstraintType\":[\"banned\"],\"availableOperators\":[\"=\",\"!=\"],\"values\":[\"autoroute\",\"tu"
+    ]
+   },
+   {
+    "id": "isochrone",
+    "params": [
+     "resource=[\"graphe_routier_r115_magellium_all_2026\"]",
+     "point={\"bbox\":\"1.362304688,48.022753906,3.647460938,49.339648438\"}",
+     "costType=[\"time\",\"distance\"]",
+     "costValue={\"min\":null,\"max\":50000}",
+     "profile=[\"car\",\"pedestrian\"]",
+     "direction=[\"departure\",\"arrival\"]",
+     "projection=[\"EPSG:4326\"]",
+     "geometryFormat=[\"geojson\",\"polyline\",\"wkt\"]",
+     "timeUnit=[\"hour\",\"minute\",\"second\",\"standard\"]",
+     "distanceUnit=[\"meter\",\"kilometer\"]",
+     "constraints={\"keys\":[{\"key\":\"waytype\",\"availableConstraintType\":[\"banned\"],\"availableOperators\":[\"=\",\"!=\"],\"values\":[\"autoroute\",\"tu"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "graphe_routier_r50_magellium_all3",
+  "ops": [
+   {
+    "id": "route",
+    "params": [
+     "resource=[\"graphe_routier_r50_magellium_all3\"]",
+     "start={\"bbox\":\"1.362304688,48.022753906,3.647460938,49.339648438\"}",
+     "end={\"bbox\":\"1.362304688,48.022753906,3.647460938,49.339648438\"}",
+     "intermediates={\"bbox\":\"1.362304688,48.022753906,3.647460938,49.339648438\"}",
+     "profile=[\"car\",\"pedestrian\"]",
+     "optimization=[\"fastest\",\"shortest\"]",
+     "getSteps=[true,false]",
+     "waysAttributes=[\"name\",\"insee_commune_droite\",\"restriction_de_poids_par_essieu\",\"nature\",\"importance\",\"insee_commune_gauche\",\"acces_pie",
+     "geometryFormat=[\"geojson\",\"polyline\",\"wkt\"]",
+     "getBbox=[true,false]",
+     "crs=[\"EPSG:4326\"]",
+     "timeUnit=[\"hour\",\"minute\",\"second\",\"standard\"]",
+     "distanceUnit=[\"meter\",\"kilometer\"]",
+     "constraints={\"keys\":[{\"key\":\"waytype\",\"availableConstraintType\":[\"banned\"],\"availableOperators\":[\"=\",\"!=\"],\"values\":[\"autoroute\",\"tu"
+    ]
+   },
+   {
+    "id": "isochrone",
+    "params": [
+     "resource=[\"graphe_routier_r50_magellium_all3\"]",
+     "point={\"bbox\":\"1.362304688,48.022753906,3.647460938,49.339648438\"}",
+     "costType=[\"time\",\"distance\"]",
+     "costValue={\"min\":null,\"max\":50000}",
+     "profile=[\"car\",\"pedestrian\"]",
+     "direction=[\"departure\",\"arrival\"]",
+     "projection=[\"EPSG:4326\"]",
+     "geometryFormat=[\"geojson\",\"polyline\",\"wkt\"]",
+     "timeUnit=[\"hour\",\"minute\",\"second\",\"standard\"]",
+     "distanceUnit=[\"meter\",\"kilometer\"]",
+     "constraints={\"keys\":[{\"key\":\"waytype\",\"availableConstraintType\":[\"banned\"],\"availableOperators\":[\"=\",\"!=\"],\"values\":[\"autoroute\",\"tu"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "graphe_routier_r55_magellium_all",
+  "ops": [
+   {
+    "id": "route",
+    "params": [
+     "resource=[\"graphe_routier_r55_magellium_all\"]",
+     "start={\"bbox\":\"1.362304688,48.022753906,3.647460938,49.339648438\"}",
+     "end={\"bbox\":\"1.362304688,48.022753906,3.647460938,49.339648438\"}",
+     "intermediates={\"bbox\":\"1.362304688,48.022753906,3.647460938,49.339648438\"}",
+     "profile=[\"car\",\"pedestrian\"]",
+     "optimization=[\"fastest\",\"shortest\"]",
+     "getSteps=[true,false]",
+     "waysAttributes=[\"name\",\"insee_commune_droite\",\"restriction_de_poids_par_essieu\",\"nature\",\"importance\",\"insee_commune_gauche\",\"acces_pie",
+     "geometryFormat=[\"geojson\",\"polyline\",\"wkt\"]",
+     "getBbox=[true,false]",
+     "crs=[\"EPSG:4326\"]",
+     "timeUnit=[\"hour\",\"minute\",\"second\",\"standard\"]",
+     "distanceUnit=[\"meter\",\"kilometer\"]",
+     "constraints={\"keys\":[{\"key\":\"waytype\",\"availableConstraintType\":[\"banned\"],\"availableOperators\":[\"=\",\"!=\"],\"values\":[\"autoroute\",\"tu"
+    ]
+   },
+   {
+    "id": "isochrone",
+    "params": [
+     "resource=[\"graphe_routier_r55_magellium_all\"]",
+     "point={\"bbox\":\"1.362304688,48.022753906,3.647460938,49.339648438\"}",
+     "costType=[\"time\",\"distance\"]",
+     "costValue={\"min\":null,\"max\":50000}",
+     "profile=[\"car\",\"pedestrian\"]",
+     "direction=[\"departure\",\"arrival\"]",
+     "projection=[\"EPSG:4326\"]",
+     "geometryFormat=[\"geojson\",\"polyline\",\"wkt\"]",
+     "timeUnit=[\"hour\",\"minute\",\"second\",\"standard\"]",
+     "distanceUnit=[\"meter\",\"kilometer\"]",
+     "constraints={\"keys\":[{\"key\":\"waytype\",\"availableConstraintType\":[\"banned\"],\"availableOperators\":[\"=\",\"!=\"],\"values\":[\"autoroute\",\"tu"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "graphe_routier_r60_magellium_all2",
+  "ops": [
+   {
+    "id": "route",
+    "params": [
+     "resource=[\"graphe_routier_r60_magellium_all2\"]",
+     "start={\"bbox\":\"1.362304688,48.022753906,3.647460938,49.339648438\"}",
+     "end={\"bbox\":\"1.362304688,48.022753906,3.647460938,49.339648438\"}",
+     "intermediates={\"bbox\":\"1.362304688,48.022753906,3.647460938,49.339648438\"}",
+     "profile=[\"car\",\"pedestrian\"]",
+     "optimization=[\"fastest\",\"shortest\"]",
+     "getSteps=[true,false]",
+     "waysAttributes=[\"name\",\"insee_commune_droite\",\"restriction_de_poids_par_essieu\",\"nature\",\"importance\",\"insee_commune_gauche\",\"acces_pie",
+     "geometryFormat=[\"geojson\",\"polyline\",\"wkt\"]",
+     "getBbox=[true,false]",
+     "crs=[\"EPSG:4326\"]",
+     "timeUnit=[\"hour\",\"minute\",\"second\",\"standard\"]",
+     "distanceUnit=[\"meter\",\"kilometer\"]",
+     "constraints={\"keys\":[{\"key\":\"waytype\",\"availableConstraintType\":[\"banned\"],\"availableOperators\":[\"=\",\"!=\"],\"values\":[\"autoroute\",\"tu"
+    ]
+   },
+   {
+    "id": "isochrone",
+    "params": [
+     "resource=[\"graphe_routier_r60_magellium_all2\"]",
+     "point={\"bbox\":\"1.362304688,48.022753906,3.647460938,49.339648438\"}",
+     "costType=[\"time\",\"distance\"]",
+     "costValue={\"min\":null,\"max\":50000}",
+     "profile=[\"car\",\"pedestrian\"]",
+     "direction=[\"departure\",\"arrival\"]",
+     "projection=[\"EPSG:4326\"]",
+     "geometryFormat=[\"geojson\",\"polyline\",\"wkt\"]",
+     "timeUnit=[\"hour\",\"minute\",\"second\",\"standard\"]",
+     "distanceUnit=[\"meter\",\"kilometer\"]",
+     "constraints={\"keys\":[{\"key\":\"waytype\",\"availableConstraintType\":[\"banned\"],\"availableOperators\":[\"=\",\"!=\"],\"values\":[\"autoroute\",\"tu"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "graphe_routier_r70_magellium_all",
+  "ops": [
+   {
+    "id": "route",
+    "params": [
+     "resource=[\"graphe_routier_r70_magellium_all\"]",
+     "start={\"bbox\":\"1.362304688,48.022753906,3.647460938,49.339648438\"}",
+     "end={\"bbox\":\"1.362304688,48.022753906,3.647460938,49.339648438\"}",
+     "intermediates={\"bbox\":\"1.362304688,48.022753906,3.647460938,49.339648438\"}",
+     "profile=[\"car\",\"pedestrian\"]",
+     "optimization=[\"fastest\",\"shortest\"]",
+     "getSteps=[true,false]",
+     "waysAttributes=[\"name\",\"insee_commune_droite\",\"restriction_de_poids_par_essieu\",\"nature\",\"importance\",\"insee_commune_gauche\",\"acces_pie",
+     "geometryFormat=[\"geojson\",\"polyline\",\"wkt\"]",
+     "getBbox=[true,false]",
+     "crs=[\"EPSG:4326\"]",
+     "timeUnit=[\"hour\",\"minute\",\"second\",\"standard\"]",
+     "distanceUnit=[\"meter\",\"kilometer\"]",
+     "constraints={\"keys\":[{\"key\":\"waytype\",\"availableConstraintType\":[\"banned\"],\"availableOperators\":[\"=\",\"!=\"],\"values\":[\"autoroute\",\"tu"
+    ]
+   },
+   {
+    "id": "isochrone",
+    "params": [
+     "resource=[\"graphe_routier_r70_magellium_all\"]",
+     "point={\"bbox\":\"1.362304688,48.022753906,3.647460938,49.339648438\"}",
+     "costType=[\"time\",\"distance\"]",
+     "costValue={\"min\":null,\"max\":50000}",
+     "profile=[\"car\",\"pedestrian\"]",
+     "direction=[\"departure\",\"arrival\"]",
+     "projection=[\"EPSG:4326\"]",
+     "geometryFormat=[\"geojson\",\"polyline\",\"wkt\"]",
+     "timeUnit=[\"hour\",\"minute\",\"second\",\"standard\"]",
+     "distanceUnit=[\"meter\",\"kilometer\"]",
+     "constraints={\"keys\":[{\"key\":\"waytype\",\"availableConstraintType\":[\"banned\"],\"availableOperators\":[\"=\",\"!=\"],\"values\":[\"autoroute\",\"tu"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "graphe_routier_r80_magellium_all_2026",
+  "ops": [
+   {
+    "id": "route",
+    "params": [
+     "resource=[\"graphe_routier_r80_magellium_all_2026\"]",
+     "start={\"bbox\":\"1.362304688,48.022753906,3.647460938,49.339648438\"}",
+     "end={\"bbox\":\"1.362304688,48.022753906,3.647460938,49.339648438\"}",
+     "intermediates={\"bbox\":\"1.362304688,48.022753906,3.647460938,49.339648438\"}",
+     "profile=[\"car\",\"pedestrian\"]",
+     "optimization=[\"fastest\",\"shortest\"]",
+     "getSteps=[true,false]",
+     "waysAttributes=[\"name\",\"insee_commune_droite\",\"restriction_de_poids_par_essieu\",\"nature\",\"importance\",\"insee_commune_gauche\",\"acces_pie",
+     "geometryFormat=[\"geojson\",\"polyline\",\"wkt\"]",
+     "getBbox=[true,false]",
+     "crs=[\"EPSG:4326\"]",
+     "timeUnit=[\"hour\",\"minute\",\"second\",\"standard\"]",
+     "distanceUnit=[\"meter\",\"kilometer\"]",
+     "constraints={\"keys\":[{\"key\":\"waytype\",\"availableConstraintType\":[\"banned\"],\"availableOperators\":[\"=\",\"!=\"],\"values\":[\"autoroute\",\"tu"
+    ]
+   },
+   {
+    "id": "isochrone",
+    "params": [
+     "resource=[\"graphe_routier_r80_magellium_all_2026\"]",
+     "point={\"bbox\":\"1.362304688,48.022753906,3.647460938,49.339648438\"}",
+     "costType=[\"time\",\"distance\"]",
+     "costValue={\"min\":null,\"max\":50000}",
+     "profile=[\"car\",\"pedestrian\"]",
+     "direction=[\"departure\",\"arrival\"]",
+     "projection=[\"EPSG:4326\"]",
+     "geometryFormat=[\"geojson\",\"polyline\",\"wkt\"]",
+     "timeUnit=[\"hour\",\"minute\",\"second\",\"standard\"]",
+     "distanceUnit=[\"meter\",\"kilometer\"]",
+     "constraints={\"keys\":[{\"key\":\"waytype\",\"availableConstraintType\":[\"banned\"],\"availableOperators\":[\"=\",\"!=\"],\"values\":[\"autoroute\",\"tu"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "graphe_routier_r85_magellium_all",
+  "ops": [
+   {
+    "id": "route",
+    "params": [
+     "resource=[\"graphe_routier_r85_magellium_all\"]",
+     "start={\"bbox\":\"1.362304688,48.022753906,3.647460938,49.339648438\"}",
+     "end={\"bbox\":\"1.362304688,48.022753906,3.647460938,49.339648438\"}",
+     "intermediates={\"bbox\":\"1.362304688,48.022753906,3.647460938,49.339648438\"}",
+     "profile=[\"car\",\"pedestrian\"]",
+     "optimization=[\"fastest\",\"shortest\"]",
+     "getSteps=[true,false]",
+     "waysAttributes=[\"name\",\"insee_commune_droite\",\"restriction_de_poids_par_essieu\",\"nature\",\"importance\",\"insee_commune_gauche\",\"acces_pie",
+     "geometryFormat=[\"geojson\",\"polyline\",\"wkt\"]",
+     "getBbox=[true,false]",
+     "crs=[\"EPSG:4326\"]",
+     "timeUnit=[\"hour\",\"minute\",\"second\",\"standard\"]",
+     "distanceUnit=[\"meter\",\"kilometer\"]",
+     "constraints={\"keys\":[{\"key\":\"waytype\",\"availableConstraintType\":[\"banned\"],\"availableOperators\":[\"=\",\"!=\"],\"values\":[\"autoroute\",\"tu"
+    ]
+   },
+   {
+    "id": "isochrone",
+    "params": [
+     "resource=[\"graphe_routier_r85_magellium_all\"]",
+     "point={\"bbox\":\"1.362304688,48.022753906,3.647460938,49.339648438\"}",
+     "costType=[\"time\",\"distance\"]",
+     "costValue={\"min\":null,\"max\":50000}",
+     "profile=[\"car\",\"pedestrian\"]",
+     "direction=[\"departure\",\"arrival\"]",
+     "projection=[\"EPSG:4326\"]",
+     "geometryFormat=[\"geojson\",\"polyline\",\"wkt\"]",
+     "timeUnit=[\"hour\",\"minute\",\"second\",\"standard\"]",
+     "distanceUnit=[\"meter\",\"kilometer\"]",
+     "constraints={\"keys\":[{\"key\":\"waytype\",\"availableConstraintType\":[\"banned\"],\"availableOperators\":[\"=\",\"!=\"],\"values\":[\"autoroute\",\"tu"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "graphe_routier_r90_magellium_all_2026_4",
+  "ops": [
+   {
+    "id": "route",
+    "params": [
+     "resource=[\"graphe_routier_r90_magellium_all_2026_4\"]",
+     "start={\"bbox\":\"1.362304688,48.022753906,3.647460938,49.339648438\"}",
+     "end={\"bbox\":\"1.362304688,48.022753906,3.647460938,49.339648438\"}",
+     "intermediates={\"bbox\":\"1.362304688,48.022753906,3.647460938,49.339648438\"}",
+     "profile=[\"car\",\"pedestrian\"]",
+     "optimization=[\"fastest\",\"shortest\"]",
+     "getSteps=[true,false]",
+     "waysAttributes=[\"name\",\"insee_commune_droite\",\"restriction_de_poids_par_essieu\",\"nature\",\"importance\",\"insee_commune_gauche\",\"acces_pie",
+     "geometryFormat=[\"geojson\",\"polyline\",\"wkt\"]",
+     "getBbox=[true,false]",
+     "crs=[\"EPSG:4326\"]",
+     "timeUnit=[\"hour\",\"minute\",\"second\",\"standard\"]",
+     "distanceUnit=[\"meter\",\"kilometer\"]",
+     "constraints={\"keys\":[{\"key\":\"waytype\",\"availableConstraintType\":[\"banned\"],\"availableOperators\":[\"=\",\"!=\"],\"values\":[\"autoroute\",\"tu"
+    ]
+   },
+   {
+    "id": "isochrone",
+    "params": [
+     "resource=[\"graphe_routier_r90_magellium_all_2026_4\"]",
+     "point={\"bbox\":\"1.362304688,48.022753906,3.647460938,49.339648438\"}",
+     "costType=[\"time\",\"distance\"]",
+     "costValue={\"min\":null,\"max\":50000}",
+     "profile=[\"car\",\"pedestrian\"]",
+     "direction=[\"departure\",\"arrival\"]",
+     "projection=[\"EPSG:4326\"]",
+     "geometryFormat=[\"geojson\",\"polyline\",\"wkt\"]",
+     "timeUnit=[\"hour\",\"minute\",\"second\",\"standard\"]",
+     "distanceUnit=[\"meter\",\"kilometer\"]",
+     "constraints={\"keys\":[{\"key\":\"waytype\",\"availableConstraintType\":[\"banned\"],\"availableOperators\":[\"=\",\"!=\"],\"values\":[\"autoroute\",\"tu"
+    ]
+   }
+  ]
+ }
+]
+
+Itinéraire, variantes : [
+ {
+  "q": "&resource=bdtopo-osrm&profile=pedestrian&optimization=fastest&geometryFormat=geojson&getSteps=false&getBbox=false",
+  "status": 400,
+  "points": null,
+  "corps": "{\"error\":{\"message\":\" Parameter 'resource' is invalid: it does not exist on this service \"}}"
+ },
+ {
+  "q": "&resource=bdtopo-osrm&profile=pedestrian&optimization=fastest",
+  "status": 400,
+  "points": null,
+  "corps": "{\"error\":{\"message\":\" Parameter 'resource' is invalid: it does not exist on this service \"}}"
+ },
+ {
+  "q": "&resource=bdtopo-osrm&profile=car&optimization=fastest&geometryFormat=geojson",
+  "status": 400,
+  "points": null,
+  "corps": "{\"error\":{\"message\":\" Parameter 'resource' is invalid: it does not exist on this service \"}}"
+ },
+ {
+  "q": "&resource=bdtopo-pgr&profile=pedestrian&optimization=shortest&geometryFormat=geojson",
+  "status": 200,
+  "points": 31
+ },
+ {
+  "q": "&resource=bdtopo-pgr&profile=pedestrian&optimization=fastest&geometryFormat=geojson",
+  "status": 200,
+  "points": 31
+ },
+ {
+  "q": "&resource=bdtopo-valhalla&profile=pedestrian&optimization=fastest&geometryFormat=geojson",
+  "status": 200,
+  "points": 31
+ },
+ {
+  "q": "&resource=bdtopo-valhalla&profile=pedestrian&optimization=shortest&geometryFormat=geojson",
+  "status": 200,
+  "points": 31
+ }
+]
+
+Communes « fontaineb » : ["Fontainebrux (39, 224 hab.)","Fontainebleau (77, 15583 hab.)"]
 
 Erreurs HTTP :
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1066&TILEROW=702&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1066&TILEROW=703&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1065&TILEROW=702&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1067&TILEROW=702&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1065&TILEROW=703&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1067&TILEROW=703&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1066&TILEROW=701&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1066&TILEROW=704&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1065&TILEROW=701&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1067&TILEROW=701&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1065&TILEROW=704&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1067&TILEROW=704&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1058&TILEROW=705&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1058&TILEROW=706&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1057&TILEROW=705&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1059&TILEROW=705&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1057&TILEROW=706&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1059&TILEROW=706&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1058&TILEROW=704&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1058&TILEROW=707&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1057&TILEROW=704&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1059&TILEROW=704&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1057&TILEROW=707&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1059&TILEROW=707&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1048&TILEROW=703&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1048&TILEROW=704&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1047&TILEROW=703&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1049&TILEROW=703&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1047&TILEROW=704&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1049&TILEROW=704&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1048&TILEROW=702&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1048&TILEROW=705&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1047&TILEROW=702&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1049&TILEROW=702&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1047&TILEROW=705&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1049&TILEROW=705&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1019&TILEROW=742&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1019&TILEROW=743&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1018&TILEROW=742&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1020&TILEROW=742&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1018&TILEROW=743&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1020&TILEROW=743&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1019&TILEROW=741&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1019&TILEROW=744&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1018&TILEROW=741&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1020&TILEROW=741&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1018&TILEROW=744&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1020&TILEROW=744&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1033&TILEROW=730&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1033&TILEROW=731&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1032&TILEROW=730&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1034&TILEROW=730&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1032&TILEROW=731&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1034&TILEROW=731&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1033&TILEROW=729&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1033&TILEROW=732&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1032&TILEROW=729&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1034&TILEROW=729&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1032&TILEROW=732&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
-ÉCHEC https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX=11&TILECOL=1034&TILEROW=732&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLAN net::ERR_ABORTED
+400 https://data.geopf.fr/navigation/itineraire?start=7.5200,49.0400&end=7.5310,49.0452&resource=bdtopo-osrm&profile=pedestrian&optimization=fastest&geometryFormat=
+400 https://data.geopf.fr/navigation/itineraire?start=7.5200,49.0400&end=7.5310,49.0452&resource=bdtopo-osrm&profile=pedestrian&optimization=fastest
+400 https://data.geopf.fr/navigation/itineraire?start=7.5200,49.0400&end=7.5310,49.0452&resource=bdtopo-osrm&profile=car&optimization=fastest&geometryFormat=geojson
+400 https://data.geopf.fr/navigation/itineraire?resource=bdtopo-osrm&profile=pedestrian&optimization=fastest&start=7.5200,49.0400&end=7.5310,49.0452&geometryFormat=
+400 https://data.geopf.fr/navigation/itineraire?resource=bdtopo-osrm&profile=pedestrian&optimization=fastest&start=7.520000,49.040000&end=7.530999,49.045215&geometr
 
 Console :
 warning Info: The current domain is not authorized for OAuth operations. This will prevent signInWithPopup, signInWithRedirect, linkWithPopup and linkWithRedirect from working. Add your domain (theo52400.github.io) to the OAuth redirect domains list in the Firebase console -> Authentication -> Settings -> A
-warning [GroupMarkerNotSet(crbug.com/242999)!:A0601C00743E0000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.
-warning [GroupMarkerNotSet(crbug.com/242999)!:A0901C00743E0000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.
-warning [.WebGL-0x24cc00dcd500]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
-warning [.WebGL-0x24cc00dcd500]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
-warning [.WebGL-0x24cc00dcd500]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
-warning [.WebGL-0x24cc00dcd500]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)
-warning [GroupMarkerNotSet(crbug.com/242999)!:A0601C00743E0000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.
-warning [GroupMarkerNotSet(crbug.com/242999)!:A0000503743E0000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.
+warning [GroupMarkerNotSet(crbug.com/242999)!:A0901C00FC2F0000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.
+warning [.WebGL-0xfdc02498700]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
+warning [.WebGL-0xfdc02498700]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
+warning [.WebGL-0xfdc02498700]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
+warning [.WebGL-0xfdc02498700]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)
+warning [GroupMarkerNotSet(crbug.com/242999)!:A0601C00FC2F0000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.
+warning [GroupMarkerNotSet(crbug.com/242999)!:A0C0EF02FC2F0000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.
+error Failed to load resource: the server responded with a status of 400 ()
+error Failed to load resource: the server responded with a status of 400 ()
+error Failed to load resource: the server responded with a status of 400 ()
 error Failed to load resource: the server responded with a status of 400 ()
 error Failed to load resource: the server responded with a status of 400 ()
 
 Journal de l'appli :
-23:22:28 Connecté (firebase), joueur Nr4Ucpaj
-23:22:53 Source forêts : LANDCOVER.FORESTINVENTORY.V2:formation_vegetale
-23:22:59 Itinéraire IGN : HTTP 400
-23:22:59 Itinéraire : ligne directe seulement
-23:23:20 Écran allumé : Wake Lock permission request denied
+23:25:24 Connecté (firebase), joueur n7RVnaHj
+23:25:34 Source forêts : LANDCOVER.FORESTINVENTORY.V2:formation_vegetale
+23:25:41 Itinéraire IGN : HTTP 400
+23:25:41 Itinéraire : ligne directe seulement
+23:26:03 Écran allumé : Wake Lock permission request denied
