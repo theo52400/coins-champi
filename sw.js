@@ -1,5 +1,5 @@
 // Service worker de Coins à champi : appli disponible sans réseau, fond de carte et peuplements gardés en cache.
-const VERSION = 'v2026-10-27-a6804c27';
+const VERSION = 'v2026-10-27-71ff3f13';
 const SHELL = 'cc-shell-' + VERSION;
 const TILES = 'cc-tiles';
 const DATA = 'cc-data';

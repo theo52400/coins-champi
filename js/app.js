@@ -90,6 +90,7 @@ async function startSync() {
     S.sync = sync; S.uid = sync.uid;
     sync.onError = (what, e) => {
       log('Synchro ' + what + ' : ' + (e.code || '') + ' ' + e.message);
+      if (/does not exist|not-found.*database|database.*not.*exist/i.test((e.code || '') + ' ' + (e.message || ''))) { toast('La base de données Firestore n\'existe pas encore : Firebase → Firestore Database → Créer une base de données.', 9000); return; }
       if (!/permission/i.test(e.code || e.message)) return;
       if (S.gid && GROUP_WATCHES.includes(what)) { if (!lostGroup) { lostGroup = true; toast('Vous ne faites plus partie de ce groupe.', 5000); watchGroup(null); setTimeout(() => { lostGroup = false; }, 3000); } return; }
       toast('Accès refusé (' + what + '). Vérifiez les règles Firestore.', 6000);
@@ -307,16 +308,24 @@ function openGroupChooser(onboarding) {
     const code = card.querySelector('#gj-code').value.trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
     if (code.length < 6) { err('Le code fait 8 caractères.'); return; }
     err(''); try { const g = await S.sync.joinGroup(code, memberPayload()); watchGroup(code); closeModal(); toast('Bienvenue dans « ' + (g.name || code) + ' »'); }
-    catch (e) { err(e.code === 'not-found' ? 'Aucun groupe ne porte ce code.' : 'Impossible de rejoindre : ' + (e.message || e)); }
+    catch (e) { err(e.code === 'not-found' && !/database/i.test(e.message || '') ? 'Aucun groupe ne porte ce code.' : 'Impossible de rejoindre : ' + fbWhy(e)); }
   };
   card.querySelector('[data-act="gc-create"]').onclick = async () => {
     const name = card.querySelector('#gc-name').value.trim();
     if (!name) { err('Donnez un nom au groupe.'); return; }
     err(''); try { const gid = await S.sync.createGroup(name.slice(0, 30), memberPayload()); watchGroup(gid); closeModal(); openTab('groupe'); toast('Groupe créé : partagez le code ' + gid); }
-    catch (e) { err('Création impossible : ' + (e.message || e)); }
+    catch (e) { err('Création impossible : ' + fbWhy(e)); }
   };
 }
 const profReady = () => !!(S.prof && S.loadedFinds && S.loadedSorties);
+// Erreurs Firestore expliquées simplement
+function fbWhy(e) {
+  const c = ((e && e.code) || '') + ' ' + ((e && e.message) || '');
+  if (/does not exist|database.*not.*exist/i.test(c)) return 'la base de données Firestore n\'existe pas encore (Firebase → Firestore Database → Créer une base de données).';
+  if (/permission/i.test(c)) return 'accès refusé par les règles Firestore : vérifie qu\'elles sont bien publiées.';
+  if (/unavailable|offline|network/i.test(c)) return 'pas de réseau pour joindre le serveur du jeu.';
+  return (e && (e.message || e.code)) || String(e);
+}
 const memberPayload = () => ({ name: (S.me && S.me.name) || 'Cueilleur', avatar: (S.me && S.me.avatar) || {}, xp: profReady() ? S.prof.xp : (S.me && S.me.xp) || 0, level: profReady() ? S.prof.level : (S.me && S.me.level) || 1, lastSeen: Date.now() });
 function openInfoSolo() {
   openModal(modalHead('Mode solo') + '<p>L\'appli n\'est pas encore reliée à un serveur Firebase. Tout fonctionne (avatar, trouvailles, Mycodex, sorties), mais les données restent sur ce téléphone et le groupe ne se partage pas.</p><p class="note">Une fois la configuration Firebase ajoutée à l\'appli, chaque joueur garde son profil et le jeu devient collectif en direct.</p>');
