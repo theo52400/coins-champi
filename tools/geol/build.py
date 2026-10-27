@@ -64,7 +64,7 @@ FAMILIES = [
     (r'sandstones?|\bgrits?\b', 'gres', 'grès', 1, False),
     (r'conglomerates?|puddingstones?', 'conglomerat', 'conglomérats', 1, False),
     (r'breccias?', 'breche', 'brèches', 2, False),
-    (r'\bcherts?\b|\bflints?\b|radiolarites?|siliceous|silcretes?|millstone', 'silex', 'silex', 1, False),
+    (r'\bcherts?\b|\bflints?\b|radiolarites?|siliceous|silcretes?|millstone|diatomites?', 'silex', 'silex', 1, False),
     (r'\bsands?\b|\bsandy\b', 'sable', 'sables', 1, False),
     (r'gravels?|pebbles?|cobbles?|boulders?', 'graviers', 'graviers', 2, False),
     (r'\bloess|\bloams?\b|\bloamy\b', 'limons', 'limons', 2, False),
@@ -86,7 +86,7 @@ FAMILIES = [
      4, False),
     (r'shales?', 'schiste_arg', 'schistes argileux', 4, False),
     (r'basalts?|basanites?|dolerites?|diabases?|spilites?|basic igneous|\bmafic', 'basalte', 'basaltes', 2, False),
-    (r'andesites?|trachytes?|phonolites?|trachyandesites?|intermediate composition igneous|\blavas?\b', 'lave',
+    (r'andesites?|trachytes?|trachytoids?|phonolites?|trachyandesites?|intermediate composition igneous|\blavas?\b', 'lave',
      'laves', 2, False),
     (r'\btuffs?\b|tuffites?|tephra|pyroclast\w*|volcanic|cinders?|scoria|\bash\b|fragmental igneous', 'tuf_volc',
      'roches volcaniques', 2, False),
@@ -188,7 +188,8 @@ PERIODS = {
     'liassic': 'Lias', 'dogger': 'Dogger', 'malm': 'Malm', 'stephanian': 'Stéphanien',
     'westphalian': 'Westphalien', 'namurian': 'Namurien', 'visean': 'Viséen', 'tournaisian': 'Tournaisien',
     'autunian': 'Autunien', 'saxonian': 'Saxonien', 'variscan': 'hercynien', 'hercynian': 'hercynien',
-    'cadomian': 'cadomien',
+    'cadomian': 'cadomien', 'gelasian': 'Pléistocène inférieur', 'calabrian': 'Pléistocène inférieur',
+    'ionian': 'Pléistocène moyen', 'tarantian': 'Pléistocène supérieur',
 }
 QUAL = {'lower': 'inférieur', 'early': 'inférieur', 'middle': 'moyen', 'upper': 'supérieur', 'late': 'supérieur'}
 # étages régionaux (frontière allemande, Bassin houiller) : déjà situés dans leur période
@@ -222,6 +223,11 @@ def age_fr(age):
     # « Viséen à Carbonifère » : la période englobe déjà l'étage
     if len(out) == 2 and (PARENT.get(out[0].split(' ')[0]) == out[1] or PARENT.get(out[1].split(' ')[0]) == out[0]):
         out = [out[0] if PARENT.get(out[0].split(' ')[0]) == out[1] else out[1]]
+    # « Dévonien moyen à Dévonien supérieur » -> « Dévonien moyen à supérieur »
+    if len(out) == 2:
+        a, b = out[0].split(' '), out[1].split(' ')
+        if len(a) == 2 and len(b) == 2 and a[0] == b[0]:
+            return a[0] + ' ' + a[1] + ' à ' + b[1]
     return ' à '.join(out)
 
 
