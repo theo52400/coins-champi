@@ -23,7 +23,7 @@ const ctx = await browser.newContext({
 const page = await ctx.newPage();
 page.on('console', m => R.console.push(m.type() + ' ' + m.text().slice(0, 300)));
 page.on('pageerror', e => R.console.push('pageerror ' + e.message));
-page.on('requestfailed', r => R.http.push('ÉCHEC ' + r.url().slice(0, 160) + ' ' + ((r.failure() || {}).errorText || '')));
+page.on('requestfailed', r => { const t = (r.failure() || {}).errorText || ''; if (!/ERR_ABORTED/.test(t)) R.http.push('ÉCHEC ' + r.url().slice(0, 160) + ' ' + t); });
 page.on('response', r => {
   const u = r.url(), s = r.status();
   if (s >= 400) R.http.push(s + ' ' + u.slice(0, 160));
@@ -74,8 +74,9 @@ await step('Firebase', async () => {
 });
 
 await step('Avatar', async () => {
-  const ok = await wait(() => document.querySelector('.pm.me'), null, 15000);
-  check('Ma position s\'affiche sur la carte', ok);
+  const ok = await wait(() => document.querySelector('.pm.me, .me-dot'), null, 15000);
+  const what = await page.evaluate(() => (document.querySelector('.pm.me') ? 'avatar' : document.querySelector('.me-dot') ? 'point (pas encore de profil)' : null));
+  check('Ma position s\'affiche sur la carte', ok, what);
 });
 
 await step('Sous-sol', async () => {
@@ -109,9 +110,26 @@ await step('Point', async () => {
 });
 
 await step('Itinéraire', async () => {
+  // ressources et profils offerts par le service, puis quelques variantes de requête
+  R.routeCaps = await page.evaluate(async () => {
+    try {
+      const j = await (await fetch('https://data.geopf.fr/navigation/getcapabilities')).json();
+      return (j.resources || []).map(r => ({ id: r.id, ops: (r.availableOperations || []).map(o => ({ id: o.id, params: (o.availableParameters || []).map(p => p.id + (p.values ? '=' + JSON.stringify(p.values).slice(0, 120) : p.defaultValue !== undefined ? '(' + p.defaultValue + ')' : '')) })) }));
+    } catch (e) { return { err: e.message }; }
+  });
+  R.routeTries = await page.evaluate(async () => {
+    const base = 'https://data.geopf.fr/navigation/itineraire?start=7.5200,49.0400&end=7.5310,49.0452';
+    const out = [];
+    for (const q of ['&resource=bdtopo-osrm&profile=pedestrian&optimization=fastest&geometryFormat=geojson&getSteps=false&getBbox=false', '&resource=bdtopo-osrm&profile=pedestrian&optimization=fastest', '&resource=bdtopo-osrm&profile=car&optimization=fastest&geometryFormat=geojson', '&resource=bdtopo-pgr&profile=pedestrian&optimization=shortest&geometryFormat=geojson', '&resource=bdtopo-pgr&profile=pedestrian&optimization=fastest&geometryFormat=geojson', '&resource=bdtopo-valhalla&profile=pedestrian&optimization=fastest&geometryFormat=geojson', '&resource=bdtopo-valhalla&profile=pedestrian&optimization=shortest&geometryFormat=geojson']) {
+      try { const r = await fetch(base + q); const t = await r.text(); let n = null; try { const j = JSON.parse(t); n = j.geometry && j.geometry.coordinates ? j.geometry.coordinates.length : null; } catch (e) { /* texte */ } out.push({ q, status: r.status, points: n, corps: n ? undefined : t.slice(0, 300) }); }
+      catch (e) { out.push({ q, err: e.message }); }
+    }
+    return out;
+  });
+  console.log('Itinéraire, variantes :', JSON.stringify(R.routeTries).slice(0, 2000));
   const direct = await page.evaluate(async () => {
     const u = 'https://data.geopf.fr/navigation/itineraire?resource=bdtopo-osrm&profile=pedestrian&optimization=fastest&start=7.5200,49.0400&end=7.5310,49.0452&geometryFormat=geojson&getSteps=false&getBbox=false';
-    try { const r = await fetch(u); const j = await r.json(); return { status: r.status, n: j.geometry && j.geometry.coordinates && j.geometry.coordinates.length, distance: j.distance, duration: j.duration, unite: j.distanceUnit }; }
+    try { const r = await fetch(u); const t = await r.text(); let j = {}; try { j = JSON.parse(t); } catch (e) { /* texte */ } return { status: r.status, n: j.geometry && j.geometry.coordinates && j.geometry.coordinates.length, distance: j.distance, duration: j.duration, unite: j.distanceUnit, corps: r.ok ? undefined : t.slice(0, 400) }; }
     catch (e) { return { err: e.message }; }
   });
   check('Service d\'itinéraire piéton IGN joignable depuis le site (CORS)', direct.status === 200 && direct.n > 1, direct);
@@ -133,6 +151,8 @@ await step('Itinéraire', async () => {
 await step('Communes', async () => {
   const nm = await page.evaluate(() => CC.M.communeAt(49.04, 7.52, 8000));
   check('Commune au point (geo.api.gouv.fr)', typeof nm === 'string' && nm.length > 1, nm);
+  R.communeSearch = await page.evaluate(async () => { try { return (await (await fetch('https://geo.api.gouv.fr/communes?nom=fontaineb&fields=nom,code,departement,population&boost=population&limit=8')).json()).map(c => c.nom + ' (' + (c.departement && c.departement.code) + ', ' + c.population + ' hab.)'); } catch (e) { return e.message; } });
+  console.log('Communes « fontaineb » :', JSON.stringify(R.communeSearch));
   await page.click('#btn-menu'); await page.fill('#q', 'fontaineb');
   const ok = await wait(() => document.querySelector('#results [data-act="gocommune"]'), null, 10000);
   if (ok) await page.evaluate(() => document.querySelector('#results [data-act="gocommune"]').click());
@@ -156,5 +176,5 @@ const okN = R.checks.filter(c => c.ok).length;
 R.resume = okN + '/' + R.checks.length + ' vérifications réussies';
 console.log(R.resume, R.counts);
 fs.writeFileSync(OUT + '/rapport.json', JSON.stringify(R, null, 1));
-fs.writeFileSync(OUT + '/rapport.txt', [R.site + ' — ' + R.date, R.resume, '', ...R.checks.map(c => (c.ok ? 'OK     ' : 'ÉCHEC  ') + c.name + (c.detail !== undefined ? '\n         ' + JSON.stringify(c.detail).slice(0, 600) : '')), '', 'Requêtes réussies : ' + JSON.stringify(R.counts), '', 'Erreurs HTTP :', ...R.http.slice(0, 60), '', 'Console :', ...R.console.slice(-80), '', 'Journal de l\'appli :', ...R.logs.map(String)].join('\n'));
+fs.writeFileSync(OUT + '/rapport.txt', [R.site + ' — ' + R.date, R.resume, '', ...R.checks.map(c => (c.ok ? 'OK     ' : 'ÉCHEC  ') + c.name + (c.detail !== undefined ? '\n         ' + JSON.stringify(c.detail).slice(0, 600) : '')), '', 'Requêtes réussies : ' + JSON.stringify(R.counts), '', 'Itinéraire, capacités : ' + JSON.stringify(R.routeCaps, null, 1), '', 'Itinéraire, variantes : ' + JSON.stringify(R.routeTries, null, 1), '', 'Communes « fontaineb » : ' + JSON.stringify(R.communeSearch), '', 'Erreurs HTTP :', ...R.http.slice(0, 60), '', 'Console :', ...R.console.slice(-80), '', 'Journal de l\'appli :', ...R.logs.map(String)].join('\n'));
 await browser.close();
