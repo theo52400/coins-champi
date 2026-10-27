@@ -1,7 +1,7 @@
 {
-  "name": "Coins à champi — Moselle",
+  "name": "Coins à champi",
   "short_name": "Coins à champi",
-  "description": "Le jeu des chasseurs de champignons en Moselle : carte des coins, sorties en groupe en direct, trouvailles en photo, Mycodex et défis.",
+  "description": "Le jeu des chasseurs de champignons, partout en France : carte des coins, sorties en groupe en direct, itinéraires, trouvailles en photo, Mycodex et défis.",
   "lang": "fr",
   "start_url": "./",
   "scope": "./",

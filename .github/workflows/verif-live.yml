@@ -1,0 +1,46 @@
+name: Vérification du site publié
+# Ouvre le site publié dans un vrai navigateur et vérifie les services en conditions réelles
+# (Firebase, BD Forêt et fonds IGN, itinéraire piéton IGN, communes, météo, sous-sol).
+# Le rapport et les captures sont publiés sur la branche « sondes », dossier verif/.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['sw.js', 'tools/verif/**', '.github/workflows/verif-live.yml']
+permissions:
+  contents: write
+concurrency:
+  group: verif-live
+  cancel-in-progress: true
+jobs:
+  verifier:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Installer le navigateur
+        run: |
+          cd /tmp && npm init -y >/dev/null && npm i -s playwright@1.48.2 && npx playwright install --with-deps chromium >/dev/null
+      - name: Attendre que le site publié soit à jour
+        shell: bash
+        run: |
+          want=$(grep -o "VERSION = '[^']*'" sw.js)
+          for i in $(seq 1 60); do
+            got=$(curl -s "https://theo52400.github.io/coins-champi/sw.js?nocache=$RANDOM" | grep -o "VERSION = '[^']*'" || true)
+            [ "$got" = "$want" ] && { echo "Site à jour : $got"; exit 0; }
+            sleep 10
+          done
+          echo "Le site publié n'a pas encore la version $want (il a $got) : on vérifie quand même."
+      - name: Vérifier
+        run: cp tools/verif/live.mjs /tmp/live.mjs && cd /tmp && node live.mjs /tmp/verif || true
+      - name: Publier le rapport sur la branche sondes
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch -q origin sondes && git switch -q sondes || git switch -q --orphan sondes
+          rm -rf verif && cp -r /tmp/verif verif
+          git add -A verif && git commit -qm "Vérification du site publié" && git push -q origin sondes

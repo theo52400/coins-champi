@@ -3,7 +3,7 @@
 import { Core as C } from './core.js';
 import * as Game from './game.js';
 import { connect } from './sync.js';
-import { createMap, POT_COL } from './map.js';
+import { createMap, POT_COL, SOIL_COLORS } from './map.js';
 import { pickImage, processPhoto } from './photos.js';
 import { FIREBASE_CONFIG } from '../config.js';
 
@@ -28,7 +28,14 @@ const store = {
 const NOW = new Date(), MONTH = NOW.getMonth() + 1;
 const TODAY = NOW.getFullYear() + '-' + String(MONTH).padStart(2, '0') + '-' + String(NOW.getDate()).padStart(2, '0');
 const APP_START = Date.now();
-const MASSIFS = [['Pays de Bitche', 49.04, 7.52], ['Warndt', 49.185, 6.72], ['Saint-Avold', 49.115, 6.68], ['Vosges (Dabo, Abreschviller)', 48.615, 7.18], ['Côtes de Moselle (Gorze)', 49.05, 6.0], ['Saulnois (Lindre)', 48.81, 6.75]];
+// Grands massifs forestiers connus des cueilleurs, du nord au sud
+const MASSIFS = [
+  ['Ardennes (Revin)', 49.93, 4.64], ['Forêt de Compiègne', 49.37, 2.90], ['Vosges du Nord (Bitche)', 49.05, 7.43], ['Warndt (Moselle)', 49.185, 6.72],
+  ['Brocéliande (Paimpont)', 48.02, -2.17], ['Forêt de Rambouillet', 48.63, 1.80], ['Forêt de Fontainebleau', 48.40, 2.65], ['Vosges (Gérardmer)', 48.07, 6.88],
+  ['Forêt d\'Orléans', 47.98, 2.20], ['Sologne', 47.60, 2.02], ['Morvan (Settons)', 47.19, 4.06], ['Forêt de Chaux (Jura)', 47.10, 5.65],
+  ['Forêt de la Joux (Jura)', 46.86, 6.07], ['Forêt de Tronçais', 46.63, 2.73], ['Plateau de Millevaches', 45.65, 2.10], ['Chartreuse', 45.34, 5.81],
+  ['Forêt des Landes', 44.15, -0.74], ['Cévennes (Aigoual)', 44.12, 3.58], ['Forêt d\'Iraty (Pyrénées)', 43.03, -1.05], ['Vizzavona (Corse)', 42.12, 9.13]
+];
 const ICON = {
   lock: '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>',
   car: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 16l1.5-6h11L19 16"/><rect x="3" y="16" width="18" height="4" rx="1.5"/><circle cx="7" cy="20" r="1.5"/><circle cx="17" cy="20" r="1.5"/></svg>',
@@ -56,7 +63,7 @@ const S = {
   gid: store.get('cc.gid', null), group: null, members: [], presence: [], groupFinds: [], carnets: [], events: [], treasures: [],
   sp: store.get('cc.sp', 'all'), mode: 'pot', showLow: store.get('cc.low', false), base: store.get('cc.base', 'plan'),
   wx: null, wxErr: null, wxAt: null, point: null, prof: null, badgesSeen: null,
-  settings: Object.assign({ share: true, vis: 'groupe', wake: true }, store.get('cc.settings', {})),
+  settings: Object.assign({ share: true, vis: 'groupe', wake: true, liveShare: false }, store.get('cc.settings', {})),
   sortie: store.get('cc.sortie', null), unsubGroup: [], stages: new Set(), sheet: 'peek', tab: 'carte'
 };
 if (S.sp !== 'all' && !C.SPECIES.some(s => s.id === S.sp)) S.sp = 'all';
@@ -67,13 +74,13 @@ const speciesImg = (id, size) => { const sp = Game.SPECIES_BY_ID[id] || Game.SPE
 const spColor = id => { const sp = Game.SPECIES_BY_ID[id]; return Av && sp && Av.CAPS[sp.cap] ? Av.CAPS[sp.cap].tints[0] : '#4A2C8F'; };
 
 // ---------------------------------------------------------------- carte
-let GEO = null;
 let M = null;
 async function boot() {
-  try { GEO = await (await fetch('data/geo57.json')).json(); } catch (e) { log('Données de Moselle absentes : ' + e.message); }
-  M = createMap($('#map'), { GEO, log, toast, store, onTap, onChange: () => { updatePeek(); refreshMore(); }, onBlocked: () => { $('#blocked').hidden = false; }, onLayerFail: k => { const el = $('#lyr-' + k); if (el) el.checked = false; } });
+  M = createMap($('#map'), { log, toast, store, onTap, onChange: () => { updatePeek(); refreshMore(); }, onBlocked: () => { $('#blocked').hidden = false; }, onLayerFail: k => { const el = $('#lyr-' + k); if (el) el.checked = false; } });
   M.setBase(S.base); M.setShowLow(S.showLow); M.setSpecies(S.sp); M.setMode('pot');
   M.map.on('moveend', () => loadWeather());
+  M.map.on('dragstart', () => { if (GPS.follow) setFollow(false); });
+  autoLocate();
   buildRail(); wireUi(); setSheet('peek'); updatePeek(); refreshMore(); loadWeather(true);
   registerSW();
   window.addEventListener('online', () => startSync());
@@ -162,7 +169,7 @@ function watchGroup(gid) {
   const u = S.unsubGroup;
   u.push(S.sync.watchGroup(gid, (g, meta) => { S.group = g; if (!g && !(meta && meta.fromCache)) { toast('Ce groupe n\'existe plus.'); watchGroup(null); return; } renderPanelIfOpen('groupe'); }));
   u.push(S.sync.watchMembers(gid, list => { S.members = list; if (S.meLoaded && S.me && !list.some(m => m.id === S.uid)) { log('Membre absent du groupe'); } renderPanelIfOpen('groupe'); renderFriends(); }));
-  u.push(S.sync.watchPresence(gid, list => { S.presence = list; renderFriends(); }));
+  u.push(S.sync.watchPresence(gid, list => { S.presence = list; renderFriends(); routeFollowFriend(); }));
   u.push(S.sync.watchGroupFinds(gid, list => { S.groupFinds = list; renderFinds(); renderPanelIfOpen('groupe'); }));
   u.push(S.sync.watchCarnets(gid, list => { S.carnets = list; renderTracksAndFog(); renderPanelIfOpen('groupe'); }));
   u.push(S.sync.watchEvents(gid, Date.now() - 2 * 3600e3, list => { onEvents(list); }));
@@ -199,6 +206,8 @@ function onProfileData() {
     S.badgesSeen = new Set(prof.badges);
   }
   if (S.me && ready) memberSync();
+  if (S.me) askLocation();
+  renderMe();
   updateTabAvatar(); renderPanelIfOpen('profil'); renderPanelIfOpen('mycodex');
 }
 function updateTabAvatar() { const im = $('#tab-avatar'); if (im && S.me && Av) im.src = avatarImg(S.me.avatar, 64); }
@@ -416,7 +425,7 @@ function renderSp() {
 }
 function renderLegend() {
   const el = $('#sec-legend');
-  if (M.map.getZoom() < M.DATA_Z) { el.innerHTML = '<h3>Sous-sol de la Moselle</h3><div class="legend"><span><i class="sw" style="background:#B3103D"></i>Grès vosgien, sol acide</span><span><i class="sw" style="background:#C77D12"></i>Grès et calcaires</span><span><i class="sw" style="background:#2C6FB0"></i>Calcaires</span></div><p class="note" style="margin-top:8px">Les massifs sur grès (Bitche, Warndt, Vosges) sont les terrains des cèpes, girolles et chanterelles ; les calcaires, ceux des trompettes et des morilles.</p>'; return; }
+  if (M.map.getZoom() < M.DATA_Z) { el.innerHTML = '<h3>Sol estimé</h3><div class="legend">' + [1, 2, 3, 4].map(c => '<span><i class="sw" style="background:' + SOIL_COLORS[c] + '"></i>' + esc(C.LITHO[c].n) + ' <small class="note">' + esc(C.LITHO[c].d) + '</small></span>').join('') + '</div><p class="note" style="margin-top:8px">' + (M.map.getZoom() < 8 ? 'Zoomez sur une région pour afficher le sol. ' : '') + 'Sols acides : terrains des cèpes, girolles et chanterelles ; sols calcaires : ceux des trompettes, morilles et pieds de mouton. D\'après la roche du sous-sol (carte géologique de la France au 1/1 000 000, BRGM).</p>'; return; }
   if (S.mode === 'bio') {
     const vs = M.stats(), present = vs ? Object.keys(vs.groups).map(Number).sort((a, b) => vs.groups[b] - vs.groups[a]) : [];
     const keys = present.length ? present.map(g => C.GKEYS[g - 1]) : ['HET', 'CHE', 'FMX', 'SEP', 'PSY', 'DOU', 'MXF', 'MXC', 'PEU', 'NUE'];
@@ -434,6 +443,7 @@ async function onTap(ll) {
   if (pointMarker) M.map.removeLayer(pointMarker);
   pointMarker = M.L.circleMarker(ll, { radius: 9, color: '#4A2C8F', weight: 3, fillColor: '#FFFFFF', fillOpacity: 0.9, interactive: false }).addTo(M.map);
   renderPoint(); setSheet('open');
+  M.communeAt(ll.lat, ll.lng).then(cn => { if (S.point === p && cn) { p.commune = cn; renderPoint(); } });
   try {
     const r = await fetch('https://data.geopf.fr/altimetrie/1.0/calcul/alti/rest/elevation.json?lon=' + ll.lng.toFixed(6) + '&lat=' + ll.lat.toFixed(6) + '&resource=ign_rge_alti_wld&zonly=true');
     const j = await r.json(); const z = j && j.elevations && j.elevations[0]; const v = typeof z === 'object' && z ? z.z : z;
@@ -447,7 +457,8 @@ function renderPoint() {
   const L0 = C.LITHO[p.litho] || C.LITHO[0];
   let h = '<h3>Ce point</h3><dl class="kv">';
   h += '<dt>Peuplement</dt><dd>' + (p.f ? esc(p.f.label || C.GROUPS[p.f.g].n) + (p.f.ess && !/^(NC|NR)$/i.test(p.f.ess) ? ' <span class="note">(' + esc(p.f.ess) + ')</span>' : '') : (M.map.getZoom() < M.DATA_Z ? 'zoomez pour charger les forêts' : 'hors forêt cartographiée')) + '</dd>';
-  h += '<dt>Sol estimé</dt><dd>' + esc(L0.n) + ' <span class="note">— ' + esc(L0.d) + '</span></dd>';
+  h += '<dt>Sol estimé</dt><dd>' + esc(L0.n) + (p.rock ? '' : ' <span class="note">— ' + esc(L0.d) + '</span>') + '</dd>';
+  if (p.rock) h += '<dt>Sous-sol</dt><dd>' + esc(p.rock.n) + (p.rock.a ? ' <span class="note">(' + esc(p.rock.a) + ')</span>' : '') + '</dd>';
   if (p.commune) h += '<dt>Commune</dt><dd>' + esc(p.commune) + '</dd>';
   if (p.edge != null) h += '<dt>Lisière</dt><dd>' + (p.edge <= p.cell ? 'en lisière' : 'à ≈ ' + p.edge + ' m') + (p.eco ? ' · transition de peuplements' : '') + '</dd>';
   h += '<dt>Altitude</dt><dd>' + (p.alt === undefined ? '…' : p.alt === null ? '—' : p.alt + ' m') + '</dd>';
@@ -457,8 +468,7 @@ function renderPoint() {
     const rows = p.pots.slice().sort((a, b) => ((b.season > 0) - (a.season > 0)) || (b.v - a.v));
     h += '<div class="bars" style="margin-top:12px">' + rows.map(r => { const v = Math.round(100 * r.v), lv = C.levelOf(r.v); return '<div class="bar"><span class="t' + (r.season ? '' : ' off') + '">' + esc(r.n) + '</span><i><b style="width:' + v + '%;background:' + (POT_COL[lv] || 'var(--line-2)') + '"></b></i><span class="v">' + v + '</span></div>'; }).join('') + '</div><p class="note" style="margin-top:6px">Potentiel d\'habitat ici (0–100). En gris : hors saison.</p>';
   }
-  const dest = p.lat.toFixed(6) + ',' + p.lng.toFixed(6);
-  h += '<div class="actions"><a class="btn primary" href="https://www.google.com/maps/dir/?api=1&destination=' + dest + '" target="_blank" rel="noopener">Itinéraire</a><button class="btn" data-act="find-here">Trouvaille ici</button>' + (S.gid ? '<button class="btn" data-act="treasure-here">Cacher un cèpe d\'or</button>' : '') + (M.map.getZoom() < M.DATA_Z ? '<button class="btn" data-act="zoomhere">Zoomer ici</button>' : '') + '<button class="btn" data-act="closepoint">Fermer</button></div>';
+  h += '<div class="actions"><button class="btn primary" data-act="route-point">Itinéraire</button><button class="btn" data-act="find-here">Trouvaille ici</button>' + (S.gid ? '<button class="btn" data-act="treasure-here">Cacher un cèpe d\'or</button>' : '') + (M.map.getZoom() < M.DATA_Z ? '<button class="btn" data-act="zoomhere">Zoomer ici</button>' : '') + '<button class="btn" data-act="closepoint">Fermer</button></div>';
   el.innerHTML = h;
 }
 
@@ -475,15 +485,16 @@ async function loadWeather(force) {
     const sum = C.summarizeWeather(await r.json(), TODAY);
     if (!sum) throw new Error('réponse inattendue');
     S.wx = sum; S.wxErr = null; wxKey = key; wxTime = Date.now();
-    const cn = M.nearestCommune(+la, +lo); S.wxAt = cn ? 'le secteur de ' + cn : 'le centre de la carte';
+    S.wxAt = 'le centre de la carte';
+    M.communeAt(+la, +lo).then(cn => { if (cn && wxKey === key) { S.wxAt = 'le secteur de ' + cn; renderWx(); } });
   } catch (e) { S.wxErr = e.message || 'erreur'; log('Météo : ' + S.wxErr); }
   finally { wxBusy = false; updatePeek(); renderWx(); }
 }
 
-// ---------------------------------------------------------------- GPS (bouton « me localiser » et sorties)
-const GPS = { watch: null, reasons: new Set(), center: false };
+// ---------------------------------------------------------------- GPS : avatar en direct, carte qui suit, sorties
+const GPS = { watch: null, reasons: new Set(), follow: false, centerNext: false, fix: null, heading: null, moving: 0 };
 S.gps = GPS;
-let meMarker = null, meAcc = null;
+let meMarker = null, meAcc = null, meKey = '', meAnim = 0, walkT = null;
 function gpsStart(reason) {
   GPS.reasons.add(reason);
   if (GPS.watch != null) return true;
@@ -492,43 +503,104 @@ function gpsStart(reason) {
   GPS.watch = navigator.geolocation.watchPosition(onFix, err => {
     $('#locate').classList.remove('wait');
     log('GPS : ' + err.message);
-    if (err.code === 1) { toast('Localisation refusée. Autorisez-la dans les réglages du navigateur pour ce site.', 6000); gpsStopAll(); }
-    else if (err.code === 3) toast('Le GPS cherche encore votre position…', 3000);
-  }, { enableHighAccuracy: true, maximumAge: 5000, timeout: 30000 });
+    if (err.code === 1) { store.set('cc.autoloc', false); toast('Localisation refusée. Autorisez-la dans les réglages du navigateur pour ce site.', 6000); gpsStopAll(); }
+    else if (err.code === 3 && (GPS.follow || GPS.centerNext)) toast('Le GPS cherche encore votre position…', 3000);
+  }, { enableHighAccuracy: true, maximumAge: 3000, timeout: 30000 });
   return true;
 }
 function gpsStop(reason) { GPS.reasons.delete(reason); if (!GPS.reasons.size) gpsStopAll(); }
 function gpsStopAll() {
   if (GPS.watch != null) navigator.geolocation.clearWatch(GPS.watch);
-  GPS.watch = null; GPS.reasons.clear(); $('#locate').classList.remove('on', 'wait');
+  GPS.watch = null; GPS.reasons.clear(); $('#locate').classList.remove('wait'); setFollow(false);
   if (meMarker) { M.layers.me.clearLayers(); meMarker = meAcc = null; }
 }
+// Au lancement : si la localisation est déjà autorisée, le champignon apparaît tout de suite sur la carte
+async function autoLocate() {
+  if (!('geolocation' in navigator) || store.get('cc.autoloc', null) === false) return;
+  let state = 'prompt';
+  try { if (navigator.permissions && navigator.permissions.query) state = (await navigator.permissions.query({ name: 'geolocation' })).state; } catch (e) { /* navigateur sans l'API */ }
+  if (state === 'granted' || (state === 'prompt' && store.get('cc.autoloc', null) === true)) gpsStart('carte');
+  else if (state === 'prompt') S.askLoc = true;
+}
+function askLocation() {
+  if (!S.askLoc || S.askedLoc || GPS.watch != null || !S.me) return;
+  S.askedLoc = true;
+  showBanner('Affiche ton champignon sur la carte et regarde-le avancer quand tu marches.', 'Activer', () => { $('#banner').hidden = true; store.set('cc.autoloc', true); gpsStart('carte'); setFollow(true); GPS.centerNext = true; });
+}
+function setFollow(on) {
+  GPS.follow = !!on;
+  const b = $('#locate'); b.classList.toggle('on', GPS.follow); b.setAttribute('aria-pressed', String(GPS.follow));
+  b.setAttribute('aria-label', GPS.follow ? 'Arrêter de suivre ma position' : 'Me localiser et suivre ma position');
+}
 function onFix(pos) {
-  const c = pos.coords;
-  GPS.fix = { lat: c.latitude, lng: c.longitude, acc: c.accuracy || 50, ts: pos.timestamp || Date.now(), heading: c.heading, speed: c.speed };
-  $('#locate').classList.remove('wait'); $('#locate').classList.add('on');
-  renderMe();
-  if (GPS.center) { GPS.center = false; M.map.setView([GPS.fix.lat, GPS.fix.lng], Math.max(M.map.getZoom(), 15)); }
-  if (S.sortie) onSortieFix(GPS.fix);
+  const c = pos.coords, now = pos.timestamp || Date.now(), prev = GPS.fix;
+  const fx = { lat: c.latitude, lng: c.longitude, acc: c.accuracy || 50, ts: now, heading: c.heading, speed: c.speed };
+  // direction de marche : cap du GPS en mouvement, sinon cap entre deux positions assez éloignées
+  if (typeof c.heading === 'number' && !isNaN(c.heading) && (c.speed || 0) > 0.6) { GPS.heading = c.heading; GPS.moving = now; }
+  else if (prev) { const d = Game.haversine([prev.lat, prev.lng], [fx.lat, fx.lng]); if (d > Math.max(4, fx.acc / 3)) { GPS.heading = Game.bearing([prev.lat, prev.lng], [fx.lat, fx.lng]); GPS.moving = now; } }
+  GPS.fix = fx;
+  $('#locate').classList.remove('wait');
+  renderMe(true);
+  if (GPS.centerNext) { GPS.centerNext = false; M.map.setView([fx.lat, fx.lng], Math.max(M.map.getZoom(), 15)); }
+  else if (GPS.follow) M.map.panTo([fx.lat, fx.lng], { animate: true, duration: 0.8 });
+  if (S.sortie) onSortieFix(fx);
+  pushPresence(false);
   checkTreasures();
   if (compassOpen) compassOpen();
   if (treasureLive) treasureLive();
+  if (Route.active) routeTick();
+  if (pocketOn) renderPocket();
 }
-function renderMe() {
+function meIcon() {
+  const ok = S.me && Av;
+  const html = ok ? '<div class="pm me"><i class="dir" hidden></i><img alt="" src="' + avatarImg(S.me.avatar, 120) + '"><span>Moi</span></div>' : '<div class="me-dot"><i class="dir" hidden></i></div>';
+  return M.L.divIcon({ className: '', html, iconSize: ok ? [64, 78] : [24, 24], iconAnchor: ok ? [32, 60] : [12, 12] });
+}
+function renderMe(animate) {
   if (!M || !GPS.fix) return;
-  const ll = [GPS.fix.lat, GPS.fix.lng];
-  const html = S.me && Av ? '<div class="pm bounce"><img alt="" src="' + avatarImg(S.me.avatar, 120) + '"><span>Moi</span></div>' : '<div class="em" style="background:#1D6FD1;width:22px;height:22px"></div>';
-  const icon = M.L.divIcon({ className: '', html, iconSize: S.me && Av ? [64, 78] : [22, 22], iconAnchor: S.me && Av ? [32, 60] : [11, 11] });
+  const fx = GPS.fix, ll = M.L.latLng(fx.lat, fx.lng), key = S.me && Av ? JSON.stringify(S.me.avatar || {}) : 'point';
   if (!meMarker) {
-    meAcc = M.L.circle(ll, { radius: GPS.fix.acc, color: '#1D6FD1', weight: 1, fillOpacity: 0.1, interactive: false }).addTo(M.layers.me);
-    meMarker = M.L.marker(ll, { icon, pane: 'people', keyboard: false, interactive: false }).addTo(M.layers.me);
-  } else { meMarker.setLatLng(ll); meMarker.setIcon(icon); meAcc.setLatLng(ll).setRadius(GPS.fix.acc); }
+    meAcc = M.L.circle(ll, { radius: fx.acc, color: '#1D6FD1', weight: 1, fillOpacity: 0.1, interactive: false }).addTo(M.layers.me);
+    meMarker = M.L.marker(ll, { icon: meIcon(), pane: 'people', keyboard: false, interactive: false, zIndexOffset: 1000 }).addTo(M.layers.me);
+    meKey = key;
+  } else {
+    if (key !== meKey) { meMarker.setIcon(meIcon()); meKey = key; }
+    meAcc.setRadius(fx.acc);
+    if (animate) glide(ll); else { meMarker.setLatLng(ll); meAcc.setLatLng(ll); }
+  }
+  meState();
 }
+// Direction (boussole du téléphone si disponible, sinon sens de la marche) et allure « en marche »
+function meState() {
+  const el = meMarker && meMarker.getElement(); if (!el) return;
+  const dir = el.querySelector('.dir'), pm = el.querySelector('.pm'), hd = headingDeg != null ? headingDeg : GPS.heading;
+  if (dir) { dir.hidden = hd == null; if (hd != null) dir.style.transform = 'rotate(' + Math.round(hd) + 'deg)'; }
+  const walking = Date.now() - GPS.moving < 6000;
+  if (pm) pm.classList.toggle('walking', walking);
+  clearTimeout(walkT); if (walking) walkT = setTimeout(meState, 6500);
+}
+// Glissement fluide de l'avatar d'une position à la suivante
+function glide(to) {
+  const from = meMarker.getLatLng();
+  cancelAnimationFrame(meAnim);
+  if (from.distanceTo(to) > 400 || window.matchMedia('(prefers-reduced-motion: reduce)').matches) { meMarker.setLatLng(to); meAcc.setLatLng(to); return; }
+  const t0 = performance.now(), dur = 900;
+  const step = now => {
+    const k = Math.min(1, (now - t0) / dur), e = k * (2 - k);
+    const p = M.L.latLng(from.lat + (to.lat - from.lat) * e, from.lng + (to.lng - from.lng) * e);
+    meMarker.setLatLng(p); meAcc.setLatLng(p);
+    if (k < 1) meAnim = requestAnimationFrame(step);
+  };
+  meAnim = requestAnimationFrame(step);
+}
+// Bouton de localisation : centre la carte sur moi et la fait suivre ; un nouvel appui arrête le suivi
 function locateToggle() {
-  if (GPS.reasons.has('locate')) { gpsStop('locate'); if (S.sortie) gpsStart('sortie'); return; }
-  GPS.center = true;
-  if (GPS.fix && Date.now() - GPS.fix.ts < 30000) { GPS.center = false; M.map.setView([GPS.fix.lat, GPS.fix.lng], Math.max(M.map.getZoom(), 15)); }
-  gpsStart('locate');
+  if (GPS.follow) { setFollow(false); return; }
+  store.set('cc.autoloc', true);
+  gpsStart('carte');
+  setFollow(true);
+  if (GPS.fix && Date.now() - GPS.fix.ts < 60000) M.map.setView([GPS.fix.lat, GPS.fix.lng], Math.max(M.map.getZoom(), 15));
+  else GPS.centerNext = true;
 }
 function oneFix(maxAge) {
   if (GPS.fix && Date.now() - GPS.fix.ts < (maxAge || 120000)) return Promise.resolve(GPS.fix);
@@ -576,7 +648,10 @@ function openNewFind(preset) {
     '<p class="note" id="nf-err" style="color:var(--danger)" hidden></p>' +
     '<div class="actions"><button class="btn primary block" data-act="nf-save">Enregistrer la trouvaille</button></div>');
   const posEl = card.querySelector('#nf-pos');
-  const showPos = () => { posEl.textContent = d.pos ? (d.pos.src === 'gps' ? 'Ici, à ± ' + Math.round(d.pos.acc) + ' m' : d.pos.src === 'photo' ? 'Position enregistrée dans la photo' : 'Point choisi sur la carte') + (M.nearestCommune(d.pos.lat, d.pos.lng) ? ' · ' + M.nearestCommune(d.pos.lat, d.pos.lng) : '') : 'Position inconnue : placez le point sur la carte.'; };
+  const showPos = () => {
+    posEl.textContent = d.pos ? (d.pos.src === 'gps' ? 'Ici, à ± ' + Math.round(d.pos.acc) + ' m' : d.pos.src === 'photo' ? 'Position enregistrée dans la photo' : 'Point choisi sur la carte') + (M.communeCached(d.pos.lat, d.pos.lng) ? ' · ' + M.communeCached(d.pos.lat, d.pos.lng) : '') : 'Position inconnue : placez le point sur la carte.';
+    if (d.pos && !M.communeCached(d.pos.lat, d.pos.lng)) { const at = d.pos; M.communeAt(at.lat, at.lng).then(cn => { if (cn && d.pos === at) showPos(); }); }
+  };
   if (d.pos) showPos();
   else oneFix(120000).then(fx => { if (!d.pos && fx) d.pos = { lat: fx.lat, lng: fx.lng, acc: fx.acc, src: 'gps' }; showPos(); });
   const err = m => { const e = card.querySelector('#nf-err'); e.textContent = m; e.hidden = !m; };
@@ -603,13 +678,14 @@ function openNewFind(preset) {
       if (!d.species) { err('Choisissez l\'espèce (ou « Autre, à identifier »).'); card.querySelector('#nf-sp').scrollIntoView({ block: 'center' }); return; }
       if (!d.pos) { err('Placez la trouvaille sur la carte.'); return; }
       d.note = card.querySelector('#nf-note').value.trim();
+      a.disabled = true; a.textContent = 'Enregistrement…';
       saveFind(d);
     }
   });
 }
-function saveFind(d) {
+async function saveFind(d) {
   const id = Game.newId('f'), ts = Date.now();
-  const commune = M.nearestCommune(d.pos.lat, d.pos.lng);
+  const commune = M.communeCached(d.pos.lat, d.pos.lng) || await M.communeAt(d.pos.lat, d.pos.lng, 1500);
   const find = { id, species: d.species, qty: d.qty, note: d.note, ts, lat: +d.pos.lat.toFixed(6), lng: +d.pos.lng.toFixed(6), acc: Math.round(d.pos.acc || 0), vis: S.gid ? d.vis : 'prive', commune, thumb: d.photo ? d.photo.thumb : null, hasPhoto: !!d.photo, sortieId: S.sortie ? S.sortie.id : null };
   let pub = null;
   if (S.gid && find.vis !== 'prive') {
@@ -662,7 +738,7 @@ async function openFind(f, own) {
     '<div class="latin" style="margin-top:10px">' + esc(sp.lat) + '</div>' +
     '<dl class="kv"><dt>Trouvé par</dt><dd>' + esc(who) + '</dd><dt>Quand</dt><dd>' + esc(dateFr(f.ts)) + '</dd><dt>Quantité</dt><dd>' + esc((Game.QTY[f.qty] || Game.QTY[1]).n) + '</dd>' + (f.commune ? '<dt>Commune</dt><dd>' + esc(f.commune) + '</dd>' : '') + '<dt>Visible par</dt><dd>' + esc(own ? Game.VISIBILITY[f.vis] || 'Privée' : f.blurR ? 'le groupe (position floutée ≈ 300 m)' : 'le groupe') + '</dd>' + (S.gid && gf ? '<dt>Bravos</dt><dd>' + likes + '</dd>' : '') + '</dl>' +
     (f.note ? '<p style="margin:10px 0 0">« ' + esc(f.note) + ' »</p>' : '') +
-    '<div class="actions">' + (!f.blurR || own ? '<a class="btn primary" href="https://www.google.com/maps/dir/?api=1&destination=' + f.lat + ',' + f.lng + '" target="_blank" rel="noopener">Itinéraire</a>' : '') +
+    '<div class="actions">' + (!f.blurR || own ? '<button class="btn primary" data-act="route-find" data-id="' + esc(f.id) + '" data-own="' + (own ? 1 : 0) + '">Itinéraire</button>' : '') +
     (!own && S.gid ? '<button class="btn" data-act="fd-like"' + (liked ? ' disabled' : '') + '>' + (liked ? 'Bravo envoyé' : 'Bravo !') + '</button>' : '') +
     '<button class="btn" data-act="fd-center">Voir sur la carte</button>' +
     (own ? '<button class="btn danger" data-act="fd-del">Supprimer</button>' : '') + '</div>');
@@ -702,7 +778,7 @@ function openFriend(p, mem) {
   const d = GPS.fix ? Game.haversine([GPS.fix.lat, GPS.fix.lng], [p.lat, p.lng]) : null;
   const card = openModal(modalHead(mem.name || p.name || 'Ami') + '<canvas class="editor-stage" id="fr-stage" style="height:200px"></canvas>' +
     '<dl class="kv"><dt>Niveau</dt><dd>' + lvl.level + ' · ' + esc(lvl.name) + '</dd><dt>Position</dt><dd>' + esc(ago(p.ts)) + (p.acc ? ' (± ' + Math.round(p.acc) + ' m)' : '') + '</dd>' + (d != null ? '<dt>Distance</dt><dd>' + fmtKm(d) + ' de vous</dd>' : '') + '</dl>' +
-    '<div class="actions"><a class="btn primary" href="https://www.google.com/maps/dir/?api=1&travelmode=walking&destination=' + p.lat + ',' + p.lng + '" target="_blank" rel="noopener">Le rejoindre</a><button class="btn" data-act="fr-center">Centrer</button></div>');
+    '<div class="actions"><button class="btn primary" data-act="route-friend" data-uid="' + esc(p.id) + '">Le rejoindre</button><button class="btn" data-act="fr-center">Centrer</button></div>');
   stage(card.querySelector('#fr-stage'), mem.avatar || p.avatar, { base: true }, 'modal');
   card.querySelector('[data-act="fr-center"]').onclick = () => { closeModal(); M.map.setView([p.lat, p.lng], Math.max(M.map.getZoom(), 16)); };
 }
@@ -735,7 +811,7 @@ function notifyEvent(ev) {
 function openEvent(ev) {
   const d = GPS.fix && ev.lat ? Game.haversine([GPS.fix.lat, GPS.fix.lng], [ev.lat, ev.lng]) : null;
   openModal(modalHead(ev.type === 'sos' ? 'SOS' : ev.type === 'rally' ? 'Regroupement' : 'Venez voir !') + '<p style="font-size:16px">' + esc(evText(ev)) + '</p><dl class="kv"><dt>Envoyé</dt><dd>' + esc(ago(ev.ts)) + '</dd>' + (d != null ? '<dt>Distance</dt><dd>' + fmtKm(d) + '</dd>' : '') + '</dl>' +
-    (ev.lat ? '<div class="actions"><a class="btn ' + (ev.type === 'sos' ? 'gold' : 'primary') + '" href="https://www.google.com/maps/dir/?api=1&travelmode=walking&destination=' + ev.lat + ',' + ev.lng + '" target="_blank" rel="noopener">Y aller</a><button class="btn" data-act="ev-center" data-lat="' + ev.lat + '" data-lng="' + ev.lng + '">Voir sur la carte</button></div>' : '') +
+    (ev.lat ? '<div class="actions"><button class="btn ' + (ev.type === 'sos' ? 'gold' : 'primary') + '" data-act="route-event" data-lat="' + ev.lat + '" data-lng="' + ev.lng + '" data-name="' + esc(ev.type === 'sos' ? 'le SOS de ' + ev.name : ev.name) + '">Y aller</button><button class="btn" data-act="ev-center" data-lat="' + ev.lat + '" data-lng="' + ev.lng + '">Voir sur la carte</button></div>' : '') +
     (ev.type === 'sos' ? '<p class="note" style="margin-top:10px">En cas d\'urgence réelle, appelez le 112.</p>' : ''));
 }
 async function openAlertMenu() {
@@ -785,7 +861,7 @@ function openTreasure(t) {
   openModal(modalHead('Cèpe d\'or') + (t.foundBy ? '<p style="font-size:16px">Trouvé par <b>' + esc(t.foundByName || 'un ami') + '</b> ' + esc(ago(t.foundAt)) + '.</p>' :
     '<p style="font-size:16px">Caché par <b>' + esc(hider) + '</b>' + (t.expires ? ', jusqu\'au ' + esc(new Date(t.expires).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })) : '') + '.</p>' +
     (t.hint ? '<div class="warnbox"><b>Indice :</b> ' + esc(t.hint) + '</div>' : '') +
-    '<p class="note" style="margin-top:10px">Il se trouve quelque part dans le cercle doré. Approchez à moins de 25 m pour le ramasser : +' + Game.TREASURE_FOUND + ' points.</p>' + (mineT ? '<p class="note">C\'est votre trésor : vous voyez son emplacement exact (★).</p><div class="actions"><button class="btn danger" data-act="tr-del" data-id="' + esc(t.id) + '">Retirer ce trésor</button></div>' : '<div id="tr-hc">' + hotCold(t) + '</div>')),
+    '<p class="note" style="margin-top:10px">Il se trouve quelque part dans le cercle doré. Approchez à moins de 25 m pour le ramasser : +' + Game.TREASURE_FOUND + ' points.</p>' + (mineT ? '<p class="note">C\'est votre trésor : vous voyez son emplacement exact (★).</p><div class="actions"><button class="btn danger" data-act="tr-del" data-id="' + esc(t.id) + '">Retirer ce trésor</button></div>' : '<div id="tr-hc">' + hotCold(t) + '</div><div class="actions"><button class="btn gold" data-act="route-zone" data-id="' + esc(t.id) + '">Aller vers la zone</button></div>')),
     () => { treasureLive = null; gpsStop('tresor'); });
   // Chaud ou froid en direct pendant qu'on cherche
   if (!t.foundBy && !mineT && activeTreasure(t)) {
@@ -873,11 +949,16 @@ function updateSortieBar() {
   $('#sb-dist').textContent = fmtKm(s.dist);
   $('#sb-finds').textContent = s.finds.length + ' trouvaille' + (s.finds.length > 1 ? 's' : '');
 }
+// Écran gardé allumé (sortie, mode poche) ; wakeFail : le navigateur ne sait pas le faire, il faut régler la mise en veille
+let wakeFail = false;
 async function requestWake() {
-  try { if ('wakeLock' in navigator && !wakeLock) { wakeLock = await navigator.wakeLock.request('screen'); wakeLock.addEventListener('release', () => { wakeLock = null; }); } } catch (e) { log('Écran allumé : ' + e.message); }
+  if (!('wakeLock' in navigator)) { wakeFail = true; return; }
+  try { if (!wakeLock) { wakeLock = await navigator.wakeLock.request('screen'); wakeFail = false; wakeLock.addEventListener('release', () => { wakeLock = null; }); } }
+  catch (e) { wakeFail = true; log('Écran allumé : ' + e.message); }
+  if (pocketOn) renderPocket();
 }
 document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible') { if (S.sortie && S.sortie.wake) requestWake(); if (S.sortie) pushPresence(true); renderFriends(); }
+  if (document.visibilityState === 'visible') { if ((S.sortie && S.sortie.wake) || pocketOn) requestWake(); pushPresence(true); renderFriends(); }
 });
 function onSortieFix(fx) {
   const s = S.sortie; if (!s) return;
@@ -888,16 +969,17 @@ function onSortieFix(fx) {
     if (!last || d >= 8) {
       if (last && d < 250) s.dist += d;
       s.track.push([+fx.lat.toFixed(6), +fx.lng.toFixed(6), Math.round((fx.ts - s.start) / 1000)]);
+      if (s.track.length === 1) M.communeAt(fx.lat, fx.lng);
       drawSortie();
       if (s.track.length % 5 === 0) saveSortieState();
       if (fogOn()) renderTracksAndFog();
     }
   }
-  pushPresence(false);
 }
+const sharingNow = () => !!(S.gid && S.me && (S.settings.liveShare || (S.sortie && S.sortie.share)));
 function pushPresence(force) {
-  const s = S.sortie, fx = GPS.fix;
-  if (!s || !s.share || !S.gid || !fx || !S.me) return;
+  const fx = GPS.fix;
+  if (!sharingNow() || !fx) return;
   const moved = Game.haversine([lastPresence.lat, lastPresence.lng], [fx.lat, fx.lng]);
   if (!force && Date.now() - lastPresence.ts < 15000 && moved < 25) return;
   if (!force && Date.now() - lastPresence.ts < 5000) return;
@@ -915,14 +997,27 @@ let compassOpen = null, headingDeg = null;
 function onOrient(e) {
   if (typeof e.webkitCompassHeading === 'number') headingDeg = e.webkitCompassHeading;
   else if (e.absolute && typeof e.alpha === 'number') headingDeg = (360 - e.alpha) % 360;
+  else return;
   if (compassOpen) compassOpen();
+  if (Route.active) routeArrow();
+  if (meMarker && !orientT) orientT = setTimeout(() => { orientT = null; meState(); }, 250);
+}
+let orientT = null, compassOn = false;
+// La boussole du téléphone (sur iPhone, l'autorisation doit être demandée pendant un appui)
+function askCompass() {
+  if (compassOn) return;
+  compassOn = true;
+  const listen = () => { window.addEventListener('deviceorientationabsolute', onOrient); window.addEventListener('deviceorientation', onOrient); };
+  try {
+    if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') DeviceOrientationEvent.requestPermission().then(r => { if (r === 'granted') listen(); }).catch(() => { compassOn = false; });
+    else listen();
+  } catch (e) { compassOn = false; }
 }
 async function openCompass() {
   const s = S.sortie;
   if (!s || !s.car) { toast(s ? 'Position de la voiture pas encore enregistrée (en attente du GPS).' : 'Démarrez une sortie pour enregistrer la voiture.'); return; }
-  try { if (typeof DeviceOrientationEvent !== 'undefined' && DeviceOrientationEvent.requestPermission) await DeviceOrientationEvent.requestPermission(); } catch (e) { /* refusé */ }
-  window.addEventListener('deviceorientationabsolute', onOrient); window.addEventListener('deviceorientation', onOrient);
-  const card = openModal(modalHead('Retour à la voiture') + '<div class="compass"><div class="arrow" id="cp-arrow"><svg width="80" height="80" viewBox="0 0 24 24" fill="var(--accent)" aria-hidden="true"><path d="M12 2l6 18-6-4-6 4z"/></svg></div><div class="dist" id="cp-dist">—</div><div class="note" id="cp-note">Tenez le téléphone à plat.</div></div><div class="actions"><a class="btn primary block" href="https://www.google.com/maps/dir/?api=1&travelmode=walking&destination=' + s.car.lat + ',' + s.car.lng + '" target="_blank" rel="noopener">Itinéraire à pied</a></div>', () => { compassOpen = null; window.removeEventListener('deviceorientationabsolute', onOrient); window.removeEventListener('deviceorientation', onOrient); });
+  askCompass();
+  const card = openModal(modalHead('Retour à la voiture') + '<div class="compass"><div class="arrow" id="cp-arrow"><svg width="80" height="80" viewBox="0 0 24 24" fill="var(--accent)" aria-hidden="true"><path d="M12 2l6 18-6-4-6 4z"/></svg></div><div class="dist" id="cp-dist">—</div><div class="note" id="cp-note">Tenez le téléphone à plat.</div></div><div class="actions"><button class="btn primary block" data-act="route-car">Itinéraire à pied jusqu\'à la voiture</button></div>', () => { compassOpen = null; });
   compassOpen = () => {
     if (!GPS.fix) return;
     const d = Game.haversine([GPS.fix.lat, GPS.fix.lng], [s.car.lat, s.car.lng]), b = Game.bearing([GPS.fix.lat, GPS.fix.lng], [s.car.lat, s.car.lng]);
@@ -955,17 +1050,169 @@ function finishSortie(save, share) {
   const s = S.sortie; if (!s) return;
   if (save && S.sync) {
     const track = Game.simplifyTrack(s.track.map(p => [p[0], p[1]]), 5);
-    const rec = { id: s.id, start: s.start, end: Date.now(), dist: Math.round(s.dist), track: Game.encodeTrack(track), finds: s.finds.map(f => ({ species: f.species, qty: f.qty, vis: f.vis || 'prive' })), species: [...new Set(s.finds.map(f => f.species))], name: S.me ? S.me.name : '', avatar: S.me ? S.me.avatar : null, commune: s.track.length ? M.nearestCommune(s.track[0][0], s.track[0][1]) : null };
+    const rec = { id: s.id, start: s.start, end: Date.now(), dist: Math.round(s.dist), track: Game.encodeTrack(track), finds: s.finds.map(f => ({ species: f.species, qty: f.qty, vis: f.vis || 'prive' })), species: [...new Set(s.finds.map(f => f.species))], name: S.me ? S.me.name : '', avatar: S.me ? S.me.avatar : null, commune: s.track.length ? M.communeCached(s.track[0][0], s.track[0][1]) : null };
     const pubFinds = s.finds.filter(f => f.vis && f.vis !== 'prive');
     const pub = share && S.gid ? Object.assign({}, rec, { finds: pubFinds.map(f => ({ species: f.species, qty: f.qty })), species: [...new Set(pubFinds.map(f => f.species))] }) : null;
     S.sync.saveSortie(rec, S.gid, pub).catch(() => {});
   }
-  if (s.share && S.gid) S.sync.setPresence(S.gid, { sharing: false, ts: Date.now() }).catch(() => {});
+  if (s.share && S.gid && !S.settings.liveShare) S.sync.setPresence(S.gid, { sharing: false, ts: Date.now() }).catch(() => {});
   S.sortie = null; store.set('cc.sortie', null);
   clearInterval(sortieTimer); $('#sortie-bar').hidden = true;
   if (wakeLock) { wakeLock.release().catch(() => {}); wakeLock = null; }
   gpsStop('sortie'); drawSortie();
   setTimeout(() => M.map.invalidateSize(), 50);
+}
+
+// ---------------------------------------------------------------- itinéraire dans l'appli
+// Chemin à pied calculé par l'IGN (routes, chemins et sentiers de la BD TOPO), plus la ligne droite vers la cible.
+const Route = { active: false, dest: null, path: null, arrived: false, seq: 0 };
+const WALK = 1.15; // m/s : allure de cueilleur sur chemin forestier
+function startRoute(dest) {
+  askCompass();
+  Route.seq++; const seq = Route.seq;
+  Route.active = true; Route.dest = dest; Route.path = null; Route.arrived = false;
+  gpsStart('route');
+  $('#route-bar').hidden = false; $('#rb-dist').textContent = '…'; $('#rb-sub').textContent = 'Calcul de l\'itinéraire vers ' + dest.name + '…';
+  $('#rb-maps').href = 'https://www.google.com/maps/dir/?api=1&destination=' + dest.lat.toFixed(6) + ',' + dest.lng.toFixed(6);
+  closeModal(); openTab('carte'); setSheet('peek');
+  setTimeout(() => M.map.invalidateSize(), 50);
+  (async () => {
+    const fx = await oneFix(60000);
+    if (seq !== Route.seq) return;
+    if (!fx) { $('#rb-sub').textContent = 'Position introuvable : active la localisation.'; drawRoute(); M.map.setView([dest.lat, dest.lng], Math.max(M.map.getZoom(), 15)); return; }
+    drawRoute(); fitRoute(); routeTick();
+    const path = await fetchPath(fx, dest);
+    if (seq !== Route.seq) return;
+    Route.path = path; drawRoute(); routeTick();
+    if (!path && Game.haversine([fx.lat, fx.lng], [dest.lat, dest.lng]) > 80) log('Itinéraire : ligne directe seulement');
+  })();
+}
+function stopRoute() {
+  Route.seq++; Route.active = false; Route.dest = null; Route.path = null;
+  M.layers.route.clearLayers(); $('#route-bar').hidden = true; gpsStop('route');
+  setTimeout(() => M.map.invalidateSize(), 50);
+}
+const polyLen = pts => { let d = 0; for (let i = 1; i < pts.length; i++) d += Game.haversine(pts[i - 1], pts[i]); return d; };
+async function fetchPath(a, b) {
+  const direct = Game.haversine([a.lat, a.lng], [b.lat, b.lng]);
+  if (direct < 80) return null;
+  const url = 'https://data.geopf.fr/navigation/itineraire?resource=bdtopo-osrm&profile=pedestrian&optimization=fastest&start=' + a.lng.toFixed(6) + ',' + a.lat.toFixed(6) + '&end=' + b.lng.toFixed(6) + ',' + b.lat.toFixed(6) + '&geometryFormat=geojson&getSteps=false&getBbox=false';
+  const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 12000);
+  try {
+    const r = await fetch(url, { signal: ctl.signal });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const j = await r.json();
+    let g = j.geometry; if (typeof g === 'string') g = JSON.parse(g);
+    if (!g || !Array.isArray(g.coordinates) || g.coordinates.length < 2) throw new Error('réponse sans tracé');
+    const pts = g.coordinates.map(p => [p[1], p[0]]);
+    const len = polyLen(pts);
+    if (len > direct * 4 + 2000) throw new Error('détour trop long (' + Math.round(len) + ' m)');
+    return pts;
+  } catch (e) { log('Itinéraire IGN : ' + (e.name === 'AbortError' ? 'délai dépassé' : e.message)); return null; }
+  finally { clearTimeout(t); }
+}
+function fitRoute() {
+  const d = Route.dest, me = GPS.fix; if (!d) return;
+  const pts = [[d.lat, d.lng]]; if (me) pts.push([me.lat, me.lng]); if (Route.path) pts.push(...Route.path);
+  if (pts.length > 1) M.map.fitBounds(pts, { padding: [50, 50], maxZoom: 17 }); else M.map.setView(pts[0], 16);
+  setFollow(false);
+}
+let routeDirect = null;
+function drawRoute() {
+  const lay = M.layers.route, L = M.L, d = Route.dest; lay.clearLayers(); routeDirect = null;
+  if (!Route.active || !d) return;
+  if (Route.path) {
+    L.polyline(Route.path, { color: '#FFFFFF', weight: 9, opacity: 0.85, interactive: false, lineJoin: 'round' }).addTo(lay);
+    L.polyline(Route.path, { color: '#4A2C8F', weight: 5, opacity: 0.95, interactive: false, lineJoin: 'round' }).addTo(lay);
+    L.polyline([Route.path[Route.path.length - 1], [d.lat, d.lng]], { color: '#4A2C8F', weight: 4, opacity: 0.9, dashArray: '1 9', lineCap: 'round', interactive: false }).addTo(lay);
+  }
+  routeDirect = L.polyline(GPS.fix ? [[GPS.fix.lat, GPS.fix.lng], [d.lat, d.lng]] : [[d.lat, d.lng]], { color: '#C8921A', weight: 3, opacity: 0.95, dashArray: '8 8', interactive: false }).addTo(lay);
+  L.marker([d.lat, d.lng], { icon: L.divIcon({ className: '', html: '<div class="dest-pin"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V4h11l-2 4 2 4H5"/></svg></div>', iconSize: [36, 44], iconAnchor: [18, 42] }), pane: 'people', interactive: false }).addTo(lay);
+}
+// Distance restante le long du chemin : du point du tracé le plus proche jusqu'au bout, puis jusqu'à la cible
+function pathRemaining(path, me, d) {
+  let bi = 0, bd = Infinity;
+  for (let i = 0; i < path.length; i++) { const q = Game.haversine([me.lat, me.lng], path[i]); if (q < bd) { bd = q; bi = i; } }
+  let rest = bd;
+  for (let i = bi; i < path.length - 1; i++) rest += Game.haversine(path[i], path[i + 1]);
+  return rest + Game.haversine(path[path.length - 1], [d.lat, d.lng]);
+}
+const CARD = ['nord', 'nord-est', 'est', 'sud-est', 'sud', 'sud-ouest', 'ouest', 'nord-ouest'];
+function routeTick() {
+  const d = Route.dest, me = GPS.fix;
+  if (!Route.active || !d || !me) return;
+  const direct = Game.haversine([me.lat, me.lng], [d.lat, d.lng]);
+  const remain = Route.path ? Math.max(direct, pathRemaining(Route.path, me, d)) : direct;
+  if (routeDirect) routeDirect.setLatLngs([[me.lat, me.lng], [d.lat, d.lng]]);
+  Route.bearing = Game.bearing([me.lat, me.lng], [d.lat, d.lng]);
+  $('#rb-dist').textContent = fmtKm(remain);
+  const min = Math.max(1, Math.round(remain / WALK / 60));
+  $('#rb-sub').textContent = 'Vers ' + d.name + ' · ' + (min < 60 ? min + ' min' : Math.floor(min / 60) + ' h ' + String(min % 60).padStart(2, '0')) + ' à pied' + (Route.path ? ' · ' + fmtKm(direct) + ' à vol d\'oiseau' : ' · tout droit, cap ' + CARD[Math.round(Route.bearing / 45) % 8]);
+  routeArrow();
+  if (direct <= Math.max(15, Math.min(35, me.acc)) && !Route.arrived) { Route.arrived = true; vibrate([80, 50, 80]); toast('Tu es arrivé : ' + d.name + ' !', 5000); }
+}
+function routeArrow() {
+  if (Route.bearing == null) return;
+  const hd = headingDeg != null ? headingDeg : null;
+  $('#rb-arrow').style.transform = 'rotate(' + Math.round(hd == null ? Route.bearing : Route.bearing - hd) + 'deg)';
+  $('#rb-arrow').title = hd == null ? 'Direction par rapport au nord (haut de la carte)' : 'Direction à suivre';
+  if (pocketOn) renderPocket();
+}
+// Ami suivi : la cible se déplace avec lui
+function routeFollowFriend() {
+  const d = Route.dest; if (!Route.active || !d || d.kind !== 'friend') return;
+  const p = S.presence.find(x => x.id === d.uid); if (!p || !p.lat) return;
+  const moved = Game.haversine([d.lat, d.lng], [p.lat, p.lng]);
+  if (moved < 5) return;
+  d.lat = p.lat; d.lng = p.lng;
+  if (Route.path && moved > 150) Route.path = null; // trop loin du tracé : la ligne directe prend le relais
+  drawRoute(); routeTick();
+}
+
+// ---------------------------------------------------------------- mode poche
+// Écran noir verrouillé : l'appli reste au premier plan, l'écran allumé, donc le GPS et le partage continuent
+let pocketOn = false, pocketClock = null, pocketHold = null;
+function pocketEnter() {
+  pocketOn = true; $('#pocket').hidden = false; requestWake();
+  try { if (document.documentElement.requestFullscreen && !document.fullscreenElement) document.documentElement.requestFullscreen({ navigationUI: 'hide' }).catch(() => {}); } catch (e) { /* facultatif */ }
+  renderPocket(); clearInterval(pocketClock); pocketClock = setInterval(renderPocket, 1000);
+}
+function pocketExit() {
+  pocketOn = false; $('#pocket').hidden = true; clearInterval(pocketClock);
+  try { if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(() => {}); } catch (e) { /* facultatif */ }
+  if (!(S.sortie && S.sortie.wake) && wakeLock) { wakeLock.release().catch(() => {}); wakeLock = null; }
+}
+function renderPocket() {
+  if (!pocketOn) return;
+  const now = new Date();
+  $('#pk-clock').textContent = now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+  const s = S.sortie, routing = Route.active && Route.dest && GPS.fix;
+  if (s) {
+    const sec = Math.floor((Date.now() - s.start) / 1000);
+    $('#pk-big').textContent = fmtKm(s.dist);
+    $('#pk-sub').textContent = Math.floor(sec / 3600) + ' h ' + String(Math.floor(sec / 60) % 60).padStart(2, '0') + ' de sortie · ' + s.finds.length + ' trouvaille' + (s.finds.length > 1 ? 's' : '');
+  } else if (routing) { $('#pk-big').textContent = $('#rb-dist').textContent; $('#pk-sub').textContent = 'vers ' + Route.dest.name; }
+  else { $('#pk-big').textContent = '—'; $('#pk-sub').textContent = 'Ta position reste suivie tant que l\'écran est allumé'; }
+  $('#pk-tip').textContent = wakeFail ? (/iPhone|iPad/.test(navigator.userAgent) ? 'Ce téléphone ne garde pas l\'écran allumé tout seul : Réglages → Luminosité et affichage → Verrouillage automatique → Jamais, le temps de la sortie.' : 'Ce téléphone ne garde pas l\'écran allumé tout seul : Paramètres → Affichage → Mise en veille de l\'écran → 30 minutes, le temps de la sortie.') : 'Range le téléphone écran allumé, sans le verrouiller : l\'écran noir consomme peu et ignore les appuis.';
+  $('#pk-live').textContent = sharingNow() ? 'Position partagée avec le groupe' : 'Position non partagée';
+  $('#pk-live').classList.toggle('on', sharingNow());
+  $('#pk-gps').textContent = !GPS.fix ? 'GPS : recherche…' : Date.now() - GPS.fix.ts > 60000 ? 'GPS : pas de nouvelle position depuis ' + Math.round((Date.now() - GPS.fix.ts) / 60000) + ' min' : 'GPS : ± ' + Math.round(GPS.fix.acc) + ' m';
+  const r = $('#pk-route');
+  if (routing) {
+    r.hidden = false;
+    $('#pk-rdist').textContent = $('#rb-dist').textContent + ' vers ' + Route.dest.name;
+    $('#pk-rarrow').style.transform = $('#rb-arrow').style.transform;
+  } else r.hidden = true;
+}
+function wirePocket() {
+  const btn = $('#pk-unlock'), ring = btn.querySelector('.pk-ring');
+  const cancel = () => { clearTimeout(pocketHold); pocketHold = null; btn.classList.remove('holding'); };
+  btn.addEventListener('pointerdown', e => { e.preventDefault(); btn.classList.add('holding'); pocketHold = setTimeout(() => { cancel(); pocketExit(); vibrate(40); }, 1200); });
+  ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => btn.addEventListener(ev, cancel));
+  // tout autre appui est ignoré
+  $('#pocket').addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); }, true);
+  $('#pocket').addEventListener('contextmenu', e => e.preventDefault());
+  if (ring) ring.setAttribute('aria-hidden', 'true');
 }
 
 // ---------------------------------------------------------------- traces et brouillard
@@ -1030,7 +1277,7 @@ function renderGroupPanel() {
   ].sort((a, b) => b.ts - a.ts).slice(0, 14);
   el.innerHTML = '<h2>' + esc(g.name) + '</h2>' +
     '<div class="card"><h3>Code d\'invitation</h3><div class="row"><span class="code grow">' + esc(S.gid) + '</span><button class="btn small" data-act="group-share">Inviter</button></div><p class="note" style="margin:8px 0 0">Vos amis ouvrent l\'appli, créent leur champignon et entrent ce code.</p></div>' +
-    '<div class="card"><h3>Classement</h3><div class="members">' + (members.length ? members.map((m, i) => { const p = pres[m.id]; const live = p && p.sharing && Date.now() - p.ts < 180e3; const lv = Game.levelOf(m.xp || 0); return '<div class="member"><span class="rank">' + (i + 1) + '</span><img alt="" src="' + avatarImg(m.avatar, 92) + '"><div class="grow"><b>' + esc(m.name || 'Ami') + (m.id === S.uid ? ' (vous)' : '') + '</b><small>Niv. ' + lv.level + ' · ' + esc(lv.name) + (live ? ' · <span style="color:var(--good);font-weight:700">en sortie</span>' : '') + '</small></div><span class="xp">' + (m.xp || 0) + ' pts</span></div>'; }).join('') : '<p class="note">Aucun membre pour l\'instant.</p>') + '</div></div>' +
+    '<div class="card"><h3>Classement</h3><div class="members">' + (members.length ? members.map((m, i) => { const p = pres[m.id]; const live = p && p.sharing && Date.now() - p.ts < 180e3; const lv = Game.levelOf(m.xp || 0); return '<div class="member"><span class="rank">' + (i + 1) + '</span><img alt="" src="' + avatarImg(m.avatar, 92) + '"><div class="grow"><b>' + esc(m.name || 'Ami') + (m.id === S.uid ? ' (vous)' : '') + '</b><small>Niv. ' + lv.level + ' · ' + esc(lv.name) + (live ? ' · <span style="color:var(--good);font-weight:700">en direct</span>' : '') + '</small></div><span class="xp">' + (m.xp || 0) + ' pts</span></div>'; }).join('') : '<p class="note">Aucun membre pour l\'instant.</p>') + '</div></div>' +
     '<div class="card"><h3>Défis de la semaine</h3>' + chal.map(c => { const got = claimed.includes(c.key); return '<div class="chal"><div class="chal-head"><b>' + esc(c.n) + '</b>' + (c.done ? (got ? '<span class="tag ok">Récupéré</span>' : '<button class="btn small primary" data-act="claim" data-key="' + esc(c.key) + '">+' + Game.CHALLENGE_PTS + ' points</button>') : '<span class="tag">' + (Math.round(c.value * 10) / 10).toLocaleString('fr-FR') + ' / ' + c.target + ' ' + esc(c.unit) + '</span>') + '</div><span class="note">' + esc(c.d) + '</span><div class="progress"><b style="width:' + Math.min(100, Math.round(100 * c.value / c.target)) + '%"></b></div></div>'; }).join('') + '<p class="note" style="margin:8px 0 0">Seules les trouvailles partagées comptent. Nouveaux défis chaque lundi.</p></div>' +
     '<div class="card"><h3>Cèpes d\'or</h3>' + (treasures.length ? treasures.map(t => '<div class="li" data-act="treasure-open" data-id="' + esc(t.id) + '" style="cursor:pointer"><div class="tz' + (t.foundBy ? ' found' : '') + '" style="flex:none">' + (t.foundBy ? '★' : '?') + '</div><div class="grow"><b>' + (t.foundBy ? 'Trouvé par ' + esc(t.foundByName || 'un ami') : 'Caché par ' + esc(t.createdBy === S.uid ? 'vous' : t.name || 'un ami')) + '</b><small>' + (t.hint ? esc(t.hint) : 'Sans indice') + '</small>' + (!t.foundBy && t.createdBy !== S.uid ? hotCold(t) : '') + '</div></div>').join('') : '<p class="note">Aucun trésor en cours.</p>') + '<div class="actions"><button class="btn gold" data-act="treasure-hide">Cacher un cèpe d\'or</button></div></div>' +
     '<div class="card"><h3>Activité</h3><div class="feed">' + (feed.length ? feed.map(f => '<div class="feed-item" data-act="' + f.act + '" data-id="' + esc(f.id) + '" style="cursor:pointer">' + f.html + '</div>').join('') : '<p class="note">Rien pour l\'instant : partez en sortie !</p>') + '</div></div>' +
@@ -1068,9 +1315,20 @@ function renderProfil() {
     '<div class="card"><h3>Badges · ' + p.badges.length + '/' + Game.BADGES.length + '</h3><div class="badges">' + Game.BADGES.map(b => '<div class="badge' + (p.badges.includes(b.id) ? '' : ' locked') + '"><span class="medal">' + medalSvg(b.icon) + '</span>' + esc(b.n) + '<small>' + esc(b.d) + '</small></div>').join('') + '</div></div>' +
     '<div class="card"><h3>Mes sorties</h3><div class="list">' + (S.mySorties.length ? S.mySorties.slice(0, 15).map(s => '<div class="li" data-act="sortie-show" data-id="' + esc(s.id) + '" style="cursor:pointer"><div class="grow"><b>' + esc(dateFr(s.start)) + '</b><small>' + fmtKm(s.dist || 0) + ' · ' + fmtDur((s.end || s.start) - s.start) + (s.commune ? ' · ' + esc(s.commune) : '') + ' · ' + ((s.finds || []).length) + ' trouvaille(s)</small></div></div>').join('') : '<p class="note">Démarrez une sortie depuis le bouton « Sortie » de la carte.</p>') + '</div></div>' +
     '<div class="card"><h3>Mes trouvailles</h3><div class="list">' + (S.myFinds.length ? S.myFinds.slice(0, 30).map(f => '<div class="li" data-act="myfind" data-id="' + esc(f.id) + '" style="cursor:pointer"><img alt="" src="' + (f.thumb || speciesImg(f.species, 64)) + '"><div class="grow"><b>' + esc((Game.SPECIES_BY_ID[f.species] || {}).n || '') + '</b><small>' + esc(dateFr(f.ts)) + (f.commune ? ' · ' + esc(f.commune) : '') + ' · ' + esc(f.vis === 'prive' ? 'secret' : f.vis === 'flou' ? 'partagé flouté' : 'partagé') + '</small></div></div>').join('') : '<p class="note">Touchez « Trouvaille » pour enregistrer votre premier coin.</p>') + '</div></div>' +
-    '<div class="card"><h3>Réglages</h3><div class="toggle-row"><span>Partager ma position en sortie par défaut</span><input type="checkbox" class="switch" id="st-share"' + (S.settings.share ? ' checked' : '') + '></div><div class="toggle-row"><span>Nouvelles trouvailles<small>Visibilité proposée par défaut</small></span><select class="input" id="st-vis" style="width:auto">' + Object.entries(Game.VISIBILITY).map(([k, v]) => '<option value="' + k + '"' + (S.settings.vis === k ? ' selected' : '') + '>' + v + '</option>').join('') + '</select></div><p class="note" style="margin:10px 0 0">Votre profil est lié à ce navigateur' + (S.sync && S.sync.kind === 'local' ? ' (mode solo).' : '. Pour jouer sur un autre téléphone, recréez un champignon et rejoignez le groupe avec son code.') + '</p></div>';
+    '<div class="card"><h3>Réglages</h3>' +
+    '<div class="toggle-row"><span>Afficher ma position sur la carte<small>Ton champignon suit tes déplacements dès que l\'appli est ouverte</small></span><input type="checkbox" class="switch" id="st-loc"' + (store.get('cc.autoloc', null) !== false && GPS.watch != null ? ' checked' : '') + '></div>' +
+    '<div class="toggle-row"><span>Partager ma position avec le groupe dès que l\'appli est ouverte<small>Sinon, seulement pendant les sorties où tu l\'as choisi</small></span><input type="checkbox" class="switch" id="st-live"' + (S.settings.liveShare ? ' checked' : '') + (S.gid ? '' : ' disabled') + '></div>' +
+    '<div class="toggle-row"><span>Partager ma position en sortie par défaut</span><input type="checkbox" class="switch" id="st-share"' + (S.settings.share ? ' checked' : '') + '></div>' +
+    '<div class="toggle-row"><span>Nouvelles trouvailles<small>Visibilité proposée par défaut</small></span><select class="input" id="st-vis" style="width:auto">' + Object.entries(Game.VISIBILITY).map(([k, v]) => '<option value="' + k + '"' + (S.settings.vis === k ? ' selected' : '') + '>' + v + '</option>').join('') + '</select></div>' +
+    '<p class="note" style="margin:10px 0 0">Votre profil est lié à ce navigateur' + (S.sync && S.sync.kind === 'local' ? ' (mode solo).' : '. Pour jouer sur un autre téléphone, recréez un champignon et rejoignez le groupe avec son code.') + '</p></div>';
   stage(el.querySelector('#pf-stage'), S.me.avatar, { base: true }, 'panel');
   el.querySelector('#st-share').onchange = e => { S.settings.share = e.target.checked; store.set('cc.settings', S.settings); };
+  el.querySelector('#st-loc').onchange = e => { store.set('cc.autoloc', e.target.checked); if (e.target.checked) { gpsStart('carte'); GPS.centerNext = true; } else { gpsStop('carte'); setFollow(false); } };
+  el.querySelector('#st-live').onchange = e => {
+    S.settings.liveShare = e.target.checked; store.set('cc.settings', S.settings);
+    if (e.target.checked) { gpsStart('carte'); pushPresence(true); toast('Le groupe voit ta position dès que l\'appli est ouverte.'); }
+    else if (S.gid && !(S.sortie && S.sortie.share)) S.sync.setPresence(S.gid, { sharing: false, ts: Date.now() }).catch(() => {});
+  };
   el.querySelector('#st-vis').onchange = e => { S.settings.vis = e.target.value; store.set('cc.settings', S.settings); };
 }
 function showSortie(s) {
@@ -1086,12 +1344,24 @@ function openDrawer(open) {
   $('#drawer').hidden = !open; $('#scrim').hidden = !open;
   if (open) { $('#q').value = ''; $('#results').innerHTML = ''; }
 }
+// Recherche d'une commune de France (API Découpage administratif)
+let searchT = null, searchSeq = 0;
 function search(q) {
-  const n = C.norm(q).trim(), el = $('#results');
-  if (!n || !GEO) { el.innerHTML = ''; return; }
-  const res = GEO.communes.filter(c => C.norm(c[0]).includes(n)).sort((a, b) => C.norm(a[0]).indexOf(n) - C.norm(b[0]).indexOf(n)).slice(0, 8);
-  const lab = { g: 'grès', x: 'grès et calcaires', c: 'calcaires', m: 'marnes et argiles' };
-  el.innerHTML = res.length ? res.map(c => '<button data-act="gocommune" data-name="' + esc(c[0]) + '">' + esc(c[0]) + ' <small>· sol : ' + lab[c[7]] + '</small></button>').join('') : '<p class="note">Aucune commune de Moselle ne correspond.</p>';
+  const el = $('#results'), txt = q.trim();
+  clearTimeout(searchT);
+  if (txt.length < 2) { el.innerHTML = ''; return; }
+  searchT = setTimeout(async () => {
+    const seq = ++searchSeq;
+    el.innerHTML = '<p class="note">Recherche…</p>';
+    try {
+      const r = await fetch('https://geo.api.gouv.fr/communes?nom=' + encodeURIComponent(txt) + '&fields=nom,code,centre,bbox,departement&boost=population&limit=8');
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      const res = await r.json();
+      if (seq !== searchSeq) return;
+      S.searchRes = res;
+      el.innerHTML = res.length ? res.map((c, i) => '<button data-act="gocommune" data-i="' + i + '">' + esc(c.nom) + ' <small>· ' + esc(c.departement ? c.departement.nom + ' (' + c.departement.code + ')' : c.code) + '</small></button>').join('') : '<p class="note">Aucune commune ne correspond.</p>';
+    } catch (e) { if (seq === searchSeq) el.innerHTML = '<p class="note">Recherche impossible sans réseau.</p>'; }
+  }, 250);
 }
 async function downloadZone() {
   const status = t => { $('#dl-status').textContent = t; };
@@ -1105,9 +1375,10 @@ async function downloadZone() {
   try {
     status('Peuplements forestiers…');
     await M.prefetchForests(b.pad(0.1), (d, t) => status('Peuplements forestiers ' + d + '/' + t));
+    await Promise.all(M.geolTileUrls(b.pad(0.1)).map(u => fetch(u).catch(() => null)));
     let done = 0;
     for (let i = 0; i < urls.length; i += 6) { await Promise.all(urls.slice(i, i + 6).map(u => fetch(u, { mode: 'no-cors' }).catch(() => null))); done = Math.min(urls.length, i + 6); status('Fond de carte ' + done + '/' + urls.length); }
-    status('Zone prête hors réseau : ' + urls.length + ' tuiles et les peuplements.');
+    status('Zone prête hors réseau : ' + urls.length + ' tuiles, les peuplements et le sol.');
   } finally { $('#dl-zone').disabled = false; }
 }
 
@@ -1130,7 +1401,14 @@ function wireUi() {
       case 'treasure-here': if (S.point) openHideTreasure({ lat: S.point.lat, lng: S.point.lng }); break;
       case 'massifs': setSheet('open'); { const el = $('#sec-point'); el.hidden = false; S.point = null; el.innerHTML = '<h3>Aller vers un massif</h3><div class="massifs">' + MASSIFS.map((m, i) => '<button class="btn small" data-act="gomassif" data-i="' + i + '">' + esc(m[0]) + '</button>').join('') + '</div>'; } break;
       case 'gomassif': { const m = MASSIFS[+t.dataset.i]; openDrawer(false); $('#sec-point').hidden = true; setSheet('peek'); openTab('carte'); M.map.setView([m[1], m[2]], 14); } break;
-      case 'gocommune': { const c = GEO.communes.find(x => x[0] === t.dataset.name); if (c) { openDrawer(false); openTab('carte'); M.map.fitBounds([[c[4], c[3]], [c[6], c[5]]], { maxZoom: 15 }); setTimeout(() => { if (M.map.getZoom() < M.DATA_Z) M.map.setZoom(M.DATA_Z); }, 400); } } break;
+      case 'gocommune': {
+        const c = (S.searchRes || [])[+t.dataset.i]; if (!c) break;
+        openDrawer(false); openTab('carte');
+        const ring = c.bbox && c.bbox.coordinates && c.bbox.coordinates[0];
+        if (ring) { const lo = ring.map(p => p[0]), la = ring.map(p => p[1]); M.map.fitBounds([[Math.min(...la), Math.min(...lo)], [Math.max(...la), Math.max(...lo)]], { maxZoom: 15 }); }
+        else if (c.centre) M.map.setView([c.centre.coordinates[1], c.centre.coordinates[0]], 14);
+        setTimeout(() => { if (M.map.getZoom() < M.DATA_Z) M.map.setZoom(M.DATA_Z); }, 400);
+      } break;
       case 'retry': M.retry(); break;
       case 'diag': openDrawer(true); break;
       case 'group-choose': openGroupChooser(false); break;
@@ -1148,6 +1426,12 @@ function wireUi() {
       case 'edit-avatar': openAvatarEditor(); break;
       case 'ob-start': startOnboarding(); break;
       case 'ev-center': closeModal(); openTab('carte'); M.map.setView([+t.dataset.lat, +t.dataset.lng], 16); break;
+      case 'route-point': if (S.point) startRoute({ lat: S.point.lat, lng: S.point.lng, name: S.point.commune ? 'ce point (' + S.point.commune + ')' : 'ce point', kind: 'point' }); break;
+      case 'route-find': { const own = t.dataset.own === '1', f = (own ? S.myFinds : S.groupFinds).find(x => x.id === id); if (f) startRoute({ lat: f.lat, lng: f.lng, name: ((Game.SPECIES_BY_ID[f.species] || {}).n || 'la trouvaille') + (own ? '' : ' de ' + (f.name || 'ton ami')), kind: 'find' }); } break;
+      case 'route-friend': { const p = S.presence.find(x => x.id === t.dataset.uid), m = S.members.find(x => x.id === t.dataset.uid) || {}; if (p && p.lat) startRoute({ lat: p.lat, lng: p.lng, name: m.name || p.name || 'ton ami', kind: 'friend', uid: p.id }); } break;
+      case 'route-event': startRoute({ lat: +t.dataset.lat, lng: +t.dataset.lng, name: t.dataset.name || 'l\'alerte', kind: 'event' }); break;
+      case 'route-car': if (S.sortie && S.sortie.car) startRoute({ lat: S.sortie.car.lat, lng: S.sortie.car.lng, name: 'la voiture', kind: 'car' }); break;
+      case 'route-zone': { const tr = S.treasures.find(x => x.id === id); if (tr) startRoute({ lat: tr.zoneLat, lng: tr.zoneLng, name: 'la zone du cèpe d\'or', kind: 'zone' }); } break;
     }
   });
   $('#handle').addEventListener('click', () => setSheet(S.sheet === 'open' ? 'peek' : 'open'));
@@ -1166,6 +1450,11 @@ function wireUi() {
   $('#sb-car').addEventListener('click', openCompass);
   $('#sb-alert').addEventListener('click', openAlertMenu);
   $('#sb-end').addEventListener('click', openEndSortie);
+  $('#sb-pocket').addEventListener('click', pocketEnter);
+  $('#rb-stop').addEventListener('click', stopRoute);
+  $('#rb-fit').addEventListener('click', fitRoute);
+  $('#rb-pocket').addEventListener('click', pocketEnter);
+  wirePocket();
   $('#q').addEventListener('input', e => search(e.target.value));
   document.querySelectorAll('input[name="base"]').forEach(r => { r.checked = r.value === S.base; r.addEventListener('change', e => { S.base = e.target.value; store.set('cc.base', S.base); M.setBase(S.base); }); });
   $('#lyr-low').checked = !!S.showLow;
@@ -1176,7 +1465,7 @@ function wireUi() {
   $('#lyr-fog').addEventListener('change', renderTracksAndFog);
   $('#lyr-tracks').addEventListener('change', renderTracksAndFog);
   $('#dl-zone').addEventListener('click', downloadZone);
-  $('#dl-clear').addEventListener('click', async () => { try { await caches.delete('cc-tiles'); await caches.delete('cc-data'); $('#dl-status').textContent = 'Cache vidé.'; } catch (e) { $('#dl-status').textContent = 'Impossible de vider le cache.'; } });
+  $('#dl-clear').addEventListener('click', async () => { try { await caches.delete('cc-tiles'); await caches.delete('cc-data'); await caches.delete('cc-geol'); $('#dl-status').textContent = 'Cache vidé.'; } catch (e) { $('#dl-status').textContent = 'Impossible de vider le cache.'; } });
   $('#diag-copy').addEventListener('click', () => {
     const txt = 'Coins à champi — diagnostic\n' + navigator.userAgent + '\nSynchro : ' + (S.sync ? S.sync.kind : 'non connectée') + '\nSource forêts : ' + JSON.stringify(store.get('cc.src', null)) + '\n' + logs.join('\n');
     try { navigator.clipboard.writeText(txt).then(() => toast('Diagnostic copié'), () => toast('Copie impossible : sélectionnez le texte')); } catch (e) { toast('Copie impossible : sélectionnez le texte'); }

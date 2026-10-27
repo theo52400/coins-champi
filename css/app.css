@@ -314,3 +314,49 @@ textarea.input{min-height:70px;resize:vertical}
 /* Mode sombre : léger halo autour des icônes d'espèces sombres (trompette, bolet bai) */
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .sp-grid img, :root:not([data-theme="light"]) .dex button:not(.locked) img, :root:not([data-theme="light"]) .opt-chip img{filter:drop-shadow(0 0 3px rgba(255,255,255,.35))} }
 :root[data-theme="dark"] .sp-grid img, :root[data-theme="dark"] .dex button:not(.locked) img, :root[data-theme="dark"] .opt-chip img{filter:drop-shadow(0 0 3px rgba(255,255,255,.35))}
+
+/* ---------- sortie : boutons qui passent à la ligne sur petit écran ---------- */
+.sortie-bar{flex-wrap:wrap}
+.sb-actions{flex-wrap:wrap;justify-content:flex-end}
+
+/* ---------- itinéraire ---------- */
+.route-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#3B2373;color:#fff;padding:8px max(14px,env(safe-area-inset-right,0px)) 8px max(14px,env(safe-area-inset-left,0px))}
+.rb-arrow{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.16);display:grid;place-items:center;flex:none}
+.rb-arrow svg{transition:transform .35s ease-out}
+.rb-main{display:flex;flex-direction:column;min-width:0;flex:1 1 150px}
+.rb-main b{font-size:19px;line-height:1.15;font-variant-numeric:tabular-nums}
+.rb-main span{font-size:13px;opacity:.92;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.rb-actions{display:flex;gap:6px;flex:none;flex-wrap:wrap}
+.rb-actions button,.rb-actions a{border:1px solid rgba(255,255,255,.45);background:rgba(255,255,255,.12);color:#fff;border-radius:9px;padding:6px 9px;font-size:13px;font-weight:700;text-decoration:none;line-height:1.3}
+.rb-actions .danger{background:#fff;color:#3B2373;border-color:#fff}
+.dest-pin{width:36px;height:36px;border-radius:50% 50% 50% 4px;transform:rotate(-45deg);background:#C8921A;color:#fff;display:grid;place-items:center;box-shadow:0 3px 10px rgba(0,0,0,.35);border:3px solid #fff}
+.dest-pin svg{transform:rotate(45deg)}
+
+/* ---------- mon avatar : direction et marche ---------- */
+.pm.me{z-index:2}
+.pm .dir,.me-dot .dir{position:absolute;left:50%;top:50%;width:0;height:0;pointer-events:none}
+.pm .dir{top:52px}
+.pm .dir::before,.me-dot .dir::before{content:"";position:absolute;left:-14px;top:-40px;width:28px;height:40px;background:linear-gradient(to top,rgba(29,111,209,.55),rgba(29,111,209,0));clip-path:polygon(50% 100%,0 0,100% 0);transform-origin:50% 100%}
+.pm .dir{transform-origin:0 0}
+.pm.me.walking img{animation:bob .55s ease-in-out infinite}
+.me-dot{position:relative;width:24px;height:24px;border-radius:50%;background:#1D6FD1;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.35)}
+@media (prefers-reduced-motion: reduce){ .pm.me.walking img{animation:none} .rb-arrow svg{transition:none} }
+
+/* ---------- mode poche : noir, peu lumineux, verrouillé ---------- */
+.pocket{position:fixed;inset:0;z-index:5000;background:#000;color:#8C968F;display:flex;flex-direction:column;align-items:center;justify-content:space-between;text-align:center;padding:calc(18px + env(safe-area-inset-top,0px)) max(20px,env(safe-area-inset-right,0px)) calc(22px + env(safe-area-inset-bottom,0px)) max(20px,env(safe-area-inset-left,0px));touch-action:none;user-select:none;-webkit-user-select:none}
+.pk-top{display:flex;flex-direction:column;gap:6px;align-items:center}
+#pk-clock{font:700 40px/1 var(--font-display);color:#6E7871;font-variant-numeric:tabular-nums}
+#pk-live{font-size:13px;border:1px solid #2A312C;border-radius:99px;padding:3px 10px}
+#pk-live.on{color:#5FA97C;border-color:#24452F}
+.pk-mid{display:flex;flex-direction:column;gap:6px;align-items:center}
+#pk-big{font:700 54px/1 var(--font-display);color:#9AA59E;font-variant-numeric:tabular-nums}
+#pk-sub,#pk-gps{font-size:14px}
+.pk-route{display:flex;align-items:center;gap:12px;color:#B9A4F3;font-size:16px;font-weight:700}
+.pk-route svg{transition:transform .35s ease-out}
+.pk-tip{max-width:30em;font-size:13px;line-height:1.45;color:#5D665F;margin:0}
+.pk-unlock{position:relative;display:flex;flex-direction:column;align-items:center;gap:8px;background:none;border:0;color:#8C968F;font-size:13px;font-weight:700;padding:18px 26px;border-radius:22px}
+.pk-unlock svg{width:30px;height:30px}
+.pk-ring{position:absolute;inset:0;border-radius:22px;border:2px solid #2A312C}
+.pk-unlock.holding .pk-ring{border-color:#B9A4F3;animation:hold 1.2s linear forwards}
+@keyframes hold{from{box-shadow:inset 0 0 0 0 rgba(185,164,243,.0)}to{box-shadow:inset 0 0 0 40px rgba(185,164,243,.25)}}
+.pm.me img,.pm.me span{position:relative;z-index:1}

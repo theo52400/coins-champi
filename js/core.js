@@ -75,16 +75,16 @@ export const Core = (() => {
     return 'FMX';
   }
 
-  // Sol estimé : 0 hors Moselle, 1 grès, 2 mixte, 3 calcaire, 4 marnes/argiles
+  // Sol estimé d'après la roche du sous-sol (carte géologique du BRGM) : 0 inconnu, 1 acide, 2 intermédiaire, 3 calcaire, 4 argileux
   const LITHO = [
-    { n: 'Hors Moselle', d: 'sol non estimé' },
-    { n: 'Grès vosgien', d: 'sol sableux et acide' },
-    { n: 'Grès et calcaires', d: 'sol variable selon le versant' },
-    { n: 'Calcaires', d: 'sol calcaire, basique' },
-    { n: 'Marnes et argiles', d: 'sol lourd, neutre à basique' }
+    { n: 'Sol inconnu', d: 'pas encore estimé ici' },
+    { n: 'Sol acide', d: 'grès, granite ou sables' },
+    { n: 'Sol intermédiaire', d: 'légèrement acide à neutre' },
+    { n: 'Sol calcaire', d: 'basique, sur calcaire ou craie' },
+    { n: 'Sol argileux', d: 'lourd et frais, souvent marneux' }
   ];
 
-  // soil: [hors Moselle, grès, mixte, calcaire, marnes] · edge: [type, a, L(m)] · m: poids par mois · w: météo
+  // soil: [inconnu, acide, intermédiaire, calcaire, argileux] · edge: [type, a, L(m)] · m: poids par mois · w: météo
   const SPECIES = [
     { id: 'cepe', n: 'Cèpes', lat: 'Boletus edulis, B. aereus, B. pinophilus',
       aff: { HET: 1, CHE: .9, FMX: .75, CHA: .9, ROB: .1, AFE: .3, PEU: .05, PSY: .8, PIN: .6, SEP: .85, DOU: .35, MEL: .2, CMX: .7, MXF: .9, MXC: .85, OFE: .7, OCO: .6, OMX: .65, NUE: .05, LAN: .1, HER: 0 },
@@ -114,7 +114,7 @@ export const Core = (() => {
       aff: { HET: .55, CHE: .3, FMX: .35, CHA: .35, ROB: 0, AFE: .15, PEU: 0, PSY: .6, PIN: .5, SEP: 1, DOU: .6, MEL: .4, CMX: .85, MXF: .6, MXC: .9, OFE: .15, OCO: .4, OMX: .35, NUE: 0, LAN: .05, HER: 0 },
       soil: [.6, 1, .75, .25, .5], edge: ['int', .4, 50], eco: .05,
       m: { 1: .4, 2: .1, 9: .4, 10: .85, 11: 1, 12: .8 }, w: { tlo: 3, thi: 14, rain: 30, frost: .85 },
-      hab: 'Mousses humides sous sapins et épicéas, sur grès acide. En troupes nombreuses, jusqu\'aux premières neiges.',
+      hab: 'Mousses humides sous sapins et épicéas, sur sol acide. En troupes nombreuses, jusqu\'aux premières neiges.',
       conf: 'Danger : petits cortinaires roux à vraies lames, mortels. La chanterelle en tube a des plis et un pied creux.' },
     { id: 'bai', n: 'Bolets bais', lat: 'Imleria badia',
       aff: { HET: .65, CHE: .55, FMX: .5, CHA: .65, ROB: 0, AFE: .2, PEU: 0, PSY: .95, PIN: .8, SEP: 1, DOU: .6, MEL: .5, CMX: .9, MXF: .7, MXC: .9, OFE: .3, OCO: .6, OMX: .5, NUE: 0, LAN: .1, HER: 0 },
@@ -252,7 +252,10 @@ export const Core = (() => {
     const fi = new Int32Array(N).fill(-1);
     for (let f = 0; f < feats.length; f++) rasterize(feats[f].rings, feats[f].bb, grid, f, fi);
     const li = new Uint8Array(N);
-    for (const L of litho) rasterize(L.rings, L.bb, grid, L.v, li);
+    // litho : fonction (x, y) -> classe de sol au centre de chaque case, ou liste de polygones classés
+    if (typeof litho === 'function') {
+      for (let j = 0; j < ny; j++) { const yc = y0 + (j + 0.5) * cs; for (let i = 0; i < nx; i++) li[j * nx + i] = litho(x0 + (i + 0.5) * cs, yc); }
+    } else for (const L of litho) rasterize(L.rings, L.bb, grid, L.v, li);
     const kn = new Uint8Array(N);
     const n2 = Math.pow(2, known.z), W = 2 * HALF;
     const tx = new Int32Array(nx), ty = new Int32Array(ny);

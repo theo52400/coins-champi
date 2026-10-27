@@ -22,7 +22,7 @@ export const CATALOG = [
   { id: 'sparassis', n: 'Sparassis crépu', lat: 'Sparassis crispa', cap: 'sparassis', pts: 25, core: null,
     hab: 'Au pied des pins, en grosse boule crépue rappelant un chou-fleur, fin d\'été et automne.', conf: 'Forme unique ; bien nettoyer, les aiguilles et la terre se logent partout.', m: { 8: .6, 9: 1, 10: .9, 11: .4 } },
   { id: 'cesar', n: 'Amanite des Césars', lat: 'Amanita caesarea', cap: 'cesar', pts: 50, core: null,
-    hab: 'Chênaies et châtaigneraies chaudes, rare en Lorraine, après les étés chauds.', conf: 'Amanite tue-mouches (rouge à flocons blancs, lames blanches) : toxique. L\'oronge a des lames et un pied jaunes.', m: { 7: .6, 8: 1, 9: .9, 10: .3 } },
+    hab: 'Chênaies et châtaigneraies chaudes du Sud-Ouest et du Midi, plus rare au nord de la Loire, après les étés chauds.', conf: 'Amanite tue-mouches (rouge à flocons blancs, lames blanches) : toxique. L\'oronge a des lames et un pied jaunes.', m: { 7: .6, 8: 1, 9: .9, 10: .3 } },
   { id: 'autre', n: 'Autre, à identifier', lat: '—', cap: 'inconnu', pts: 5, core: null,
     hab: 'Une trouvaille à faire identifier par un pharmacien ou une société mycologique.', conf: 'Ne consommez jamais un champignon sans identification certaine.', m: {} }
 ];

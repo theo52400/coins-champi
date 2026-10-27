@@ -1,4 +1,5 @@
-// Carte : fonds IGN, BD Forêt en direct, grille de potentiel, mode biotope, couches du jeu, brouillard, hors-ligne.
+// Carte : fonds IGN, BD Forêt en direct, sous-sol (carte géologique du BRGM) pour toute la France, grille de potentiel,
+// mode biotope, couches du jeu, brouillard, hors-ligne.
 import { Core as C } from './core.js';
 import { FOG, cellBounds } from './game.js';
 
@@ -10,43 +11,95 @@ const ESRI = 'https://services.esrifrance.fr/arcgis/rest/services/IGN/FranceDOM_
 const IGN_WMTS = 'https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&TILEMATRIXSET=PM&TILEMATRIX={z}&TILECOL={x}&TILEROW={y}';
 const ATTR_IGN = '© <a href="https://www.ign.fr/" target="_blank" rel="noopener">IGN</a>';
 export const POT_COL = ['', '#F2B43A', '#E5601A', '#B3103D'];
+export const SOIL_COLORS = ['', '#B3103D', '#C77D12', '#2C6FB0', '#7A6A2E'];
 
 export function createMap(el, deps) {
-  const { GEO, log, toast, store } = deps;
+  const { log, toast, store } = deps;
   const MONTH = new Date().getMonth() + 1;
   const st = { sp: 'all', mode: 'pot', showLow: false, base: 'plan', srcErr: null, fog: null };
 
-  // ---------- sol estimé ----------
-  function polysToRings(polys) {
-    return polys.map(poly => {
-      const rings = poly.map(r => { const a = new Float64Array(r.length * 2); r.forEach((p, i) => { a[2 * i] = C.mx(p[0]); a[2 * i + 1] = C.my(p[1]); }); return a; });
-      const bb = [Infinity, Infinity, -Infinity, -Infinity];
-      rings.forEach(a => { for (let i = 0; i < a.length; i += 2) { bb[0] = Math.min(bb[0], a[i]); bb[2] = Math.max(bb[2], a[i]); bb[1] = Math.min(bb[1], a[i + 1]); bb[3] = Math.max(bb[3], a[i + 1]); } });
-      return { rings, bb };
-    });
+  // ---------- sous-sol : carte géologique de la France au 1/1 000 000 (BRGM), tuiles de 1° chargées à la demande ----------
+  // Chaque case de 0,005° porte un numéro de légende : [classe de sol, roche, âge]. Classes : 1 acide, 2 intermédiaire,
+  // 3 calcaire, 4 argileux (0 inconnu).
+  const GEOL = { idx: null, n: 200, ver: '1', legend: [null], cls: new Uint8Array(1), tiles: new Map() };
+  const geolKey = (la, lo) => la + '_' + lo;
+  fetch('data/geol/index.json').then(r => (r.ok ? r.json() : null)).then(j => {
+    if (!j || !Array.isArray(j.tiles) || !Array.isArray(j.legend)) { log('Sous-sol : pas de données'); return; }
+    GEOL.idx = new Set(j.tiles.map(t => geolKey(t[0], t[1]))); GEOL.n = j.n || 200; GEOL.ver = String(j.v || 1);
+    GEOL.legend = j.legend; GEOL.cls = Uint8Array.from(j.legend, e => (e ? e[0] : 0));
+    ensureGeol(map.getBounds()); scheduleRedraw();
+  }).catch(e => log('Sous-sol : index indisponible (' + e.message + ')'));
+  async function gunzip(buf) {
+    const u = new Uint8Array(buf);
+    if (u[0] !== 0x1f || u[1] !== 0x8b) return u;
+    if (typeof DecompressionStream === 'undefined') throw new Error('décompression non prise en charge par ce navigateur');
+    const st = new Blob([u]).stream().pipeThrough(new DecompressionStream('gzip'));
+    return new Uint8Array(await new Response(st).arrayBuffer());
   }
-  const LITHO_POLYS = [];
-  if (GEO) {
-    polysToRings(GEO.dep).forEach(p => LITHO_POLYS.push(Object.assign({ v: 4 }, p)));
-    [['gres', 1], ['mixte', 2], ['calc', 3]].forEach(([k, v]) => polysToRings(GEO[k]).forEach(p => LITHO_POLYS.push(Object.assign({ v }, p))));
+  const geolUrl = k => 'data/geol/' + k + '.bin.gz?v=' + GEOL.ver;
+  function ensureGeol(b) {
+    if (!GEOL.idx || !b) return;
+    const la0 = Math.floor(b.getSouth()), la1 = Math.floor(b.getNorth()), lo0 = Math.floor(b.getWest()), lo1 = Math.floor(b.getEast());
+    if ((la1 - la0 + 1) * (lo1 - lo0 + 1) > 48) return;
+    for (let la = la0; la <= la1; la++) for (let lo = lo0; lo <= lo1; lo++) {
+      const k = geolKey(la, lo);
+      if (!GEOL.idx.has(k) || GEOL.tiles.has(k)) continue;
+      GEOL.tiles.set(k, { st: 'q' });
+      fetch(geolUrl(k)).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.arrayBuffer(); }).then(gunzip)
+        .then(u => {
+          const n2 = GEOL.n * GEOL.n; if (u.length !== n2 * 2) throw new Error('taille ' + u.length);
+          const d = new Uint16Array(n2), dv = new DataView(u.buffer, u.byteOffset, u.length);
+          for (let i = 0; i < n2; i++) d[i] = dv.getUint16(2 * i, true);
+          GEOL.tiles.set(k, { st: 'ok', d }); soilImg.delete(k); scheduleRedraw(); drawSoil();
+        })
+        .catch(e => { GEOL.tiles.delete(k); log('Sous-sol ' + k + ' : ' + e.message); });
+    }
   }
-  function lithoAt(x, y) { let v = 0; for (const Lp of LITHO_POLYS) if (x >= Lp.bb[0] && x <= Lp.bb[2] && y >= Lp.bb[1] && y <= Lp.bb[3] && C.pointInRings(Lp.rings, x, y)) v = Lp.v; return v; }
-  function nearestCommune(lat, lon) {
-    if (!GEO) return null;
-    let best = null, bd = Infinity; const k = Math.cos(lat * Math.PI / 180);
-    for (const c of GEO.communes) { const d = (c[1] - lat) ** 2 + ((c[2] - lon) * k) ** 2; if (d < bd) { bd = d; best = c; } }
-    return best && bd < 0.0009 ? best[0] : null;
+  // Roche au point : { c: classe de sol, n: roche, a: âge } ; null si inconnue ou pas encore chargée
+  function rockAt(lat, lon) {
+    const la = Math.floor(lat), lo = Math.floor(lon), t = GEOL.tiles.get(geolKey(la, lo));
+    if (!t || t.st !== 'ok') return null;
+    const n = GEOL.n, r = Math.min(n - 1, Math.floor((la + 1 - lat) * n)), c = Math.min(n - 1, Math.floor((lon - lo) * n));
+    const e = GEOL.legend[t.d[r * n + c]];
+    return e ? { c: e[0], n: e[1], a: e[2] || '' } : null;
+  }
+  const soilClass = rock => (rock ? rock.c : 0);
+  function classAt(lat, lon) {
+    const la = Math.floor(lat), lo = Math.floor(lon), t = GEOL.tiles.get(geolKey(la, lo));
+    if (!t || t.st !== 'ok') return 0;
+    const n = GEOL.n, r = Math.min(n - 1, Math.floor((la + 1 - lat) * n)), c = Math.min(n - 1, Math.floor((lon - lo) * n));
+    return GEOL.cls[t.d[r * n + c]] || 0;
+  }
+  const lithoAtXY = (x, y) => classAt(C.latOf(y), C.lonOf(x));
+
+  // ---------- communes (API Découpage administratif de l'État) ----------
+  const communeCache = new Map();
+  const ckey = (lat, lon) => (Math.round(lat * 200) / 200).toFixed(3) + ',' + (Math.round(lon * 200) / 200).toFixed(3);
+  function communeCached(lat, lon) { const v = communeCache.get(ckey(lat, lon)); return typeof v === 'string' ? v : null; }
+  function communeAt(lat, lon, ms) {
+    const k = ckey(lat, lon), v = communeCache.get(k);
+    if (typeof v === 'string' || v === null) return Promise.resolve(v);
+    if (v && v.then) return v;
+    const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), ms || 4000);
+    const pr = fetch('https://geo.api.gouv.fr/communes?lat=' + lat.toFixed(5) + '&lon=' + lon.toFixed(5) + '&fields=nom&format=json', { signal: ctl.signal })
+      .then(r => (r.ok ? r.json() : Promise.reject(new Error('HTTP ' + r.status))))
+      .then(a => { const nm = Array.isArray(a) && a[0] ? a[0].nom : null; communeCache.set(k, nm); return nm; })
+      .catch(() => { communeCache.delete(k); return null; })
+      .finally(() => clearTimeout(t));
+    communeCache.set(k, pr);
+    return pr;
   }
 
   // ---------- carte et fonds ----------
   const map = L.map(el, { zoomControl: false, minZoom: 7, maxZoom: 18, attributionControl: true });
   map.attributionControl.setPrefix(false);
   map.attributionControl.setPosition('topright');
-  map.attributionControl.addAttribution('BD Forêt® © IGN · météo Open-Meteo');
+  map.attributionControl.addAttribution('BD Forêt® © IGN · géologie © BRGM · météo Open-Meteo');
+  map.createPane('soil'); map.getPane('soil').style.zIndex = 340; map.getPane('soil').style.pointerEvents = 'none';
   map.createPane('grid'); map.getPane('grid').style.zIndex = 350; map.getPane('grid').style.pointerEvents = 'none';
   map.createPane('fog'); map.getPane('fog').style.zIndex = 370; map.getPane('fog').style.pointerEvents = 'none';
   map.createPane('people'); map.getPane('people').style.zIndex = 640;
-  map.fitBounds([[48.52, 5.89], [49.52, 7.64]]);
+  map.fitBounds([[42.3, -4.8], [51.1, 8.3]]);
 
   function tileFallback(name, cands, onFail) {
     let i = 0, cur = null, loads = 0, errs = 0, on = false;
@@ -78,7 +131,7 @@ export function createMap(el, deps) {
     photo: tileFallback('Photos IGN', [{ url: IGN_WMTS + '&LAYER=ORTHOIMAGERY.ORTHOPHOTOS&STYLE=normal&FORMAT=image/jpeg', opt: { maxZoom: 18, maxNativeZoom: 18, attribution: ATTR_IGN } }, OSM], baseFailed),
     osm: tileFallback('OpenStreetMap', [OSM], baseFailed)
   };
-  const GEOL = tileFallback('Géologie BRGM', ['SCAN_H_GEOL50', 'SCAN_D_GEOL50', 'GEOLOGIE'].map(layers => ({ wms: true, url: 'https://geoservices.brgm.fr/geologie', opt: { layers, format: 'image/png', transparent: true, version: '1.3.0', opacity: 0.55, maxZoom: 18, zIndex: 5, attribution: '© <a href="https://www.brgm.fr/" target="_blank" rel="noopener">BRGM</a>' } })), () => { toast('Carte géologique BRGM indisponible.'); if (deps.onLayerFail) deps.onLayerFail('geol'); });
+  const GEOL50 = tileFallback('Géologie BRGM', ['SCAN_H_GEOL50', 'SCAN_D_GEOL50', 'GEOLOGIE'].map(layers => ({ wms: true, url: 'https://geoservices.brgm.fr/geologie', opt: { layers, format: 'image/png', transparent: true, version: '1.3.0', opacity: 0.55, maxZoom: 18, zIndex: 5, attribution: '© <a href="https://www.brgm.fr/" target="_blank" rel="noopener">BRGM</a>' } })), () => { toast('Carte géologique BRGM indisponible.'); if (deps.onLayerFail) deps.onLayerFail('geol'); });
   const ONF = tileFallback('Forêts publiques', [
     { url: IGN_WMTS + '&LAYER=FORETS.PUBLIQUES&STYLE=FORET%20PUBLIQUE&FORMAT=image/png', opt: { maxZoom: 18, maxNativeZoom: 16, opacity: 0.7, zIndex: 6, attribution: ATTR_IGN + ', ONF' } },
     { url: IGN_WMTS + '&LAYER=FORETS.PUBLIQUES&STYLE=normal&FORMAT=image/png', opt: { maxZoom: 18, maxNativeZoom: 16, opacity: 0.7, zIndex: 6, attribution: ATTR_IGN + ', ONF' } },
@@ -91,14 +144,41 @@ export function createMap(el, deps) {
     BASES[k].add(); st.base = k;
   }
 
-  if (GEO) GEO.dep.forEach(poly => L.polygon(poly.map(r => r.map(p => [p[1], p[0]])), { color: '#4A2C8F', weight: 2, opacity: 0.6, fill: false, interactive: false, dashArray: '6 5' }).addTo(map));
-  const soilLayer = L.layerGroup();
-  if (GEO) {
-    const col = { gres: '#B3103D', mixte: '#C77D12', calc: '#2C6FB0' };
-    ['gres', 'mixte', 'calc'].forEach(k => GEO[k].forEach(poly => L.polygon(poly.map(r => r.map(p => [p[1], p[0]])), { color: col[k], weight: 2, opacity: 0.9, fillOpacity: 0.06, interactive: false }).addTo(soilLayer)));
+  // Calque « sol estimé » : couleurs des classes (affiché seul entre les zooms 8 et 12, ou à la demande)
+  const SOIL_COL = [null, [179, 16, 61], [199, 125, 18], [44, 111, 176], [122, 106, 46]];
+  const soilImg = new Map();
+  function soilImage(k) {
+    if (soilImg.has(k)) return soilImg.get(k);
+    const t = GEOL.tiles.get(k); if (!t || t.st !== 'ok') return null;
+    const n = GEOL.n, cv = document.createElement('canvas'); cv.width = cv.height = n;
+    const g = cv.getContext('2d'); if (!g) return null;
+    const im = g.createImageData(n, n);
+    for (let i = 0; i < n * n; i++) {
+      const col = SOIL_COL[GEOL.cls[t.d[i]]]; if (!col) continue;
+      im.data[4 * i] = col[0]; im.data[4 * i + 1] = col[1]; im.data[4 * i + 2] = col[2]; im.data[4 * i + 3] = 255;
+    }
+    g.putImageData(im, 0, 0); soilImg.set(k, cv); return cv;
   }
   let soilForced = false;
-  function syncSoil() { const want = soilForced || map.getZoom() < DATA_Z; if (want && !map.hasLayer(soilLayer)) soilLayer.addTo(map); else if (!want && map.hasLayer(soilLayer)) map.removeLayer(soilLayer); }
+  const soilWanted = () => soilForced || (map.getZoom() >= 8 && map.getZoom() < DATA_Z);
+  function drawSoil() {
+    if (!soilLayer || !map.hasLayer(soilLayer)) return;
+    soilLayer.draw(ctx => {
+      ctx.globalAlpha = 0.3; ctx.imageSmoothingEnabled = false;
+      const b = map.getBounds();
+      for (let la = Math.floor(b.getSouth()); la <= Math.floor(b.getNorth()); la++) for (let lo = Math.floor(b.getWest()); lo <= Math.floor(b.getEast()); lo++) {
+        const im = soilImage(geolKey(la, lo)); if (!im) continue;
+        const p1 = map.latLngToContainerPoint([la + 1, lo]), p2 = map.latLngToContainerPoint([la, lo + 1]);
+        ctx.drawImage(im, p1.x, p1.y, p2.x - p1.x, p2.y - p1.y);
+      }
+    });
+  }
+  function syncSoil() {
+    const want = soilWanted();
+    if (want) ensureGeol(map.getBounds());
+    if (want && !map.hasLayer(soilLayer)) soilLayer.addTo(map); else if (!want && map.hasLayer(soilLayer)) map.removeLayer(soilLayer);
+    drawSoil();
+  }
   map.on('zoomend', syncSoil);
 
   // ---------- canevas (grille de potentiel, brouillard) ----------
@@ -121,11 +201,12 @@ export function createMap(el, deps) {
   });
   const gridLayer = new CanvasLayer('grid').addTo(map);
   const fogLayer = new CanvasLayer('fog');
+  const soilLayer = new CanvasLayer('soil');
 
   // ---------- couches du jeu ----------
   const layers = {
     finds: L.layerGroup().addTo(map), friends: L.layerGroup().addTo(map), events: L.layerGroup().addTo(map),
-    treasures: L.layerGroup().addTo(map), track: L.layerGroup().addTo(map), car: L.layerGroup().addTo(map), me: L.layerGroup().addTo(map), tracks: L.layerGroup()
+    treasures: L.layerGroup().addTo(map), track: L.layerGroup().addTo(map), car: L.layerGroup().addTo(map), route: L.layerGroup().addTo(map), me: L.layerGroup().addTo(map), tracks: L.layerGroup()
   };
 
   // ---------- BD Forêt (IGN Géoplateforme) ----------
@@ -275,15 +356,14 @@ export function createMap(el, deps) {
   function redraw() {
     const z = map.getZoom();
     if (z < DATA_Z) { G = null; gridLayer.clear(); if (deps.onChange) deps.onChange(); return; }
-    ensureTiles();
+    ensureTiles(); ensureGeol(map.getBounds().pad(0.1));
     const b = map.getBounds(), latRef = Math.round(map.getCenter().lat);
     const cg = C.cellGround(z), cs = cg / Math.cos(latRef * Math.PI / 180);
     const grid = C.makeGrid(C.mx(b.getWest()), C.my(b.getSouth()), C.mx(b.getEast()), C.my(b.getNorth()), cs, 8);
     const gx1 = grid.x0 + grid.nx * cs, gy1 = grid.y0 + grid.ny * cs, list = [];
     for (const f of feats.values()) if (f.bb[2] >= grid.x0 && f.bb[0] <= gx1 && f.bb[3] >= grid.y0 && f.bb[1] <= gy1) list.push(f);
-    const lit = LITHO_POLYS.filter(Lp => Lp.bb[2] >= grid.x0 && Lp.bb[0] <= gx1 && Lp.bb[3] >= grid.y0 && Lp.bb[1] <= gy1);
     const known = { z: DATA_Z, has: (x, y) => { const t = tiles.get(x + '/' + y); return !!t && t.st === 'ok'; } };
-    const lay = C.computeLayers(grid, list, lit, known);
+    const lay = C.computeLayers(grid, list, lithoAtXY, known);
     const pots = C.potentials(lay, grid, cg);
     G = { z, grid, cg, layers: lay, pots, all: C.bestOf(pots, MONTH, grid.nx * grid.ny), list };
     statsCache = null;
@@ -336,7 +416,8 @@ export function createMap(el, deps) {
   // ---------- analyse d'un point ----------
   function analyze(ll) {
     const x = C.mx(ll.lng), y = C.my(ll.lat);
-    const p = { lat: ll.lat, lng: ll.lng, litho: lithoAt(x, y), commune: nearestCommune(ll.lat, ll.lng), k: null, f: null };
+    const rock = rockAt(ll.lat, ll.lng);
+    const p = { lat: ll.lat, lng: ll.lng, rock, litho: soilClass(rock), commune: communeCached(ll.lat, ll.lng), k: null, f: null };
     if (G) {
       const i = Math.floor((x - G.grid.x0) / G.grid.cs), j = Math.floor((y - G.grid.y0) / G.grid.cs);
       if (i >= 0 && j >= 0 && i < G.grid.nx && j < G.grid.ny) p.k = j * G.grid.nx + i;
@@ -396,7 +477,7 @@ export function createMap(el, deps) {
     });
   }
 
-  map.on('moveend', () => { scheduleRedraw(); drawFog(); });
+  map.on('moveend', () => { scheduleRedraw(); drawFog(); if (soilWanted()) { ensureGeol(map.getBounds()); drawSoil(); } });
   map.on('click', e => { if (deps.onTap) deps.onTap(e.latlng); });
   syncSoil();
 
@@ -408,9 +489,10 @@ export function createMap(el, deps) {
     setShowLow(b) { st.showLow = !!b; render(); },
     setBase, redraw, scheduleRedraw, render, stats, tileCounts, retry, analyze, setFog, drawFog,
     setSoil(on) { soilForced = !!on; syncSoil(); },
-    setGeol(on) { if (on) GEOL.add(); else GEOL.remove(); },
+    setGeol(on) { if (on) GEOL50.add(); else GEOL50.remove(); },
     setOnf(on) { if (on) ONF.add(); else ONF.remove(); },
     resetSource() { store.set('cc.src', null); retry(); },
-    tileUrls, prefetchForests, nearestCommune, lithoAt: (lat, lng) => lithoAt(C.mx(lng), C.my(lat))
+    tileUrls, prefetchForests, communeAt, communeCached, rockAt, soilClass, ensureGeol, GEOL,
+    geolTileUrls: b => { const out = []; if (!GEOL.idx) return out; for (let la = Math.floor(b.getSouth()); la <= Math.floor(b.getNorth()); la++) for (let lo = Math.floor(b.getWest()); lo <= Math.floor(b.getEast()); lo++) if (GEOL.idx.has(geolKey(la, lo))) out.push(geolUrl(geolKey(la, lo))); return out; }
   };
 }
