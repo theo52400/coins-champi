@@ -1,309 +1,133 @@
-+ for s in small medium large
-+ for p in "49.06,7.50" "48.66,6.10" "48.41,2.63" "44.30,-0.90"
-+ la=49.06
-+ lo=7.50
-+ curl -sS --max-time 60 'https://macrostrat.org/api/v2/geologic_units/map?lat=49.06&lng=7.50&scale=small'
-+ python3 -c 'import sys,json; d=json.load(sys.stdin); r=d.get('\''success'\'',{}).get('\''data'\'',[]); print('\''small 49.06,7.50'\'', [(u.get('\''source_id'\''), u.get('\''name'\''), u.get('\''lith'\''), (u.get('\''descrip'\'') or '\'''\'')[:80]) for u in r][:3])'
-small 49.06,7.50 [(147, 'detrital deposit', 'Major:{sandstone}, Minor{siltstone,claystone}', '')]
-+ for p in "49.06,7.50" "48.66,6.10" "48.41,2.63" "44.30,-0.90"
-+ la=48.66
-+ lo=6.10
-+ curl -sS --max-time 60 'https://macrostrat.org/api/v2/geologic_units/map?lat=48.66&lng=6.10&scale=small'
-+ python3 -c 'import sys,json; d=json.load(sys.stdin); r=d.get('\''success'\'',{}).get('\''data'\'',[]); print('\''small 48.66,6.10'\'', [(u.get('\''source_id'\''), u.get('\''name'\''), u.get('\''lith'\''), (u.get('\''descrip'\'') or '\'''\'')[:80]) for u in r][:3])'
-small 48.66,6.10 [(147, 'mostly biogenic deposit', 'Major:{limestone}, Minor{marl,sandstone,dolomite/dolostone}', '')]
-+ for p in "49.06,7.50" "48.66,6.10" "48.41,2.63" "44.30,-0.90"
-+ la=48.41
-+ lo=2.63
-+ curl -sS --max-time 60 'https://macrostrat.org/api/v2/geologic_units/map?lat=48.41&lng=2.63&scale=small'
-+ python3 -c 'import sys,json; d=json.load(sys.stdin); r=d.get('\''success'\'',{}).get('\''data'\'',[]); print('\''small 48.41,2.63'\'', [(u.get('\''source_id'\''), u.get('\''name'\''), u.get('\''lith'\''), (u.get('\''descrip'\'') or '\'''\'')[:80]) for u in r][:3])'
-small 48.41,2.63 [(147, 'marine deposit', 'Major:{clay}, Minor{sand,carbonates, consolidated,marl}', '')]
-+ for p in "49.06,7.50" "48.66,6.10" "48.41,2.63" "44.30,-0.90"
-+ la=44.30
-+ lo=-0.90
-+ curl -sS --max-time 60 'https://macrostrat.org/api/v2/geologic_units/map?lat=44.30&lng=-0.90&scale=small'
-+ python3 -c 'import sys,json; d=json.load(sys.stdin); r=d.get('\''success'\'',{}).get('\''data'\'',[]); print('\''small 44.30,-0.90'\'', [(u.get('\''source_id'\''), u.get('\''name'\''), u.get('\''lith'\''), (u.get('\''descrip'\'') or '\'''\'')[:80]) for u in r][:3])'
-small 44.30,-0.90 [(147, 'fluviatil', 'Major:{clay}, Minor{sand,gravel}', '')]
-+ for s in small medium large
-+ for p in "49.06,7.50" "48.66,6.10" "48.41,2.63" "44.30,-0.90"
-+ la=49.06
-+ lo=7.50
-+ curl -sS --max-time 60 'https://macrostrat.org/api/v2/geologic_units/map?lat=49.06&lng=7.50&scale=medium'
-+ python3 -c 'import sys,json; d=json.load(sys.stdin); r=d.get('\''success'\'',{}).get('\''data'\'',[]); print('\''medium 49.06,7.50'\'', [(u.get('\''source_id'\''), u.get('\''name'\''), u.get('\''lith'\''), (u.get('\''descrip'\'') or '\'''\'')[:80]) for u in r][:3])'
-medium 49.06,7.50 [(249, '', 'conglomerate [5.0%..50.0%]; quartzite [5.0%..50.0%]; sandstone [50.0%..95.0%]', ''), (1056, 'Sandstone, Lower Triassic', 'sandstone', ''), (94, '', 'Sandstone, conglomerate', 'limnic - fluvial to brackish deposits')]
-+ for p in "49.06,7.50" "48.66,6.10" "48.41,2.63" "44.30,-0.90"
-+ la=48.66
-+ lo=6.10
-+ curl -sS --max-time 60 'https://macrostrat.org/api/v2/geologic_units/map?lat=48.66&lng=6.10&scale=medium'
-+ python3 -c 'import sys,json; d=json.load(sys.stdin); r=d.get('\''success'\'',{}).get('\''data'\'',[]); print('\''medium 48.66,6.10'\'', [(u.get('\''source_id'\''), u.get('\''name'\''), u.get('\''lith'\''), (u.get('\''descrip'\'') or '\'''\'')[:80]) for u in r][:3])'
-medium 48.66,6.10 [(94, '', 'Clay, clay marlstone, calcareous sandstone, marlstone, oolitic limestone, iron ore seams', 'marine deposits'), (249, '', 'impure Carbonate [5.0%..50.0%]; limestone [50.0%..95.0%]', ''), (1056, 'Limestone, Middle Jurassic', 'limestone', '')]
-+ for p in "49.06,7.50" "48.66,6.10" "48.41,2.63" "44.30,-0.90"
-+ la=48.41
-+ lo=2.63
-+ curl -sS --max-time 60 'https://macrostrat.org/api/v2/geologic_units/map?lat=48.41&lng=2.63&scale=medium'
-+ python3 -c 'import sys,json; d=json.load(sys.stdin); r=d.get('\''success'\'',{}).get('\''data'\'',[]); print('\''medium 48.41,2.63'\'', [(u.get('\''source_id'\''), u.get('\''name'\''), u.get('\''lith'\''), (u.get('\''descrip'\'') or '\'''\'')[:80]) for u in r][:3])'
-medium 48.41,2.63 [(249, '', 'sand [50.0%..95.0%]; sandstone [5.0%..50.0%]', ''), (1056, 'Sand, Oligocene', 'sand', '')]
-+ for p in "49.06,7.50" "48.66,6.10" "48.41,2.63" "44.30,-0.90"
-+ la=44.30
-+ lo=-0.90
-+ curl -sS --max-time 60 'https://macrostrat.org/api/v2/geologic_units/map?lat=44.30&lng=-0.90&scale=medium'
-+ python3 -c 'import sys,json; d=json.load(sys.stdin); r=d.get('\''success'\'',{}).get('\''data'\'',[]); print('\''medium 44.30,-0.90'\'', [(u.get('\''source_id'\''), u.get('\''name'\''), u.get('\''lith'\''), (u.get('\''descrip'\'') or '\'''\'')[:80]) for u in r][:3])'
-medium 44.30,-0.90 [(249, '', 'clay [5.0%..50.0%]; gravel [5.0%..50.0%]; sand [50.0%..95.0%]', ''), (1056, 'Sand, Pliocene', 'sand', '')]
-+ for s in small medium large
-+ for p in "49.06,7.50" "48.66,6.10" "48.41,2.63" "44.30,-0.90"
-+ la=49.06
-+ lo=7.50
-+ curl -sS --max-time 60 'https://macrostrat.org/api/v2/geologic_units/map?lat=49.06&lng=7.50&scale=large'
-+ python3 -c 'import sys,json; d=json.load(sys.stdin); r=d.get('\''success'\'',{}).get('\''data'\'',[]); print('\''large 49.06,7.50'\'', [(u.get('\''source_id'\''), u.get('\''name'\''), u.get('\''lith'\''), (u.get('\''descrip'\'') or '\'''\'')[:80]) for u in r][:3])'
-large 49.06,7.50 []
-+ for p in "49.06,7.50" "48.66,6.10" "48.41,2.63" "44.30,-0.90"
-+ la=48.66
-+ lo=6.10
-+ curl -sS --max-time 60 'https://macrostrat.org/api/v2/geologic_units/map?lat=48.66&lng=6.10&scale=large'
-+ python3 -c 'import sys,json; d=json.load(sys.stdin); r=d.get('\''success'\'',{}).get('\''data'\'',[]); print('\''large 48.66,6.10'\'', [(u.get('\''source_id'\''), u.get('\''name'\''), u.get('\''lith'\''), (u.get('\''descrip'\'') or '\'''\'')[:80]) for u in r][:3])'
-large 48.66,6.10 []
-+ for p in "49.06,7.50" "48.66,6.10" "48.41,2.63" "44.30,-0.90"
-+ la=48.41
-+ lo=2.63
-+ curl -sS --max-time 60 'https://macrostrat.org/api/v2/geologic_units/map?lat=48.41&lng=2.63&scale=large'
-+ python3 -c 'import sys,json; d=json.load(sys.stdin); r=d.get('\''success'\'',{}).get('\''data'\'',[]); print('\''large 48.41,2.63'\'', [(u.get('\''source_id'\''), u.get('\''name'\''), u.get('\''lith'\''), (u.get('\''descrip'\'') or '\'''\'')[:80]) for u in r][:3])'
-large 48.41,2.63 []
-+ for p in "49.06,7.50" "48.66,6.10" "48.41,2.63" "44.30,-0.90"
-+ la=44.30
-+ lo=-0.90
-+ curl -sS --max-time 60 'https://macrostrat.org/api/v2/geologic_units/map?lat=44.30&lng=-0.90&scale=large'
-+ python3 -c 'import sys,json; d=json.load(sys.stdin); r=d.get('\''success'\'',{}).get('\''data'\'',[]); print('\''large 44.30,-0.90'\'', [(u.get('\''source_id'\''), u.get('\''name'\''), u.get('\''lith'\''), (u.get('\''descrip'\'') or '\'''\'')[:80]) for u in r][:3])'
-large 44.30,-0.90 []
-+ curl -sS --max-time 60 'https://macrostrat.org/api/v2/defs/sources?format=json'
-+ python3 -c 'import sys,json; d=json.load(sys.stdin)['\''success'\'']['\''data'\'']; print(len(d), '\''sources'\''); [print(s.get('\''source_id'\''), s.get('\''name'\''), s.get('\''scale'\''), s.get('\''url'\'')) for s in d if any(w in (s.get('\''name'\'') or '\'''\'') for w in ('\''France'\'','\''Europe'\'','\''French'\'','\''IGME'\'','\''OneGeology'\'','\''BRGM'\''))]'
-742 sources
-147 Europe 1:5M small https://www.bgr.bund.de/EN/Themen/Sammlungen-Grundlagen/GG_geol_Info/Karten/International/Europa/IGME5000/igme5000_node_en.html
-249 France, 1M medium https://www.brgm.eu
-+ cap 'https://data.geus.dk/egdi/wms/?service=WMS&request=GetCapabilities' 3000000
-+ grep -oE '<Name>[^<]*</Name>'
-+ grep -iE '1m|geol|lith|surface'
-+ curl -sSL --max-time 120 'https://data.geus.dk/egdi/wms/?service=WMS&request=GetCapabilities'
-+ head -40
-+ head -c 3000000
-<Name>maps.europe_geology.eu_ows</Name>
-<Name>pp01_gba_subsurface_temp</Name>
-<Name>pp14_sgids_subsurface_temp</Name>
-<Name>pp04_hgi_cgs_land_surface_temp2</Name>
-<Name>gwc_avre_1min_20210917_111604</Name>
-<Name>pp03_icgc_land_surface_temp</Name>
-<Name>eurolithosmap_mh</Name>
-<Name>wp3_35b_geologicalmap_gr</Name>
-<Name>pp09_geozs_land_surface_temp</Name>
-<Name>gc3d_paneu_units_lithotec</Name>
-<Name>pp03_icgc_subsurface_temp</Name>
-<Name>hydrogeologic_map_bgr_2019</Name>
-<Name>wp3_35b_geologicalmap_sum</Name>
-<Name>gas_hydrate_geology_polygon</Name>
-<Name>pp08_rbins_land_surface_temp</Name>
-<Name>geologicunitview</Name>
-<Name>Ground surface temperature</Name>
-<Name>pp07_gsi_land_surface_temp</Name>
-<Name>pp09_geozs_subsurface_temp</Name>
-<Name>gwc_boutonne_1max</Name>
-<Name>gas_hydrate_geology_point</Name>
-<Name>pp07_gsi_elev_geological_boundary_karst</Name>
-<Name>pp14_sgids_land_surface_temp</Name>
-<Name>gwc_avre_1max</Name>
-<Name>pp11_sgu_land_surface_temp</Name>
-<Name>hydrogeological_map_mask_countries</Name>
-<Name>pp01_gba_land_surface_temp</Name>
-<Name>gwc_boutonne_1min</Name>
-<Name>egdi_surface_lithology_sandstone</Name>
-<Name>frame_lithium_metallogenic_areas</Name>
-<Name>frame_cba_scores_lithium_v01</Name>
-<Name>egdi_mineraloccurrence_eurolithos</Name>
-<Name>euoga_geology_underground_water</Name>
-<Name>euoga_geology_euoga_basins</Name>
-<Name>basic_geology</Name>
-<Name>geologicalmapinventory</Name>
-<Name>geology</Name>
-+ grep -oE '<(wfs:)?Name>[^<]*</(wfs:)?Name>'
-+ cap 'https://data.geus.dk/egdi/wfs/?service=WFS&request=GetCapabilities' 3000000
-+ head -60
-+ curl -sSL --max-time 120 'https://data.geus.dk/egdi/wfs/?service=WFS&request=GetCapabilities'
-+ head -c 3000000
-<Name>ms:3dgeoeu_all_project_areas</Name>
-<Name>ms:aahurs_pilot_area</Name>
-<Name>ms:AKADEMIK_SERGEY_VAVILOV_1997</Name>
-<Name>ms:Anas_1999_TrackLine</Name>
-<Name>ms:Anas_2000_TrackLine</Name>
-<Name>ms:Aquifer_group_France</Name>
-<Name>ms:area_exploration_potential</Name>
-<Name>ms:Area_High_Potential</Name>
-<Name>ms:areas_exploration_potential</Name>
-<Name>ms:ASELVA_TrackLine</Name>
-<Name>ms:Basemap</Name>
-<Name>ms:Basemap_20260903_113829</Name>
-<Name>ms:borehole_index_jtu_test</Name>
-<Name>ms:borehole_index_jtu_test_2</Name>
-<Name>ms:bratislava_pilot_area</Name>
-<Name>ms:brussels_pilot_area</Name>
-<Name>ms:cardiff_pilot_area</Name>
-<Name>ms:coalheritage</Name>
-<Name>ms:cork_pilot_area</Name>
-<Name>ms:crm_countries</Name>
-<Name>ms:cross3a_pyd</Name>
-<Name>ms:Cruise_K414</Name>
-<Name>ms:Cruise_K510</Name>
-<Name>ms:Cruise_K539</Name>
-<Name>ms:Cruise_K540</Name>
-<Name>ms:Cruise_K542</Name>
-<Name>ms:Cruise_M146</Name>
-<Name>ms:Cruise_M24</Name>
-<Name>ms:Cruise_M66</Name>
-<Name>ms:data_2024_crmdepositsabc_egdi</Name>
-<Name>ms:DataView</Name>
-<Name>ms:daughter_units</Name>
-<Name>ms:decision_support_system_coastal_vulnerability</Name>
-<Name>ms:decision_support_system_offshore_windfarm_siting</Name>
-<Name>ms:Decos</Name>
-<Name>ms:Deep_Sea_Drilling_Project_Station</Name>
-<Name>ms:denit_countries_label</Name>
-<Name>ms:denitrification_gwb_centroid_countries</Name>
-<Name>ms:denitrification_gwb_centroid_label</Name>
-<Name>ms:DenmarkSentinelSprings_3034_20251217_100701</Name>
-<Name>ms:dge_dinantian_facies</Name>
-<Name>ms:dge_dinantian_faciesup</Name>
-<Name>ms:dge_dinantian_wells</Name>
-<Name>ms:dge_existing2023</Name>
-<Name>ms:dge_planned2023</Name>
-<Name>ms:dge_roi_urg</Name>
-<Name>ms:dge_seismic_urg</Name>
-<Name>ms:dge_wells_urg</Name>
-<Name>ms:dimension_stone_20211109_141044</Name>
-<Name>ms:DIVA_ATABRIA</Name>
-<Name>ms:egdi_darlinge_active_wells</Name>
-<Name>ms:egdi_eurare_occurrences</Name>
-<Name>ms:egdi_geotech_boreholes</Name>
-<Name>ms:egdi_geotech_bridges</Name>
-<Name>ms:egdi_geotech_reports</Name>
-<Name>ms:egdi_jupiter_boringer_ws</Name>
-<Name>ms:egdi_m4eu_sandstone_fields</Name>
-<Name>ms:egdi_m4eu_sandstone_occ</Name>
-<Name>ms:egdi_mineraloccurr_base_metals</Name>
-<Name>ms:egdi_mineraloccurr_critical_raw_materials</Name>
-grep: write error: Broken pipe
-head: error writing 'standard output': Broken pipe
-curl: (23) Failure writing output to destination
-+ cap 'https://geoservices.brgm.fr/geologie?SERVICE=WMS&REQUEST=GetCapabilities' 3000000
-+ grep -oE '<Name>[^<]*</Name>'
-+ head -60
-+ curl -sSL --max-time 120 'https://geoservices.brgm.fr/geologie?SERVICE=WMS&REQUEST=GetCapabilities'
-+ head -c 3000000
-+ head -c 3000
-+ cap 'https://geoservices.brgm.fr/geologie?SERVICE=WFS&REQUEST=GetCapabilities' 20000
-+ curl -sSL --max-time 120 'https://geoservices.brgm.fr/geologie?SERVICE=WFS&REQUEST=GetCapabilities'
-+ head -c 20000
-<html><head><title>Request Rejected</title></head><body>The requested URL was rejected. Please consult with your administrator.<br><br>Your support ID is: 14450178025410969425<br><br><a href='javascript:history.back();'>[Go Back]</a></body></html>+ echo
++ for u in "https://macrostrat.org/api/v2/geologic_units/map?source_id=249&format=geojson_bare" "https://macrostrat.org/api/v2/geologic_units/burwell?source_id=249&format=geojson_bare" "https://macrostrat.org/api/v2/geologic_units/map?source_id=249"
++ curl -sS --max-time 600 -o /tmp/x.json -w '%{http_code} %{size_download}\n' 'https://macrostrat.org/api/v2/geologic_units/map?source_id=249&format=geojson_bare'
+500 64
++ head -c 900 /tmp/x.json
+{
+  "error": {
+    "message": "No valid parameters passed"
+  }
+}+ echo
 
-+ cap 'https://geoservices.brgm.fr/geologie?SERVICE=WFS&VERSION=2.0.0&REQUEST=GetCapabilities' 3000000
-+ grep -oE '<(wfs:)?Name>[^<]*</(wfs:)?Name>'
-+ head -60
-+ curl -sSL --max-time 120 'https://geoservices.brgm.fr/geologie?SERVICE=WFS&VERSION=2.0.0&REQUEST=GetCapabilities'
-+ head -c 3000000
-+ curl -sSIL --max-time 30 https://infoterre.brgm.fr/
-+ head -5
-curl: (7) Failed to connect to infoterre.brgm.fr port 443 after 557 ms: Couldn't connect to server
-+ head -5
-+ curl -sSIL --max-time 30 https://www.brgm.fr/
-HTTP/1.1 301 Moved Permanently
-Date: Tue, 27 Oct 2026 22:00:14 GMT
-X-Drupal-Route-Normalizer: 1
-X-Drupal-Dynamic-Cache: UNCACHEABLE (301)
-Content-language: fr
-+ grep -oE '<(wfs:)?Name>[^<]*</(wfs:)?Name>'
-+ curl -sS --max-time 300 'https://data.geopf.fr/wfs/ows?SERVICE=WFS&VERSION=2.0.0&REQUEST=GetCapabilities'
-+ grep -iE 'geol|litho|brgm|sol|pedo'
-+ head -40
-<Name>BDCARTO_V5:occupation_du_sol</Name>
-<Name>INRA.CARTE.SOLS:geoportail_vf</Name>
-<Name>carto2_pv_sol1_gpkg_06-08-2026_1_wfs:commune_arrdt_r11</Name>
-<Name>carto2_pv_sol1_gpkg_06-08-2026_wfs:commune_arrdt_r11</Name>
-<Name>POTENTIEL.SOLAIRE.SOL:pv_sol_metropole_guadeloupe_martinique</Name>
-<Name>POTENTIEL.SOLAIRE.BATIMENT:bati</Name>
-<Name>ObsForets.Sols:repartition_niveaux_trophiques_2018_2022</Name>
-<Name>ObsForets.Sols:repartition_niveaux_trophiques_toutes_campagnes</Name>
-<Name>drealnorm_src_gpkg_06-10-2026_wfs:drealnorm_src_litho_simplifiee_s_r28</Name>
-<Name>INRAE_CARTE-SOLS:sols_dominants_france_metropolitaine</Name>
-<Name>etude_34015_gpkg_04-09-2026_wfs:sols_dominants_france_metropolitaine</Name>
-<Name>etude_30110_gpkg_03-09-2026_wfs:sols_dominants_rrp_gironde</Name>
-+ curl -sS --max-time 300 'https://data.geopf.fr/wms-r/wms?SERVICE=WMS&REQUEST=GetCapabilities'
-+ grep -oE '<Name>[^<]*</Name>'
-+ grep -iE 'geol|litho|brgm|sol|pedo'
-+ head -40
-<Name>IGNF_LIDAR-HD_DENSITE-SOL</Name>
-<Name>cartes_densite_sol</Name>
-<Name>IGNF_LIDAR-HD_DENSITE-SURSOL</Name>
-<Name>cartes_densite_sursol</Name>
-<Name>IGNF_PHOTOVOLTAIQUE-SOL_2017-2020</Name>
-<Name>IGNF_PHOTOVOLTAIQUE-SOL_2021-2023</Name>
-<Name>INRA.CARTE.SOLS</Name>
-<Name>CARTE DES SOLS</Name>
-<Name>INRAE_CARTE-SOLS</Name>
-<Name>IRRADIATION.SOLAIRE</Name>
-<Name>CORINE Land Cover - HR - taux d&apos;imperméabilisation des sols</Name>
-<Name>CORINE Land Cover - HR - taux d&apos;imperméabilisation des sols</Name>
-+ for q in "lithologie" "carte geologique millionieme" "geologie 1 000 000" "BDGSF" "base de donnees geographique des sols"
-+ python3 -c '
-import sys, json
-d = json.load(sys.stdin)
-for ds in d.get('\''data'\'', []):
-    print('\''##'\'', ds.get('\''title'\''), '\''|'\'', ds.get('\''organization'\'', {}) and ds['\''organization'\''].get('\''name'\''))
-    for r in ds.get('\''resources'\'', [])[:6]: print('\''   -'\'', r.get('\''format'\''), r.get('\''filesize'\''), r.get('\''url'\''))
-'
-++ python3 -c 'import urllib.parse,sys;print(urllib.parse.quote(sys.argv[1]))' lithologie
-+ curl -sS --max-time 60 'https://www.data.gouv.fr/api/1/datasets/?q=lithologie&page_size=8'
-## Lithologie simplifiée en Bourgogne-Franche-Comté | DREAL Bourgogne-Franche-Comté
-   - shp None https://ckan2.data.arnia-bfc.fr/dataset/2a9e38ba-cb89-4ad2-8124-f98a8de832cb/resource/4363d74f-9cc3-4485-a10c-f7944e5adb21/download/lithologique-si_7b373e97_9a073a3_445c27bb_n_lithologie_simplifiee_bfce.zip
-   - ods None https://ckan2.data.arnia-bfc.fr/dataset/2a9e38ba-cb89-4ad2-8124-f98a8de832cb/resource/1361b76e-34e9-4480-b2a7-d1c8ff8992b5/download/lithologique-si_7b373e97_bac4f46_049aab97_n_litholigie_simplifiee_bfce_dico_attributs.ods
-+ for q in "lithologie" "carte geologique millionieme" "geologie 1 000 000" "BDGSF" "base de donnees geographique des sols"
-+ python3 -c '
-import sys, json
-d = json.load(sys.stdin)
-for ds in d.get('\''data'\'', []):
-    print('\''##'\'', ds.get('\''title'\''), '\''|'\'', ds.get('\''organization'\'', {}) and ds['\''organization'\''].get('\''name'\''))
-    for r in ds.get('\''resources'\'', [])[:6]: print('\''   -'\'', r.get('\''format'\''), r.get('\''filesize'\''), r.get('\''url'\''))
-'
-++ python3 -c 'import urllib.parse,sys;print(urllib.parse.quote(sys.argv[1]))' 'carte geologique millionieme'
-+ curl -sS --max-time 60 'https://www.data.gouv.fr/api/1/datasets/?q=carte%20geologique%20millionieme&page_size=8'
-+ for q in "lithologie" "carte geologique millionieme" "geologie 1 000 000" "BDGSF" "base de donnees geographique des sols"
-+ python3 -c '
-import sys, json
-d = json.load(sys.stdin)
-for ds in d.get('\''data'\'', []):
-    print('\''##'\'', ds.get('\''title'\''), '\''|'\'', ds.get('\''organization'\'', {}) and ds['\''organization'\''].get('\''name'\''))
-    for r in ds.get('\''resources'\'', [])[:6]: print('\''   -'\'', r.get('\''format'\''), r.get('\''filesize'\''), r.get('\''url'\''))
-'
-++ python3 -c 'import urllib.parse,sys;print(urllib.parse.quote(sys.argv[1]))' 'geologie 1 000 000'
-+ curl -sS --max-time 60 'https://www.data.gouv.fr/api/1/datasets/?q=geologie%201%20000%20000&page_size=8'
-+ for q in "lithologie" "carte geologique millionieme" "geologie 1 000 000" "BDGSF" "base de donnees geographique des sols"
-+ python3 -c '
-import sys, json
-d = json.load(sys.stdin)
-for ds in d.get('\''data'\'', []):
-    print('\''##'\'', ds.get('\''title'\''), '\''|'\'', ds.get('\''organization'\'', {}) and ds['\''organization'\''].get('\''name'\''))
-    for r in ds.get('\''resources'\'', [])[:6]: print('\''   -'\'', r.get('\''format'\''), r.get('\''filesize'\''), r.get('\''url'\''))
-'
-++ python3 -c 'import urllib.parse,sys;print(urllib.parse.quote(sys.argv[1]))' BDGSF
-+ curl -sS --max-time 60 'https://www.data.gouv.fr/api/1/datasets/?q=BDGSF&page_size=8'
-+ for q in "lithologie" "carte geologique millionieme" "geologie 1 000 000" "BDGSF" "base de donnees geographique des sols"
-+ python3 -c '
-import sys, json
-d = json.load(sys.stdin)
-for ds in d.get('\''data'\'', []):
-    print('\''##'\'', ds.get('\''title'\''), '\''|'\'', ds.get('\''organization'\'', {}) and ds['\''organization'\''].get('\''name'\''))
-    for r in ds.get('\''resources'\'', [])[:6]: print('\''   -'\'', r.get('\''format'\''), r.get('\''filesize'\''), r.get('\''url'\''))
-'
-++ python3 -c 'import urllib.parse,sys;print(urllib.parse.quote(sys.argv[1]))' 'base de donnees geographique des sols'
-+ curl -sS --max-time 60 'https://www.data.gouv.fr/api/1/datasets/?q=base%20de%20donnees%20geographique%20des%20sols&page_size=8'
-+ head -5
-+ curl -sSIL --max-time 30 https://esdac.jrc.ec.europa.eu/content/topsoil-physical-properties-europe-based-lucas-topsoil-data
-HTTP/1.1 200 OK
-Date: Tue, 27 Oct 2026 22:44:57 GMT
-Expires: Sun, 19 Nov 1978 05:00:00 GMT
-Cache-Control: no-cache, must-revalidate
-Content-Language: en
++ echo
+
++ for u in "https://macrostrat.org/api/v2/geologic_units/map?source_id=249&format=geojson_bare" "https://macrostrat.org/api/v2/geologic_units/burwell?source_id=249&format=geojson_bare" "https://macrostrat.org/api/v2/geologic_units/map?source_id=249"
++ curl -sS --max-time 600 -o /tmp/x.json -w '%{http_code} %{size_download}\n' 'https://macrostrat.org/api/v2/geologic_units/burwell?source_id=249&format=geojson_bare'
+500 64
++ head -c 900 /tmp/x.json
+{
+  "error": {
+    "message": "No valid parameters passed"
+  }
+}+ echo
+
++ echo
+
++ for u in "https://macrostrat.org/api/v2/geologic_units/map?source_id=249&format=geojson_bare" "https://macrostrat.org/api/v2/geologic_units/burwell?source_id=249&format=geojson_bare" "https://macrostrat.org/api/v2/geologic_units/map?source_id=249"
++ curl -sS --max-time 600 -o /tmp/x.json -w '%{http_code} %{size_download}\n' 'https://macrostrat.org/api/v2/geologic_units/map?source_id=249'
+500 64
++ head -c 900 /tmp/x.json
+{
+  "error": {
+    "message": "No valid parameters passed"
+  }
+}+ echo
+
++ echo
+
++ curl -sS --max-time 60 'https://macrostrat.org/api/v2/defs/sources?source_id=249&format=json'
++ head -c 3000
+{"success":{"v":2,"license":"CC-BY 4.0","data":[{"source_id":249,"name":"France, 1M","url":"https://www.brgm.eu","ref_title":"1:1M-scale surface Geologic Units, INSPIRE Lithology portrayal","authors":"BRGM","ref_year":"2017","ref_source":"Bureau de Recherches Géologiques et Minières","isbn_doi":"","scale":"medium","features":19696,"area":548833}]}}+ echo
+
++ curl -sS --max-time 60 'https://macrostrat.org/api/v2/defs/sources?source_id=249&format=geojson_bare'
++ head -c 600
+{"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[-4.87915,51.11261],[9.8645,51.11261],[9.8645,41.28456],[-4.87915,41.28456],[-4.87915,51.11261]]]},"properties":{"source_id":249,"name":"France, 1M","url":"https://www.brgm.eu","ref_title":"1:1M-scale surface Geologic Units, INSPIRE Lithology portrayal","authors":"BRGM","ref_year":"2017","ref_source":"Bureau de Recherches Géologiques et Minières","isbn_doi":"","scale":"medium","features":19696,"area":548833}}]}+ echo
+
++ pip install -q mapbox-vector-tile
++ tail -1
++ python3 -
+https://tiles.macrostrat.org/carto/8/133/87.mvt 64381 octets {'units': 389, 'lines': 25}
+   clés units ['age', 'b_int', 'b_int_id', 'best_age_bottom', 'best_age_top', 'color', 'comments', 'descrip', 'legend_id', 'lith', 'map_id', 'name', 'ref_authors', 'ref_isbn', 'ref_name', 'ref_source', 'ref_title', 'ref_url', 'ref_year', 'source_id', 't_int', 't_int_id']
+      units {'map_id': '2604061', 'source_id': '94', 'legend_id': '53915', 'best_age_top': '237.0', 'best_age_bottom': '247.2', 'color': '#9b4f99', 'name': '', 'age': 'Triassic, Lower Muschelkalk', 'lith': 'Thin-bedded limestone, dolomitic sandstone, claystone, marlstone, calcaerous marlstone, do', 'descrip': 'marine deposits', 'comments': '', 't_int_id': '69', 't_int': 'Ladinian', 'b_int_id': '70', 'b_int': 'Anisian', 'ref_url': 'https://produktcenter.bgr.de/terraCatalog/DetailResult.do?fileIdentifier=1C60DDA9-EF73-47B', 'ref_name': 'Germany 1:1M', 'ref_title': 'Geological Map of Germany 1:M', 'ref_authors': 'Toloczyki, M., P. Trurnit, A. Voges, H. Wittekindt, A. Zitzmann', 'ref_source': 'Bundesanstalt für Geowissenschaften und Rohstoffe', 'ref_year': '2006', 'ref_isbn': ''}
+      units {'map_id': '2604504', 'source_id': '94', 'legend_id': '53926', 'best_age_top': '242.0', 'best_age_bottom': '272.95', 'color': '#00e6f3', 'name': '', 'age': 'Triassic, Upper Buntsandstein', 'lith': 'Sandstone, siltstone, claystone', 'descrip': 'limnic - fluvial to marine - brackish deposits', 'comments': '', 't_int_id': '70', 't_int': 'Anisian', 'b_int_id': '76', 'b_int': 'Late Permian', 'ref_url': 'https://produktcenter.bgr.de/terraCatalog/DetailResult.do?fileIdentifier=1C60DDA9-EF73-47B', 'ref_name': 'Germany 1:1M', 'ref_title': 'Geological Map of Germany 1:M', 'ref_authors': 'Toloczyki, M., P. Trurnit, A. Voges, H. Wittekindt, A. Zitzmann', 'ref_source': 'Bundesanstalt für Geowissenschaften und Rohstoffe', 'ref_year': '2006', 'ref_isbn': ''}
+      units {'map_id': '2607662', 'source_id': '94', 'legend_id': '53926', 'best_age_top': '242.0', 'best_age_bottom': '272.95', 'color': '#00e6f3', 'name': '', 'age': 'Triassic, Upper Buntsandstein', 'lith': 'Sandstone, siltstone, claystone', 'descrip': 'limnic - fluvial to marine - brackish deposits', 'comments': '', 't_int_id': '70', 't_int': 'Anisian', 'b_int_id': '76', 'b_int': 'Late Permian', 'ref_url': 'https://produktcenter.bgr.de/terraCatalog/DetailResult.do?fileIdentifier=1C60DDA9-EF73-47B', 'ref_name': 'Germany 1:1M', 'ref_title': 'Geological Map of Germany 1:M', 'ref_authors': 'Toloczyki, M., P. Trurnit, A. Voges, H. Wittekindt, A. Zitzmann', 'ref_source': 'Bundesanstalt für Geowissenschaften und Rohstoffe', 'ref_year': '2006', 'ref_isbn': ''}
+      units {'map_id': '2608705', 'source_id': '94', 'legend_id': '53929', 'best_age_top': '237.0', 'best_age_bottom': '247.2', 'color': '#9b4f99', 'name': '', 'age': 'Triassic, Upper Muschelkalk', 'lith': 'Bedded limestone and marlstone, sandy dolostone, claystone, sandstone', 'descrip': 'marine deposits', 'comments': '', 't_int_id': '69', 't_int': 'Ladinian', 'b_int_id': '70', 'b_int': 'Anisian', 'ref_url': 'https://produktcenter.bgr.de/terraCatalog/DetailResult.do?fileIdentifier=1C60DDA9-EF73-47B', 'ref_name': 'Germany 1:1M', 'ref_title': 'Geological Map of Germany 1:M', 'ref_authors': 'Toloczyki, M., P. Trurnit, A. Voges, H. Wittekindt, A. Zitzmann', 'ref_source': 'Bundesanstalt für Geowissenschaften und Rohstoffe', 'ref_year': '2006', 'ref_isbn': ''}
+   clés lines ['descrip', 'direction', 'line_id', 'name', 'source_id', 'type']
+      lines {'line_id': '1147834', 'source_id': '94', 'descrip': '', 'name': '', 'direction': '', 'type': 'thrust fault'}
+      lines {'line_id': '1147833', 'source_id': '94', 'descrip': '', 'name': '', 'direction': '', 'type': 'thrust fault'}
+      lines {'line_id': '1868104', 'source_id': '249', 'descrip': '', 'name': '', 'direction': '', 'type': 'fault'}
+      lines {'line_id': '1868202', 'source_id': '249', 'descrip': '', 'name': '', 'direction': '', 'type': 'fault'}
+https://tiles.macrostrat.org/carto-slim/8/133/87.mvt 45041 octets {'units': 389, 'lines': 16}
+   clés units ['best_age_bottom', 'best_age_top', 'color', 'legend_id', 'lith_class1', 'lith_type1', 'lith_type2', 'map_id', 'source_id']
+      units {'map_id': '2604061', 'source_id': '94', 'legend_id': '53915', 'best_age_top': '237.0', 'best_age_bottom': '247.2', 'color': '#9b4f99', 'lith_class1': 'sedimentary', 'lith_type1': 'carbonate', 'lith_type2': 'siliciclastic'}
+      units {'map_id': '2604504', 'source_id': '94', 'legend_id': '53926', 'best_age_top': '242.0', 'best_age_bottom': '272.95', 'color': '#00e6f3', 'lith_class1': 'sedimentary', 'lith_type1': 'siliciclastic'}
+      units {'map_id': '2607662', 'source_id': '94', 'legend_id': '53926', 'best_age_top': '242.0', 'best_age_bottom': '272.95', 'color': '#00e6f3', 'lith_class1': 'sedimentary', 'lith_type1': 'siliciclastic'}
+      units {'map_id': '2608705', 'source_id': '94', 'legend_id': '53929', 'best_age_top': '237.0', 'best_age_bottom': '247.2', 'color': '#9b4f99', 'lith_class1': 'sedimentary', 'lith_type1': 'carbonate', 'lith_type2': 'siliciclastic'}
+   clés lines ['descrip', 'direction', 'line_id', 'name', 'source_id', 'type']
+      lines {'line_id': '1147834', 'source_id': '94', 'descrip': '', 'name': '', 'direction': '', 'type': 'thrust fault'}
+      lines {'line_id': '1147833', 'source_id': '94', 'descrip': '', 'name': '', 'direction': '', 'type': 'thrust fault'}
+      lines {'line_id': '1868104', 'source_id': '249', 'descrip': '', 'name': '', 'direction': '', 'type': 'fault'}
+      lines {'line_id': '1868202', 'source_id': '249', 'descrip': '', 'name': '', 'direction': '', 'type': 'fault'}
+https://tiles.macrostrat.org/burwell/8/133/87.mvt ERREUR HTTP Error 404: Not Found
+https://tiles.macrostrat.org/all/8/133/87.mvt ERREUR HTTP Error 404: Not Found
+https://tiles.macrostrat.org/carto/9/266/175.mvt 28302 octets {'units': 103, 'lines': 22}
+   clés units ['age', 'b_int', 'b_int_id', 'best_age_bottom', 'best_age_top', 'color', 'comments', 'descrip', 'legend_id', 'lith', 'map_id', 'name', 'ref_authors', 'ref_isbn', 'ref_name', 'ref_source', 'ref_title', 'ref_url', 'ref_year', 'source_id', 't_int', 't_int_id']
+      units {'map_id': '2600832', 'source_id': '94', 'legend_id': '53919', 'best_age_top': '201.3', 'best_age_bottom': '242.0', 'color': '#761283', 'name': '', 'age': 'Triassic, Middle Keuper', 'lith': 'Dolomitic, gravelly or clayey marlstone, claystone and sandstone with gypsum and anhydrite', 'descrip': 'limnic - fluvial to brackish deposits', 'comments': '', 't_int_id': '64', 't_int': 'Late Triassic', 'b_int_id': '69', 'b_int': 'Ladinian', 'ref_url': 'https://produktcenter.bgr.de/terraCatalog/DetailResult.do?fileIdentifier=1C60DDA9-EF73-47B', 'ref_name': 'Germany 1:1M', 'ref_title': 'Geological Map of Germany 1:M', 'ref_authors': 'Toloczyki, M., P. Trurnit, A. Voges, H. Wittekindt, A. Zitzmann', 'ref_source': 'Bundesanstalt für Geowissenschaften und Rohstoffe', 'ref_year': '2006', 'ref_isbn': ''}
+      units {'map_id': '3473832', 'source_id': '249', 'legend_id': '87560', 'best_age_top': '201.3', 'best_age_bottom': '237.0', 'color': '#a773ab', 'name': '', 'age': 'Upper Triassic', 'lith': 'clay [5.0%..50.0%]; dolomite [5.0%..50.0%]; impure Carbonate [50.0%..95.0%]; sandstone [5.', 'descrip': '', 'comments': '', 't_int_id': '64', 't_int': 'Late Triassic', 'b_int_id': '64', 'b_int': 'Late Triassic', 'ref_url': 'https://www.brgm.eu', 'ref_name': 'France, 1M', 'ref_title': '1:1M-scale surface Geologic Units, INSPIRE Lithology portrayal', 'ref_authors': 'BRGM', 'ref_source': 'Bureau de Recherches Géologiques et Minières', 'ref_year': '2017', 'ref_isbn': ''}
+      units {'map_id': '3474772', 'source_id': '249', 'legend_id': '87313', 'best_age_top': '237.0', 'best_age_bottom': '247.2', 'color': '#9b4f99', 'name': '', 'age': 'Middle Triassic', 'lith': 'clay [5.0%..50.0%]; dolomite [5.0%..50.0%]; impure Carbonate [50.0%..95.0%]; sandstone [5.', 'descrip': '', 'comments': '', 't_int_id': '68', 't_int': 'Middle Triassic', 'b_int_id': '68', 'b_int': 'Middle Triassic', 'ref_url': 'https://www.brgm.eu', 'ref_name': 'France, 1M', 'ref_title': '1:1M-scale surface Geologic Units, INSPIRE Lithology portrayal', 'ref_authors': 'BRGM', 'ref_source': 'Bureau de Recherches Géologiques et Minières', 'ref_year': '2017', 'ref_isbn': ''}
+      units {'map_id': '2605655', 'source_id': '94', 'legend_id': '53913', 'best_age_top': '201.3', 'best_age_bottom': '242.0', 'color': '#761283', 'name': '', 'age': 'Triassic, Lower Keuper', 'lith': 'Claystone, marlstone with layers of sandstone, dolomite and limestone', 'descrip': 'limnic - fluvial to brackish deposits', 'comments': '', 't_int_id': '64', 't_int': 'Late Triassic', 'b_int_id': '69', 'b_int': 'Ladinian', 'ref_url': 'https://produktcenter.bgr.de/terraCatalog/DetailResult.do?fileIdentifier=1C60DDA9-EF73-47B', 'ref_name': 'Germany 1:1M', 'ref_title': 'Geological Map of Germany 1:M', 'ref_authors': 'Toloczyki, M., P. Trurnit, A. Voges, H. Wittekindt, A. Zitzmann', 'ref_source': 'Bundesanstalt für Geowissenschaften und Rohstoffe', 'ref_year': '2006', 'ref_isbn': ''}
+   clés lines ['descrip', 'direction', 'line_id', 'name', 'source_id', 'type']
+      lines {'line_id': '1868104', 'source_id': '249', 'descrip': '', 'name': '', 'direction': '', 'type': 'fault'}
+      lines {'line_id': '1868104', 'source_id': '249', 'descrip': '', 'name': '', 'direction': '', 'type': 'fault'}
+      lines {'line_id': '1868202', 'source_id': '249', 'descrip': '', 'name': '', 'direction': '', 'type': 'fault'}
+      lines {'line_id': '1868202', 'source_id': '249', 'descrip': '', 'name': '', 'direction': '', 'type': 'fault'}
+https://tiles.macrostrat.org/carto-slim/9/266/175.mvt 21437 octets {'units': 103, 'lines': 9}
+   clés units ['best_age_bottom', 'best_age_top', 'color', 'legend_id', 'lith_class1', 'lith_type1', 'lith_type2', 'map_id', 'source_id']
+      units {'map_id': '2600832', 'source_id': '94', 'legend_id': '53919', 'best_age_top': '201.3', 'best_age_bottom': '242.0', 'color': '#761283', 'lith_class1': 'sedimentary', 'lith_type1': 'evaporite', 'lith_type2': 'siliciclastic'}
+      units {'map_id': '3473832', 'source_id': '249', 'legend_id': '87560', 'best_age_top': '201.3', 'best_age_bottom': '237.0', 'color': '#a773ab', 'lith_class1': 'sedimentary', 'lith_type1': 'carbonate', 'lith_type2': 'siliciclastic'}
+      units {'map_id': '3474772', 'source_id': '249', 'legend_id': '87313', 'best_age_top': '237.0', 'best_age_bottom': '247.2', 'color': '#9b4f99', 'lith_class1': 'sedimentary', 'lith_type1': 'carbonate', 'lith_type2': 'siliciclastic'}
+      units {'map_id': '2605655', 'source_id': '94', 'legend_id': '53913', 'best_age_top': '201.3', 'best_age_bottom': '242.0', 'color': '#761283', 'lith_class1': 'sedimentary', 'lith_type1': 'carbonate', 'lith_type2': 'siliciclastic'}
+   clés lines ['descrip', 'direction', 'line_id', 'name', 'source_id', 'type']
+      lines {'line_id': '1868104', 'source_id': '249', 'descrip': '', 'name': '', 'direction': '', 'type': 'fault'}
+      lines {'line_id': '1868202', 'source_id': '249', 'descrip': '', 'name': '', 'direction': '', 'type': 'fault'}
+      lines {'line_id': '1874092', 'source_id': '249', 'descrip': '', 'name': '', 'direction': '', 'type': 'normal fault'}
+      lines {'line_id': '1868144', 'source_id': '249', 'descrip': '', 'name': '', 'direction': '', 'type': 'fault'}
+https://tiles.macrostrat.org/burwell/9/266/175.mvt ERREUR HTTP Error 404: Not Found
+https://tiles.macrostrat.org/all/9/266/175.mvt ERREUR HTTP Error 404: Not Found
+https://tiles.macrostrat.org/carto/10/532/350.mvt 8487 octets {'units': 26}
+   clés units ['age', 'b_int', 'b_int_id', 'best_age_bottom', 'best_age_top', 'color', 'comments', 'descrip', 'legend_id', 'lith', 'map_id', 'name', 'ref_authors', 'ref_isbn', 'ref_name', 'ref_source', 'ref_title', 'ref_url', 'ref_year', 'source_id', 't_int', 't_int_id']
+      units {'map_id': '3474772', 'source_id': '249', 'legend_id': '87313', 'best_age_top': '237.0', 'best_age_bottom': '247.2', 'color': '#9b4f99', 'name': '', 'age': 'Middle Triassic', 'lith': 'clay [5.0%..50.0%]; dolomite [5.0%..50.0%]; impure Carbonate [50.0%..95.0%]; sandstone [5.', 'descrip': '', 'comments': '', 't_int_id': '68', 't_int': 'Middle Triassic', 'b_int_id': '68', 'b_int': 'Middle Triassic', 'ref_url': 'https://www.brgm.eu', 'ref_name': 'France, 1M', 'ref_title': '1:1M-scale surface Geologic Units, INSPIRE Lithology portrayal', 'ref_authors': 'BRGM', 'ref_source': 'Bureau de Recherches Géologiques et Minières', 'ref_year': '2017', 'ref_isbn': ''}
+      units {'map_id': '3472694', 'source_id': '249', 'legend_id': '87280', 'best_age_top': '247.2', 'best_age_bottom': '251.902', 'color': '#831982', 'name': '', 'age': 'Lower Triassic', 'lith': 'conglomerate [5.0%..50.0%]; quartzite [5.0%..50.0%]; sandstone [50.0%..95.0%]', 'descrip': '', 'comments': '', 't_int_id': '213', 't_int': 'Early Triassic', 'b_int_id': '213', 'b_int': 'Early Triassic', 'ref_url': 'https://www.brgm.eu', 'ref_name': 'France, 1M', 'ref_title': '1:1M-scale surface Geologic Units, INSPIRE Lithology portrayal', 'ref_authors': 'BRGM', 'ref_source': 'Bureau de Recherches Géologiques et Minières', 'ref_year': '2017', 'ref_isbn': ''}
+      units {'map_id': '2607008', 'source_id': '94', 'legend_id': '53916', 'best_age_top': '242.0', 'best_age_bottom': '272.95', 'color': '#00e6f3', 'name': '', 'age': 'Triassic, Middle Buntsandstein', 'lith': 'Sandstone, conglomerate', 'descrip': 'limnic - fluvial to brackish deposits', 'comments': '', 't_int_id': '70', 't_int': 'Anisian', 'b_int_id': '76', 'b_int': 'Late Permian', 'ref_url': 'https://produktcenter.bgr.de/terraCatalog/DetailResult.do?fileIdentifier=1C60DDA9-EF73-47B', 'ref_name': 'Germany 1:1M', 'ref_title': 'Geological Map of Germany 1:M', 'ref_authors': 'Toloczyki, M., P. Trurnit, A. Voges, H. Wittekindt, A. Zitzmann', 'ref_source': 'Bundesanstalt für Geowissenschaften und Rohstoffe', 'ref_year': '2006', 'ref_isbn': ''}
+      units {'map_id': '2608516', 'source_id': '94', 'legend_id': '53915', 'best_age_top': '237.0', 'best_age_bottom': '247.2', 'color': '#9b4f99', 'name': '', 'age': 'Triassic, Lower Muschelkalk', 'lith': 'Thin-bedded limestone, dolomitic sandstone, claystone, marlstone, calcaerous marlstone, do', 'descrip': 'marine deposits', 'comments': '', 't_int_id': '69', 't_int': 'Ladinian', 'b_int_id': '70', 'b_int': 'Anisian', 'ref_url': 'https://produktcenter.bgr.de/terraCatalog/DetailResult.do?fileIdentifier=1C60DDA9-EF73-47B', 'ref_name': 'Germany 1:1M', 'ref_title': 'Geological Map of Germany 1:M', 'ref_authors': 'Toloczyki, M., P. Trurnit, A. Voges, H. Wittekindt, A. Zitzmann', 'ref_source': 'Bundesanstalt für Geowissenschaften und Rohstoffe', 'ref_year': '2006', 'ref_isbn': ''}
+https://tiles.macrostrat.org/carto-slim/10/532/350.mvt 6144 octets {'units': 26}
+   clés units ['best_age_bottom', 'best_age_top', 'color', 'legend_id', 'lith_class1', 'lith_type1', 'lith_type2', 'map_id', 'source_id']
+      units {'map_id': '3474772', 'source_id': '249', 'legend_id': '87313', 'best_age_top': '237.0', 'best_age_bottom': '247.2', 'color': '#9b4f99', 'lith_class1': 'sedimentary', 'lith_type1': 'carbonate', 'lith_type2': 'siliciclastic'}
+      units {'map_id': '3472694', 'source_id': '249', 'legend_id': '87280', 'best_age_top': '247.2', 'best_age_bottom': '251.902', 'color': '#831982', 'lith_class1': 'metamorphic', 'lith_class2': 'sedimentary', 'lith_type1': 'metasedimentary', 'lith_type2': 'siliciclastic'}
+      units {'map_id': '2607008', 'source_id': '94', 'legend_id': '53916', 'best_age_top': '242.0', 'best_age_bottom': '272.95', 'color': '#00e6f3', 'lith_class1': 'sedimentary', 'lith_type1': 'siliciclastic'}
+      units {'map_id': '2608516', 'source_id': '94', 'legend_id': '53915', 'best_age_top': '237.0', 'best_age_bottom': '247.2', 'color': '#9b4f99', 'lith_class1': 'sedimentary', 'lith_type1': 'carbonate', 'lith_type2': 'siliciclastic'}
+https://tiles.macrostrat.org/burwell/10/532/350.mvt ERREUR HTTP Error 404: Not Found
+https://tiles.macrostrat.org/all/10/532/350.mvt ERREUR HTTP Error 404: Not Found
+https://tiles.macrostrat.org/carto/7/66/43.mvt 175878 octets {'units': 1375, 'lines': 149}
+   clés units ['age', 'b_int', 'b_int_id', 'best_age_bottom', 'best_age_top', 'color', 'comments', 'descrip', 'legend_id', 'lith', 'map_id', 'name', 'ref_authors', 'ref_isbn', 'ref_name', 'ref_source', 'ref_title', 'ref_url', 'ref_year', 'source_id', 't_int', 't_int_id']
+      units {'map_id': '3160643', 'source_id': '147', 'legend_id': '66275', 'best_age_top': '358.9', 'best_age_bottom': '393.3', 'color': '#b47d26', 'name': 'Middle Devonian claystone', 'age': 'Middle Devonian - Late Devonian', 'lith': 'Major:{claystone}, Minor{limestone,sandstone,conglomerate}', 'descrip': '', 'comments': '', 't_int_id': '95', 't_int': 'Late Devonian', 'b_int_id': '98', 'b_int': 'Middle Devonian', 'ref_url': 'https://www.bgr.bund.de/EN/Themen/Sammlungen-Grundlagen/GG_geol_Info/Karten/International/', 'ref_name': 'Europe 1:5M', 'ref_title': 'The 1:5M International Geological Map of Europe and Adjacent Areas: Development and Implem', 'ref_authors': 'Asch, K.', 'ref_source': 'Geologisches Jahrbuch, SA 3', 'ref_year': '2003', 'ref_isbn': ''}
+      units {'map_id': '2604061', 'source_id': '94', 'legend_id': '53915', 'best_age_top': '237.0', 'best_age_bottom': '247.2', 'color': '#9b4f99', 'name': '', 'age': 'Triassic, Lower Muschelkalk', 'lith': 'Thin-bedded limestone, dolomitic sandstone, claystone, marlstone, calcaerous marlstone, do', 'descrip': 'marine deposits', 'comments': '', 't_int_id': '69', 't_int': 'Ladinian', 'b_int_id': '70', 'b_int': 'Anisian', 'ref_url': 'https://produktcenter.bgr.de/terraCatalog/DetailResult.do?fileIdentifier=1C60DDA9-EF73-47B', 'ref_name': 'Germany 1:1M', 'ref_title': 'Geological Map of Germany 1:M', 'ref_authors': 'Toloczyki, M., P. Trurnit, A. Voges, H. Wittekindt, A. Zitzmann', 'ref_source': 'Bundesanstalt für Geowissenschaften und Rohstoffe', 'ref_year': '2006', 'ref_isbn': ''}
+      units {'map_id': '2604504', 'source_id': '94', 'legend_id': '53926', 'best_age_top': '242.0', 'best_age_bottom': '272.95', 'color': '#00e6f3', 'name': '', 'age': 'Triassic, Upper Buntsandstein', 'lith': 'Sandstone, siltstone, claystone', 'descrip': 'limnic - fluvial to marine - brackish deposits', 'comments': '', 't_int_id': '70', 't_int': 'Anisian', 'b_int_id': '76', 'b_int': 'Late Permian', 'ref_url': 'https://produktcenter.bgr.de/terraCatalog/DetailResult.do?fileIdentifier=1C60DDA9-EF73-47B', 'ref_name': 'Germany 1:1M', 'ref_title': 'Geological Map of Germany 1:M', 'ref_authors': 'Toloczyki, M., P. Trurnit, A. Voges, H. Wittekindt, A. Zitzmann', 'ref_source': 'Bundesanstalt für Geowissenschaften und Rohstoffe', 'ref_year': '2006', 'ref_isbn': ''}
+      units {'map_id': '2607662', 'source_id': '94', 'legend_id': '53926', 'best_age_top': '242.0', 'best_age_bottom': '272.95', 'color': '#00e6f3', 'name': '', 'age': 'Triassic, Upper Buntsandstein', 'lith': 'Sandstone, siltstone, claystone', 'descrip': 'limnic - fluvial to marine - brackish deposits', 'comments': '', 't_int_id': '70', 't_int': 'Anisian', 'b_int_id': '76', 'b_int': 'Late Permian', 'ref_url': 'https://produktcenter.bgr.de/terraCatalog/DetailResult.do?fileIdentifier=1C60DDA9-EF73-47B', 'ref_name': 'Germany 1:1M', 'ref_title': 'Geological Map of Germany 1:M', 'ref_authors': 'Toloczyki, M., P. Trurnit, A. Voges, H. Wittekindt, A. Zitzmann', 'ref_source': 'Bundesanstalt für Geowissenschaften und Rohstoffe', 'ref_year': '2006', 'ref_isbn': ''}
+   clés lines ['descrip', 'direction', 'line_id', 'name', 'source_id', 'type']
+      lines {'line_id': '1868057', 'source_id': '249', 'descrip': '', 'name': '', 'direction': '', 'type': 'fault'}
+      lines {'line_id': '1868076', 'source_id': '249', 'descrip': '', 'name': '', 'direction': '', 'type': 'fault'}
+      lines {'line_id': '1868098', 'source_id': '249', 'descrip': '', 'name': '', 'direction': '', 'type': 'fault'}
+      lines {'line_id': '1147835', 'source_id': '94', 'descrip': '', 'name': '', 'direction': '', 'type': 'thrust fault'}
+https://tiles.macrostrat.org/carto-slim/7/66/43.mvt 119398 octets {'units': 1375, 'lines': 107}
+   clés units ['best_age_bottom', 'best_age_top', 'color', 'legend_id', 'lith_class1', 'lith_type1', 'lith_type2', 'map_id', 'source_id']
+      units {'map_id': '3160643', 'source_id': '147', 'legend_id': '66275', 'best_age_top': '358.9', 'best_age_bottom': '393.3', 'color': '#b47d26', 'lith_class1': 'sedimentary', 'lith_type1': 'carbonate', 'lith_type2': 'siliciclastic'}
+      units {'map_id': '2604061', 'source_id': '94', 'legend_id': '53915', 'best_age_top': '237.0', 'best_age_bottom': '247.2', 'color': '#9b4f99', 'lith_class1': 'sedimentary', 'lith_type1': 'carbonate', 'lith_type2': 'siliciclastic'}
+      units {'map_id': '2604504', 'source_id': '94', 'legend_id': '53926', 'best_age_top': '242.0', 'best_age_bottom': '272.95', 'color': '#00e6f3', 'lith_class1': 'sedimentary', 'lith_type1': 'siliciclastic'}
+      units {'map_id': '2607662', 'source_id': '94', 'legend_id': '53926', 'best_age_top': '242.0', 'best_age_bottom': '272.95', 'color': '#00e6f3', 'lith_class1': 'sedimentary', 'lith_type1': 'siliciclastic'}
+   clés lines ['descrip', 'direction', 'line_id', 'name', 'source_id', 'type']
+      lines {'line_id': '1868057', 'source_id': '249', 'descrip': '', 'name': '', 'direction': '', 'type': 'fault'}
+      lines {'line_id': '1868076', 'source_id': '249', 'descrip': '', 'name': '', 'direction': '', 'type': 'fault'}
+      lines {'line_id': '1868098', 'source_id': '249', 'descrip': '', 'name': '', 'direction': '', 'type': 'fault'}
+      lines {'line_id': '1147835', 'source_id': '94', 'descrip': '', 'name': '', 'direction': '', 'type': 'thrust fault'}
+https://tiles.macrostrat.org/burwell/7/66/43.mvt ERREUR HTTP Error 404: Not Found
+https://tiles.macrostrat.org/all/7/66/43.mvt ERREUR HTTP Error 404: Not Found
