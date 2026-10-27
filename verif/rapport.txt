@@ -1,12 +1,12 @@
-https://theo52400.github.io/coins-champi/ — 2026-10-27T23:25:23.330Z
-12/15 vérifications réussies
+https://theo52400.github.io/coins-champi/ — 2026-10-27T23:31:01.052Z
+15/15 vérifications réussies
 
 OK     L'appli démarre
-         {"version":"v2026-10-27-34852dd5"}
+         {"version":"v2026-10-27-a6a2c53a"}
 OK     Connexion au serveur du jeu (Firebase, compte anonyme)
-         {"kind":"firebase","uid":"n7RVna","banner":null}
+         {"kind":"firebase","uid":"wu1IfJ","banner":null}
 OK     Écriture et relecture dans Firestore (puis effacement)
-         {"ecriture":true,"relu":"Vérification","ms":2115}
+         {"ecriture":true,"relu":"Vérification","ms":2634}
 OK     Ma position s'affiche sur la carte
          "point (pas encore de profil)"
 OK     Sous-sol chargé et cohérent (grès, calcaire, craie, sables, granite)
@@ -15,23 +15,23 @@ OK     Peuplements forestiers IGN chargés et grille de potentiel calculée
          {"tuiles":{"ok":2,"err":0,"wait":0,"total":2},"peuplements":232,"erreur":null}
 OK     Fiche d'un point : peuplement, sol, sous-sol, commune, altitude
          "CE POINT Peuplement Forêt fermée de chênes décidus purs (Chênes décidus) Sol estimé Sol acide Sous-sol Grès, conglomérats et quartzites (Trias inférieur) Commune Bitche Lisière à ≈ 679 m · transition de peuplements Altitude 305 m Distance 991 m de vous Cèpes 77 Girolles 74 Pieds de mouton 72 Pieds b"
-ÉCHEC  Service d'itinéraire piéton IGN joignable depuis le site (CORS)
-         {"status":400,"corps":"{\"error\":{\"message\":\" Parameter 'resource' is invalid: it does not exist on this service \"}}"}
-ÉCHEC  Itinéraire tracé dans l'appli (chemin IGN + ligne directe)
-         {"dist":"991 m","sub":"Vers ce point (Bitche) · 14 min à pied · tout droit, cap nord-est","calques":2}
+OK     Service d'itinéraire piéton IGN joignable depuis le site (CORS)
+         {"status":200,"n":31,"distance":1051.12,"duration":947.008,"unite":"meter"}
+OK     Itinéraire tracé dans l'appli (chemin IGN + ligne directe)
+         {"dist":"1,1 km","sub":"Vers ce point (Bitche) · 16 min à pied · 991 m à vol d'oiseau","calques":5}
 OK     Mode poche
-         {"ouvert":true,"grand":"991 m","gps":"GPS : ± 10 m"}
+         {"ouvert":true,"grand":"1,1 km","gps":"GPS : ± 10 m"}
 OK     Mode poche : appui long pour sortir
 OK     Commune au point (geo.api.gouv.fr)
          "Bitche"
-ÉCHEC  Recherche d'une commune : Fontainebleau
-         {"lat":46.69925897839863,"lng":5.442695617675782}
+OK     Recherche d'une commune : Fontainebleau
+         {"lat":48.42350498388312,"lng":2.682037353515625}
 OK     Météo Open-Meteo
          {"status":200,"jours":15}
 OK     Aucune erreur JavaScript
          []
 
-Requêtes réussies : {"Firebase":22,"sous-sol":42,"météo":7,"tuiles IGN":34,"communes":9,"BD Forêt (WFS)":17,"altitude IGN":1,"itinéraire IGN":4}
+Requêtes réussies : {"sous-sol":41,"Firebase":12,"météo":7,"tuiles IGN":45,"communes":9,"BD Forêt (WFS)":17,"altitude IGN":1,"itinéraire IGN":4}
 
 Itinéraire, capacités : [
  {
@@ -518,35 +518,7 @@ Itinéraire, capacités : [
 
 Itinéraire, variantes : [
  {
-  "q": "&resource=bdtopo-osrm&profile=pedestrian&optimization=fastest&geometryFormat=geojson&getSteps=false&getBbox=false",
-  "status": 400,
-  "points": null,
-  "corps": "{\"error\":{\"message\":\" Parameter 'resource' is invalid: it does not exist on this service \"}}"
- },
- {
-  "q": "&resource=bdtopo-osrm&profile=pedestrian&optimization=fastest",
-  "status": 400,
-  "points": null,
-  "corps": "{\"error\":{\"message\":\" Parameter 'resource' is invalid: it does not exist on this service \"}}"
- },
- {
-  "q": "&resource=bdtopo-osrm&profile=car&optimization=fastest&geometryFormat=geojson",
-  "status": 400,
-  "points": null,
-  "corps": "{\"error\":{\"message\":\" Parameter 'resource' is invalid: it does not exist on this service \"}}"
- },
- {
   "q": "&resource=bdtopo-pgr&profile=pedestrian&optimization=shortest&geometryFormat=geojson",
-  "status": 200,
-  "points": 31
- },
- {
-  "q": "&resource=bdtopo-pgr&profile=pedestrian&optimization=fastest&geometryFormat=geojson",
-  "status": 200,
-  "points": 31
- },
- {
-  "q": "&resource=bdtopo-valhalla&profile=pedestrian&optimization=fastest&geometryFormat=geojson",
   "status": 200,
   "points": 31
  },
@@ -560,30 +532,18 @@ Itinéraire, variantes : [
 Communes « fontaineb » : ["Fontainebrux (39, 224 hab.)","Fontainebleau (77, 15583 hab.)"]
 
 Erreurs HTTP :
-400 https://data.geopf.fr/navigation/itineraire?start=7.5200,49.0400&end=7.5310,49.0452&resource=bdtopo-osrm&profile=pedestrian&optimization=fastest&geometryFormat=
-400 https://data.geopf.fr/navigation/itineraire?start=7.5200,49.0400&end=7.5310,49.0452&resource=bdtopo-osrm&profile=pedestrian&optimization=fastest
-400 https://data.geopf.fr/navigation/itineraire?start=7.5200,49.0400&end=7.5310,49.0452&resource=bdtopo-osrm&profile=car&optimization=fastest&geometryFormat=geojson
-400 https://data.geopf.fr/navigation/itineraire?resource=bdtopo-osrm&profile=pedestrian&optimization=fastest&start=7.5200,49.0400&end=7.5310,49.0452&geometryFormat=
-400 https://data.geopf.fr/navigation/itineraire?resource=bdtopo-osrm&profile=pedestrian&optimization=fastest&start=7.520000,49.040000&end=7.530999,49.045215&geometr
 
 Console :
 warning Info: The current domain is not authorized for OAuth operations. This will prevent signInWithPopup, signInWithRedirect, linkWithPopup and linkWithRedirect from working. Add your domain (theo52400.github.io) to the OAuth redirect domains list in the Firebase console -> Authentication -> Settings -> A
-warning [GroupMarkerNotSet(crbug.com/242999)!:A0901C00FC2F0000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.
-warning [.WebGL-0xfdc02498700]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
-warning [.WebGL-0xfdc02498700]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
-warning [.WebGL-0xfdc02498700]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
-warning [.WebGL-0xfdc02498700]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)
-warning [GroupMarkerNotSet(crbug.com/242999)!:A0601C00FC2F0000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.
-warning [GroupMarkerNotSet(crbug.com/242999)!:A0C0EF02FC2F0000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.
-error Failed to load resource: the server responded with a status of 400 ()
-error Failed to load resource: the server responded with a status of 400 ()
-error Failed to load resource: the server responded with a status of 400 ()
-error Failed to load resource: the server responded with a status of 400 ()
-error Failed to load resource: the server responded with a status of 400 ()
+warning [GroupMarkerNotSet(crbug.com/242999)!:A0901C001C0A0000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.
+warning [.WebGL-0x1aec00a41b00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
+warning [.WebGL-0x1aec00a41b00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
+warning [.WebGL-0x1aec00a41b00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
+warning [.WebGL-0x1aec00a41b00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)
+warning [GroupMarkerNotSet(crbug.com/242999)!:A0601C001C0A0000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.
+warning [GroupMarkerNotSet(crbug.com/242999)!:A0802C031C0A0000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.
 
 Journal de l'appli :
-23:25:24 Connecté (firebase), joueur n7RVnaHj
-23:25:34 Source forêts : LANDCOVER.FORESTINVENTORY.V2:formation_vegetale
-23:25:41 Itinéraire IGN : HTTP 400
-23:25:41 Itinéraire : ligne directe seulement
-23:26:03 Écran allumé : Wake Lock permission request denied
+23:31:02 Connecté (firebase), joueur wu1IfJPE
+23:31:13 Source forêts : LANDCOVER.FORESTINVENTORY.V2:formation_vegetale
+23:31:21 Écran allumé : Wake Lock permission request denied
