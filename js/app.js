@@ -100,10 +100,22 @@ async function startSync() {
     startUserWatchers();
   } catch (e) {
     log('Connexion : ' + (e.code || '') + ' ' + e.message);
-    showBanner('Pas de connexion au serveur du jeu. La carte fonctionne ; le jeu reprend dès que le réseau revient.', 'Réessayer', () => startSync());
+    const why = connProblem(e);
+    showBanner(why ? 'Le jeu ne peut pas se connecter : ' + why : 'Pas de connexion au serveur du jeu. La carte fonctionne ; le jeu reprend dès que le réseau revient.', 'Réessayer', () => startSync());
     $('#banner').dataset.kind = 'offline';
     clearTimeout(syncRetry); syncRetry = setTimeout(startSync, 60000);
   } finally { syncing = false; }
+}
+// Causes connues d'un échec de connexion Firebase, expliquées avec l'endroit où corriger (null : simple problème de réseau)
+function connProblem(e) {
+  const c = ((e && e.code) || '') + ' ' + ((e && e.message) || '');
+  if (/admin-restricted-operation|operation-not-allowed|ADMIN_ONLY_OPERATION|OPERATION_NOT_ALLOWED/.test(c)) return 'la connexion « Anonyme » n\'est pas activée dans Firebase (Authentication → Méthode de connexion → Anonyme → Activer → Enregistrer).';
+  if (/configuration-not-found|CONFIGURATION_NOT_FOUND/.test(c)) return 'Authentication n\'est pas encore activé dans Firebase (Authentication → Commencer, puis activer « Anonyme »).';
+  if (/unauthorized-domain/.test(c)) return 'cette adresse n\'est pas autorisée par Firebase (Authentication → Paramètres → Domaines autorisés → ajouter ' + location.hostname + ').';
+  if (/requests-from-referer/.test(c)) return 'la clé API de Firebase est réservée à d\'autres sites (Google Cloud → API et services → Identifiants → clé du navigateur → ajouter ' + location.hostname + ').';
+  if (/api-key|API_KEY|project-not-found|app-not-authorized/i.test(c)) return 'la configuration Firebase de l\'appli est refusée (' + ((e && e.code) || 'clé API') + ').';
+  if (navigator.onLine === false || /network-request-failed|Connexion au serveur impossible|timeout/i.test(c)) return null;
+  return 'erreur ' + ((e && e.code) || (e && e.message) || 'inconnue') + '. Menu ☰ → Diagnostic pour le détail.';
 }
 function showBanner(text, action, fn, onDismiss) {
   const b = $('#banner'); b.dataset.kind = ''; b.innerHTML = '<span>' + esc(text) + '</span>' + (action ? '<button>' + esc(action) + '</button>' : '') + '<button aria-label="Fermer">✕</button>';
