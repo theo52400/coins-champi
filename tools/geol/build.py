@@ -15,6 +15,8 @@ Pour un essai hors réseau : --from-dir DOSSIER lit DOSSIER/{z}/{x}/{y}.mvt.
 """
 import argparse
 import gzip
+import struct
+import zlib
 import hashlib
 import json
 import math
@@ -311,7 +313,7 @@ def legend_id(props):
 
 # ---------------------------------------------------------------------------------------------------------
 # Remplissage de polygones sur la grille nationale (règle pair-impair : les trous sont respectés)
-def fill(grid, rings, val):
+def fill(grid, rings, val, sgrid=None, sval=0):
     X1, Y1, X2, Y2 = [], [], [], []
     for c, r in rings:
         if len(c) < 3:
@@ -353,6 +355,8 @@ def fill(grid, rings, val):
     np.add.at(D, (ra - r0, c1 - cmin), -1)
     cov = np.cumsum(D, axis=1)[:, :cmax - cmin] > 0
     grid[r0:r1, cmin:cmax][cov] = val
+    if sgrid is not None:
+        sgrid[r0:r1, cmin:cmax][cov] = sval
     return int(cov.sum())
 
 
@@ -407,9 +411,12 @@ def main():
     ap.add_argument('--from-dir')
     ap.add_argument('--workers', type=int, default=8)
     ap.add_argument('--limit', type=int, default=0)
+    ap.add_argument('--diag', help='dossier des images de contrôle (sources, classes)')
     a = ap.parse_args()
     os.makedirs(a.out, exist_ok=True)
     grid = np.zeros((H, W), np.uint16)
+    sgrid = np.zeros((H, W), np.uint8)
+    sids = {}
     todo = tile_range(a.zoom)
     if a.limit:
         todo = todo[:a.limit]
@@ -457,7 +464,7 @@ def main():
                             rings.append(rg)
                 if rings:
                     feats += 1
-                    cells += fill(grid, rings, lid)
+                    cells += fill(grid, rings, lid, sgrid, sids.setdefault(sid, len(sids) + 1))
             if done % 200 == 0:
                 print('  %d/%d tuiles, %d unités, %.0f s' % (done, len(todo), feats, time.time() - t0), flush=True)
     print('Lu : %d tuiles (%d vides, %d en échec), %d polygones, %.0f s' % (done, empty, len(failed), feats, time.time() - t0))
@@ -509,6 +516,8 @@ def main():
         print('  %s %-34s %-13s %s%s' % ('ok ' if got in want else '?? ', nm, names[got], e[1] if e else '—', (' (' + e[2] + ')') if e and e[2] else ''))
         if lid in SAMPLE:
             print('        source %s : %s | %s' % SAMPLE[lid])
+    if a.diag:
+        diag(a.diag, grid, sgrid, sids, cls_of)
     print('\nTermes les plus fréquents -> famille :')
     for (term, fam), n in TERM_FAMILY.most_common(70):
         print('  %5d  %-40s %s' % (n, term[:40], fam))
@@ -518,6 +527,33 @@ def main():
     print('\nLégende (extrait) :')
     for i, e in enumerate(LEGEND_LIST[1:80], 1):
         print('  %3d  %s  %s  %s' % (i, names[e[0]], e[1], e[2]))
+
+
+def write_png(path, rgb):
+    h, w, _ = rgb.shape
+    raw = b''.join(b'\x00' + rgb[y].tobytes() for y in range(h))
+    chunk = lambda t, d: struct.pack('>I', len(d)) + t + d + struct.pack('>I', zlib.crc32(t + d) & 0xffffffff)
+    with open(path, 'wb') as fh:
+        fh.write(b'\x89PNG\r\n\x1a\n' + chunk(b'IHDR', struct.pack('>IIBBBBB', w, h, 8, 2, 0, 0, 0)) + chunk(b'IDAT', zlib.compress(raw, 9)) + chunk(b'IEND', b''))
+
+
+SRC_COL = {'249': (205, 205, 205), '94': (240, 150, 40), '49': (60, 170, 80), '140': (150, 80, 200), '77': (230, 210, 40),
+           '23': (40, 190, 220), '207': (220, 40, 40)}
+CLS_COL = [(255, 255, 255), (179, 16, 61), (199, 125, 18), (44, 111, 176), (122, 106, 46)]
+
+
+def diag(out, grid, sgrid, sids, cls_of):
+    os.makedirs(out, exist_ok=True)
+    pal = np.zeros((256, 3), np.uint8) + 255
+    for sid, i in sids.items():
+        pal[i] = SRC_COL.get(sid, (0, 0, 0))
+    write_png(os.path.join(out, 'sources.png'), pal[sgrid[::2, ::2]])
+    cpal = np.array(CLS_COL, np.uint8)
+    write_png(os.path.join(out, 'classes.png'), cpal[cls_of[grid[::2, ::2]]])
+    r0, r1, c0, c1 = (LAT1 - 50) * N, (LAT1 - 47.5) * N, (4.5 - LON0) * N, (8.5 - LON0) * N
+    write_png(os.path.join(out, 'sources-nord-est.png'), pal[sgrid[int(r0):int(r1), int(c0):int(c1)]])
+    write_png(os.path.join(out, 'classes-nord-est.png'), cpal[cls_of[grid[int(r0):int(r1), int(c0):int(c1)]]])
+    print('\nImages de contrôle écrites dans', out, '— couleurs des sources :', {s: SRC_COL.get(s, (0, 0, 0)) for s in sids})
 
 
 CHECKS = [

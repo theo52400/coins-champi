@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ['tools/geol/build.py', '.github/workflows/geol-france.yml']
+    paths: ['tools/geol/build.py', 'tools/geol/probe_sources.py', '.github/workflows/geol-france.yml']
 permissions:
   contents: write
 concurrency:
@@ -26,7 +26,8 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
-          rm -rf /tmp/geol && python3 tools/geol/build.py /tmp/geol 2>&1 | tee tools/geol/build.log
+          mkdir -p /tmp/diag && (python3 tools/geol/probe_sources.py > /tmp/diag/sonde-sources.log 2>&1 || true)
+          rm -rf /tmp/geol && python3 tools/geol/build.py /tmp/geol --diag /tmp/diag 2>&1 | tee tools/geol/build.log
           rm -rf data/geol && mkdir -p data && cp -r /tmp/geol data/geol
       - name: Publier dans le dépôt
         shell: bash
@@ -36,5 +37,10 @@ jobs:
           git add -A data/geol tools/geol/build.log
           git diff --cached --quiet && { echo "Rien de neuf"; exit 0; }
           git commit -qm "Sous-sol de la France : tuiles géologiques (BRGM 1/1 000 000 via Macrostrat)"
-          for i in 1 2 3; do git pull -q --rebase origin main && git push -q origin HEAD:main && exit 0; sleep 5; done
-          exit 1
+          for i in 1 2 3; do git pull -q --rebase origin main && git push -q origin HEAD:main && break; sleep 5; done
+      - name: Images de contrôle sur la branche sondes
+        shell: bash
+        run: |
+          git fetch -q origin sondes && git switch -q sondes || git switch -q --orphan sondes
+          rm -rf geol && cp -r /tmp/diag geol && cp tools/geol/build.log geol/ 2>/dev/null || true
+          git add -A geol && git commit -qm "Sous-sol : images de contrôle" && git push -q origin sondes
