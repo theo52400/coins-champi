@@ -1,0 +1,260 @@
+Tuiles Macrostrat à lire : 1890 (zoom 10)
+  400/1890 tuiles, 5114 unités, 5 s
+  600/1890 tuiles, 9465 unités, 8 s
+  800/1890 tuiles, 18395 unités, 12 s
+  1000/1890 tuiles, 61339 unités, 20 s
+  1200/1890 tuiles, 75554 unités, 22 s
+  1400/1890 tuiles, 80821 unités, 23 s
+  1600/1890 tuiles, 94439 unités, 27 s
+  1800/1890 tuiles, 107641 unités, 30 s
+Lu : 1890 tuiles (517 vides, 1 en échec), 113705 polygones, 44 s
+  échec (10, 515, 381) HTTP 503
+Écrit : 149 tuiles de 1°, 742 entrées de légende, 0.6 Mo, version a0de5e2e
+
+Répartition des cases renseignées (4036260) :
+  acide           43.3 %
+  intermédiaire   12.4 %
+  calcaire        33.3 %
+  argileux        11.0 %
+
+Sources Macrostrat (unités lues) : 140:49264, 249:28195, 49:24403, 94:7265, 77:4462, 23:1653, 207:733
+
+Points de contrôle :
+  ok  Vosges du Nord (grès)              acide         Grès et conglomérats
+  ok  Forêt de Haye (calcaire)           calcaire      Calcaires et calcaires marneux (Jurassique moyen)
+  ok  Morvan (granite)                   acide         Rhyolites, laves et roches magmatiques (Tournaisien à Viséen)
+  ok  Champagne crayeuse                 calcaire      Craie, calcaires et calcaires marneux (Crétacé supérieur)
+  ok  Vercors (calcaire)                 calcaire      Calcaires marneux, conglomérats et calcaires (Miocène)
+  ok  Landes (sables)                    acide         Sables, argiles et graviers (Pliocène à Pléistocène)
+  ok  Forêt de Fontainebleau             calcaire      Calcaires marneux, argiles et calcaires (Oligocène)
+  ok  Sologne (sables et argiles)        acide         Sables, argiles et graviers (Holocène)
+  ok  Bretagne intérieure                acide         Quartzites, grès et schistes (Ordovicien)
+  ok  Limousin (granite)                 acide         Granite (Viséen à Carbonifère)
+  ok  Bresse                             argileux      Argiles, graviers et sables
+  ok  Jura (calcaire)                    calcaire      Calcaires et gypse (Jurassique supérieur)
+  ok  Grands Causses                     calcaire      Calcaires, argiles et dolomies (Jurassique supérieur)
+  ok  Monts Dore (volcans)               intermédiaire Laves et roches volcaniques (Pléistocène supérieur à Holocène)
+  ok  Ardennes (schistes)                acide         Grauwackes, quartzites et schistes (Cambrien)
+  ok  Vosges cristallines                acide         Granite (Viséen à Carbonifère)
+  ??  Plaine d'Alsace                    acide         Sables, argiles et graviers (Holocène)
+  ok  Sainte-Baume (calcaire)            calcaire      Calcaires marneux, argiles et calcaires (Jurassique supérieur)
+  ok  Corse (granite)                    acide         Granite (Carbonifère supérieur supérieur)
+  ok  Pays de Caux (craie)               calcaire      Craie, calcaires et calcaires marneux (Crétacé supérieur)
+  ok  Pays nantais                       acide         Sables, argiles et graviers (Holocène)
+  ??  Forêt de Saint-Avold (grès)        calcaire      Calcaires marneux, argiles et dolomies (Trias supérieur)
+  ok  Plateau lorrain                    argileux      Argiles, marnes et calcaires
+
+Termes les plus fréquents -> famille :
+    214  sandstone                                gres
+    184  limestone                                calcaire
+    159  schist                                   schiste
+    114  clay                                     argile
+    102  conglomerate                             conglomerat
+     96  sand                                     sable
+     92  impure carbonate                         calcaire_marneux
+     75  quartzite                                quartzite
+     65  metamorphic rock                         metamorphique
+     57  gravel                                   graviers
+     49  mica schist                              micaschiste
+     44  paragneiss                               gneiss
+     41  gneiss                                   gneiss
+     40  amphibolite                              amphibolite
+     39  dolomite                                 dolomie
+     35  evaporite                                gypse
+     34  granite                                  granite
+     25  mudstone                                 argile
+     25  rhyolite, rhyolitic rock                 rhyolite
+     24  slate                                    ardoise
+     24  claystone                                argile
+     22  siltstone                                siltite
+     21  basalt                                   basalte
+     20  fragmental igneous rock                  magmatique
+     20  diorite                                  diorite
+     20  biogenic carbonate rocks                 calcaire
+     19  granodiorite                             granite
+     17  silt                                     limons
+     17  orthogneiss                              gneiss
+     17  coal                                     charbon
+     16  greywacke                                grauwacke
+     16  andesite                                 lave
+     15  gabbro                                   gabbro
+     15  siliciclastic sedimentary rocks          detritique
+     15  metamorphic rocks                        metamorphique
+     15  mostly metasedimentary                   metamorphique
+     14  monzogranite                             granite
+     14  marl to calcareous phyllite              ardoise
+     14  interbedded sandstone                    gres
+     12  marl                                     marne
+     12  migmatite                                migmatite
+     12  often somewhat marly limestone           calcaire
+     11  dolerite                                 basalte
+     11  tonalite                                 granite
+     11  marble                                   marbre
+     11  marlstone                                marne
+     10  dolostone                                dolomie
+      9  evaporites                               gypse
+      9  basanite                                 basalte
+      9  argillaceous shale                       schiste_arg
+      9  graywacke                                grauwacke
+      9  compact sandstone                        gres
+      9  layers of marl schist                    schiste
+      9  calcareous phyllite                      ardoise
+      8  trachyte                                 lave
+      7  marl. sandstone                          gres
+      7  gypsum                                   gypse
+      7  granitoid  (granite)                     granite
+      7  serpentinite                             serpentinite
+      7  igneous rock                             magmatique
+      7  quartz diorite                           diorite
+      6  mafic lava                               lave
+      6  breccia                                  breche
+      6  impure dolomite                          dolomie
+      6  phonolite                                lave
+      6  granite in tonalite                      granite
+      6  quartz syenite                           diorite
+      5  mafic tuff                               tuf_volc
+      5  chalk                                    craie
+      5  eclogite                                 amphibolite
+
+Termes non reconnus :
+     35  tuffite
+     12  trachytoid
+     11  metasomatic rock
+     10  solid
+     10  abundant feldspar
+      8  sericite
+      8  epidote
+      8  chlorite
+      7  interbedded
+      7  tephrite
+      5  diatomite
+      4  compoundmaterial
+      4  often calcareous
+      3  ironstone
+      3  ferricrete
+      3  blocks
+      3  predominantly calcareous
+      3  partly pebbly
+      3  brash
+      3  pebbly
+      3  lime
+      2  argillaceous rocks
+      2  dolomitic
+      2  nephelinite
+      2  mainly blocks
+      2  landslide
+      2  glass
+      2  latite
+      2  keratophyre
+      2  meta-ultrabasite
+      2  tectonic melange
+      2  granodioritic
+      2  basic dikes
+      1  ultramafitite
+      1  lutite
+      1  crushed stone
+      1  in parts increasingly calcareous downwards
+      1  lime-
+      1  iron ore seams
+      1  plattenkalk
+      1  kieselkalk
+      1  leucitite
+      1  melaphyre
+      1  diorit
+      1  redwitzite
+      1  snow
+      1  trass
+      1  carbonatite
+      1  essexite
+      1  theralite
+      1  sporadic kieselkalk
+      1  olivine nephelinite
+      1  ries
+      1  diatexite
+      1  palite
+      1  cemented
+      1  ultra-basite
+      1  dolomitic interbeds
+      1  plattensandstein
+      1  so-called rotgneis
+
+Légende (extrait) :
+    1  intermédiaire  Laves  Dévonien
+    2  argileux  Argiles, siltites et grès  
+    3  acide  Granite  Carbonifère à Permien
+    4  intermédiaire  Basaltes  Dévonien
+    5  argileux  Argiles, siltites et grès  Dévonien supérieur
+    6  argileux  Argiles, limons et sables  Éocène à Miocène
+    7  intermédiaire  Graviers, sables et limons  Néogène
+    8  acide  Grès, conglomérats et argiles  
+    9  intermédiaire  Graviers, conglomérats et sables  Pléistocène
+   10  intermédiaire  Graviers, conglomérats et sables  Holocène
+   11  acide  Conglomérats, grès et argiles  
+   12  acide  Quartzites, schistes ardoisiers et grès  
+   13  acide  Conglomérats, grès et schistes ardoisiers  Carbonifère
+   14  calcaire  Dolomies, calcaires et grès  Carbonifère
+   15  calcaire  Dolomies, calcaires et grès  Crétacé supérieur
+   16  acide  Conglomérats, grès et calcaires  
+   17  acide  Grès, schistes ardoisiers et calcaires  
+   18  acide  Conglomérats, grès et schistes ardoisiers  Carbonifère supérieur
+   19  acide  Conglomérats, grès et schistes ardoisiers  
+   20  calcaire  Dolomies, calcaires et marnes  
+   21  calcaire  Dolomies, calcaires et grès  Crétacé inférieur
+   22  calcaire  Calcaires, dolomies et grès  
+   23  calcaire  Calcaires, dolomies et grès  Jurassique inférieur
+   24  calcaire  Calcaires et argiles  Dévonien
+   25  acide  Grès et conglomérats  Dévonien inférieur
+   26  argileux  Argiles, siltites et grès  Dévonien inférieur
+   27  intermédiaire  Brèches  Dévonien supérieur
+   28  acide  Roches magmatiques  Dévonien
+   29  acide  Schistes  Dévonien
+   30  acide  Grès et conglomérats  
+   31  acide  Micaschistes  Dévonien
+   32  acide  Granite  Dévonien
+   33  acide  Granite  Carbonifère à Carbonifère supérieur supérieur
+   34  acide  Roches métamorphiques, micaschistes et schistes  
+   35  acide  Granite  
+   36  acide  Granite  Tournaisien à Viséen
+   37  acide  Granite  Paléogène
+   38  intermédiaire  Roches volcaniques  Carbonifère
+   39  intermédiaire  Basaltes  Carbonifère à Permien
+   40  acide  Micaschistes, amphibolites et gneiss  
+   41  acide  Migmatites et amphibolites  
+   42  acide  Roches métamorphiques et amphibolites  Ordovicien supérieur à Silurien
+   43  acide  Gneiss  Cambrien à Ordovicien moyen
+   44  acide  Granite  Viséen à Carbonifère
+   45  acide  Micaschistes et gneiss  
+   46  acide  Roches métamorphiques et gneiss  Cambrien à Ordovicien moyen
+   47  acide  Grès, charbon et conglomérats  Carbonifère supérieur supérieur
+   48  acide  Grauwackes, grès et schistes  
+   49  acide  Schistes, calcaires et quartzites  Dévonien inférieur
+   50  acide  Roches métamorphiques  Cambrien à Ordovicien moyen
+   51  acide  Schistes, quartzites et grès  Silurien
+   52  acide  Quartzites, grès et schistes  Ordovicien
+   53  argileux  Argiles, graviers et sables  
+   54  argileux  Argiles, calcaires marneux et calcaires  Oligocène
+   55  acide  Schistes et quartzites  Silurien à Dévonien inférieur
+   56  acide  Micaschistes, gneiss et quartzites  
+   57  acide  Grès et conglomérats  Dévonien supérieur
+   58  acide  Grès et conglomérats  Permien
+   59  intermédiaire  Laves et roches volcaniques  Dévonien
+   60  intermédiaire  Laves et roches volcaniques  Carbonifère
+   61  intermédiaire  Laves  Carbonifère
+   62  acide  Sables et argiles  Holocène
+   63  acide  Sables, argiles et graviers  Holocène
+   64  acide  Schistes, calcaires et grès  Dévonien moyen à Dévonien supérieur
+   65  acide  Roches métamorphiques, micaschistes et gneiss  
+   66  intermédiaire  Serpentinites  
+   67  acide  Gneiss et amphibolites  Cambrien à Ordovicien
+   68  acide  Micaschistes, amphibolites et gneiss  Ordovicien à Silurien
+   69  acide  Grès, conglomérats et schistes  Ordovicien
+   70  acide  Conglomérats, grès et argiles  Éocène
+   71  acide  Conglomérats, grès et calcaires  Trias
+   72  calcaire  Dolomies, calcaires et grès  Crétacé
+   73  calcaire  Calcaires et grès  
+   74  intermédiaire  Laves  Permien
+   75  intermédiaire  Roches volcaniques  Dévonien
+   76  acide  Micaschistes, gneiss et quartzites  Silurien à Dévonien inférieur
+   77  acide  Schistes, calcaires et grès  Tournaisien à Viséen
+   78  acide  Rhyolites et roches magmatiques  Tournaisien à Viséen
+   79  acide  Grauwackes, charbon et grès  Viséen à Carbonifère
