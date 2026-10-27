@@ -46,7 +46,9 @@ FAMILIES = [
     (r'\bwater\b|\blakes?\b|glacier|\bice\b', 'eau', None, 0, False),
     (r'\bpeat|\bbog\b', 'tourbe', 'tourbe', 1, False),
     (r'\bcoal|lignite', 'charbon', 'charbon', 1, False),
-    (r'calc-?schists?|calcschists?|schistes? lustr', 'calcschiste', 'calcschistes', 3, False),
+    (r'calc-?schists?|calcschists?|schistes? lustr|calcareous (?:phyllites?|schists?|slates?)', 'calcschiste', 'calcschistes', 3,
+     False),
+    (r'\bmarl(?:y)? (?:schists?|slates?|shales?)', 'marne', 'marnes', 4, False),
     (r'mica[ -]?schists?', 'micaschiste', 'micaschistes', 1, False),
     (r'schists?\b', 'schiste', 'schistes', 1, False),
     (r'\bslates?\b|phyllites?|phyllades?', 'ardoise', 'schistes ardoisiers', 1, False),
@@ -86,7 +88,9 @@ FAMILIES = [
     (r'basalts?|basanites?|dolerites?|diabases?|spilites?|basic igneous|\bmafic', 'basalte', 'basaltes', 2, False),
     (r'andesites?|trachytes?|phonolites?|trachyandesites?|intermediate composition igneous|\blavas?\b', 'lave',
      'laves', 2, False),
-    (r'\btuffs?\b|tephra|pyroclast\w*|volcanic|cinders?|scoria|\bash\b', 'tuf_volc', 'roches volcaniques', 2, False),
+    (r'\btuffs?\b|tuffites?|tephra|pyroclast\w*|volcanic|cinders?|scoria|\bash\b|fragmental igneous', 'tuf_volc',
+     'roches volcaniques', 2, False),
+    (r'siliciclastic', 'siliciclastique', 'roches détritiques siliceuses', 1, False),
     (r'gabbros?|norites?', 'gabbro', 'gabbros', 2, False),
     (r'diorites?|monzonites?|syenites?', 'diorite', 'diorites', 2, False),
     (r'amphibolites?|eclogites?|greenstones?|metabasites?|prasinites?|ophiolit\w*', 'amphibolite', 'amphibolites',
@@ -187,23 +191,44 @@ PERIODS = {
     'cadomian': 'cadomien',
 }
 QUAL = {'lower': 'inférieur', 'early': 'inférieur', 'middle': 'moyen', 'upper': 'supérieur', 'late': 'supérieur'}
+# étages régionaux (frontière allemande, Bassin houiller) : déjà situés dans leur période
+STAGES = {
+    'buntsandstein': 'Buntsandstein', 'muschelkalk': 'Muschelkalk', 'keuper': 'Keuper', 'lettenkohle': 'Lettenkohle',
+    'rotliegend': 'Permien inférieur', 'rotliegendes': 'Permien inférieur', 'zechstein': 'Permien supérieur',
+}
 
 
 def age_fr(age):
+    """« Lower Triassic » -> « Trias inférieur » ; « Upper Jurassic - Lower Cretaceous » -> « Jurassique supérieur à
+    Crétacé inférieur » ; chaîne vide si l'âge n'est pas reconnu (plutôt que de le laisser en anglais)."""
     if not age:
         return ''
     out = []
-    for piece in re.split(r'\s+-\s+|\s+to\s+', age.strip()):
-        words = [w for w in re.split(r'[\s,]+', piece.strip()) if w]
-        if not words:
-            continue
-        q = None
-        if words[0].lower() in QUAL:
-            q = QUAL[words.pop(0).lower()]
-        if len(words) != 1 or words[0].lower() not in PERIODS:
-            return ''                      # âge non reconnu : on ne l'affiche pas plutôt que de le laisser en anglais
-        out.append(PERIODS[words[0].lower()] + (' ' + q if q else ''))
-    return ' à '.join(out[:2])
+    for piece in re.split(r'\s+-\s+|\s+to\s+|\s*/\s*', age.strip()):
+        words = [w.lower() for w in re.split(r'[\s,;()]+', piece.strip()) if w]
+        lab = None
+        for i, w in enumerate(words):
+            if w in STAGES or w in PERIODS:
+                base = STAGES.get(w) or PERIODS[w]
+                q = QUAL.get(words[i - 1]) if i > 0 else None
+                lab = base + (' ' + q if q and ' ' not in base else '')
+                if w in STAGES:
+                    break                  # l'étage est plus précis que la période qui le précède
+                if not any(x in STAGES for x in words[i + 1:]):
+                    break
+        if lab and lab not in out:
+            out.append(lab)
+    out = out[:2]
+    # « Viséen à Carbonifère » : la période englobe déjà l'étage
+    if len(out) == 2 and (PARENT.get(out[0].split(' ')[0]) == out[1] or PARENT.get(out[1].split(' ')[0]) == out[0]):
+        out = [out[0] if PARENT.get(out[0].split(' ')[0]) == out[1] else out[1]]
+    return ' à '.join(out)
+
+
+PARENT = {'Viséen': 'Carbonifère', 'Tournaisien': 'Carbonifère', 'Namurien': 'Carbonifère', 'Westphalien': 'Carbonifère',
+          'Stéphanien': 'Carbonifère', 'Autunien': 'Permien', 'Saxonien': 'Permien', 'Buntsandstein': 'Trias',
+          'Muschelkalk': 'Trias', 'Keuper': 'Trias', 'Lettenkohle': 'Trias', 'Lias': 'Jurassique', 'Dogger': 'Jurassique',
+          'Malm': 'Jurassique'}
 
 
 def label_of(fams):
@@ -224,10 +249,13 @@ def label_of(fams):
     return s
 
 
+LOOSE = {'sable', 'graviers', 'argile', 'limons', 'alluvions', 'tourbe', 'detritique', 'colluvions'}
 UNIT_CACHE = {}
+SAMPLE = {}          # numéro de légende -> exemple d'unité d'origine (source, lith, âge), pour le contrôle
 LEGEND = {}          # (classe, roche, âge) -> numéro
 LEGEND_LIST = [None]
 SOURCES = Counter()
+SOURCE_INFO = {}
 
 
 def legend_id(props):
@@ -259,12 +287,18 @@ def legend_id(props):
         cls = decide(frac)
         fams = sorted(weights.items(), key=lambda kv: (-kv[1], first[kv[0]]))
         fams = [(k, w) for k, w in fams if w / tot >= 0.1 and FAM_BY_KEY[k][1] > 0]
-        entry = (cls, label_of(fams), age_fr(age))
+        label, afr = label_of(fams), age_fr(age)
+        # dépôts meubles récents (sables, graviers, argiles, limons de l'Holocène) : des alluvions, dont l'acidité
+        # dépend du bassin versant -> sol intermédiaire
+        if re.search(r'holocene|recent', age, re.I) and set(weights) <= LOOSE and 'alluvions' not in weights:
+            cls, label = 2, 'Alluvions : ' + label[0].lower() + label[1:]
+        entry = (cls, label, afr)
         if cls and entry[1]:
             lid = LEGEND.get(entry)
             if lid is None:
                 lid = LEGEND[entry] = len(LEGEND_LIST)
                 LEGEND_LIST.append(list(entry))
+                SAMPLE[lid] = (str(props.get('source_id')), lith[:140], age)
     UNIT_CACHE[key] = lid
     return lid
 
@@ -330,7 +364,7 @@ def fetch(t, from_dir):
         return t, (open(p, 'rb').read() if os.path.exists(p) else b''), None
     url = URL.format(z=z, x=x, y=y)
     err = None
-    for attempt in range(5):
+    for attempt in range(8):
         try:
             req = urllib.request.Request(url, headers={'User-Agent': UA})
             with urllib.request.urlopen(req, timeout=90) as r:
@@ -344,7 +378,7 @@ def fetch(t, from_dir):
             err = 'HTTP %d' % e.code
         except Exception as e:  # réseau
             err = str(e)
-        time.sleep(2 * (attempt + 1))
+        time.sleep(3 * (attempt + 1))
     return t, None, err
 
 
@@ -399,7 +433,11 @@ def main():
             ext = lay.get('extent', 4096)
             for f in lay['features']:
                 props = f.get('properties') or {}
-                SOURCES[str(props.get('source_id'))] += 1
+                sid = str(props.get('source_id'))
+                SOURCES[sid] += 1
+                si = SOURCE_INFO.setdefault(sid, {'t': (props.get('ref_title') or props.get('ref_name') or '')[:90], 'y': props.get('ref_year'), 'bb': [999, 999, -999, -999]})
+                lon_c, lat_c = (tx + 0.5) / 2 ** z * 360 - 180, math.degrees(math.atan(math.sinh(math.pi * (1 - 2 * (ty + 0.5) / 2 ** z))))
+                si['bb'] = [min(si['bb'][0], lon_c), min(si['bb'][1], lat_c), max(si['bb'][2], lon_c), max(si['bb'][3], lat_c)]
                 lid = legend_id(props)
                 if not lid:
                     continue
@@ -451,7 +489,10 @@ def main():
     print('\nRépartition des cases renseignées (%d) :' % tot)
     for c, nm in ((1, 'acide'), (2, 'intermédiaire'), (3, 'calcaire'), (4, 'argileux')):
         print('  %-14s %5.1f %%' % (nm, 100.0 * (cl == c).sum() / tot))
-    print('\nSources Macrostrat (unités lues) :', ', '.join('%s:%d' % kv for kv in SOURCES.most_common(12)))
+    print('\nSources Macrostrat (unités lues) :')
+    for sid, n in SOURCES.most_common(15):
+        si = SOURCE_INFO.get(sid, {})
+        print('  %5s %6d  %s (%s)  lon %.1f..%.1f lat %.1f..%.1f' % ((sid, n, si.get('t'), si.get('y')) + tuple(si.get('bb', [0, 0, 0, 0]))))
     print('\nPoints de contrôle :')
     names = {0: 'inconnu', 1: 'acide', 2: 'intermédiaire', 3: 'calcaire', 4: 'argileux'}
     for lat, lon, nm, want in CHECKS:
@@ -460,6 +501,8 @@ def main():
         e = LEGEND_LIST[lid] if lid else None
         got = e[0] if e else 0
         print('  %s %-34s %-13s %s%s' % ('ok ' if got in want else '?? ', nm, names[got], e[1] if e else '—', (' (' + e[2] + ')') if e and e[2] else ''))
+        if lid in SAMPLE:
+            print('        source %s : %s | %s' % SAMPLE[lid])
     print('\nTermes les plus fréquents -> famille :')
     for (term, fam), n in TERM_FAMILY.most_common(70):
         print('  %5d  %-40s %s' % (n, term[:40], fam))
@@ -493,7 +536,11 @@ CHECKS = [
     (42.10, 9.05, 'Corse (granite)', {1}),
     (49.60, 1.20, 'Pays de Caux (craie)', {3, 4}),
     (47.25, -1.50, 'Pays nantais', {1}),
-    (49.03, 6.85, 'Forêt de Saint-Avold (grès)', {1}),
+    (49.13, 6.72, 'Forêt de Saint-Avold (grès)', {1}),
+    (49.16, 6.80, 'Warndt (grès)', {1}),
+    (48.55, 7.10, 'Forêt de Phalsbourg-Dabo (grès)', {1}),
+    (43.95, 6.20, 'Préalpes de Digne', {3, 4}),
+    (47.00, 0.60, 'Touraine (tuffeau)', {3, 1, 2}),
     (48.80, 6.20, 'Plateau lorrain', {3, 4}),
 ]
 
