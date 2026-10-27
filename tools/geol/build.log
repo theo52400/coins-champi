@@ -1,13 +1,11 @@
 Tuiles Macrostrat à lire : 1890 (zoom 10)
   600/1890 tuiles, 9455 unités, 14 s
-  800/1890 tuiles, 31017 unités, 20 s
-  1000/1890 tuiles, 63649 unités, 25 s
+  1000/1890 tuiles, 63625 unités, 26 s
   1200/1890 tuiles, 77859 unités, 30 s
   1400/1890 tuiles, 83131 unités, 35 s
-  1600/1890 tuiles, 96767 unités, 40 s
-  1800/1890 tuiles, 110051 unités, 46 s
+  1600/1890 tuiles, 96814 unités, 40 s
 Lu : 1890 tuiles (517 vides, 0 en échec), 116076 polygones, 48 s
-Écrit : 149 tuiles de 1°, 802 entrées de légende, 0.7 Mo, version 6d2115b6
+Écrit : 149 tuiles de 1°, 802 entrées de légende, 0.7 Mo, version 5d607d16
 
 Répartition des cases renseignées (4039858) :
   acide           39.2 %
@@ -80,6 +78,8 @@ Points de contrôle :
         source 249 : clay [5.0%..50.0%]; gravel [5.0%..50.0%]; sand [50.0%..95.0%] | Holocene
   ok  Plateau lorrain                    argileux      Argiles, marnes et calcaires (Jurassique)
         source 94 : Clay, clay-marlstone, limestone, sandstone, oil shale | Jurassic, Early Jurassic (Lias)
+
+Images de contrôle écrites dans /tmp/diag — couleurs des sources : {'23': (40, 190, 220), '77': (230, 210, 40), '249': (205, 205, 205), '140': (150, 80, 200), '94': (240, 150, 40), '49': (60, 170, 80), '207': (220, 40, 40)}
 
 Termes les plus fréquents -> famille :
     214  sandstone                                gres
@@ -216,22 +216,22 @@ Termes non reconnus :
       1  dislocated blocks
 
 Légende (extrait) :
-    1  intermédiaire  Laves  Dévonien
-    2  argileux  Argiles, siltites et grès  Dévonien
-    3  acide  Granite  Carbonifère à Permien
-    4  intermédiaire  Basaltes  Dévonien
-    5  argileux  Argiles, siltites et grès  Dévonien supérieur
+    1  intermédiaire  Basaltes  Dévonien
+    2  argileux  Argiles, siltites et grès  Dévonien supérieur
+    3  intermédiaire  Laves  Dévonien
+    4  argileux  Argiles, siltites et grès  Dévonien
+    5  acide  Granite  Carbonifère à Permien
     6  argileux  Argiles, limons et sables  Éocène à Miocène
     7  intermédiaire  Graviers, sables et limons  Néogène
-    8  calcaire  Dolomies, calcaires et marnes  
-    9  calcaire  Dolomies, calcaires et grès  Crétacé inférieur
-   10  acide  Quartzites, schistes ardoisiers et grès  Cambrien
-   11  acide  Conglomérats, grès et schistes ardoisiers  Carbonifère
-   12  calcaire  Calcaires, dolomies et grès  
-   13  calcaire  Dolomies, calcaires et grès  Crétacé supérieur
-   14  calcaire  Dolomies, calcaires et grès  Carbonifère
-   15  calcaire  Calcaires, dolomies et grès  Jurassique inférieur
-   16  acide  Conglomérats, grès et calcaires  
+    8  acide  Quartzites, schistes ardoisiers et grès  Cambrien
+    9  acide  Conglomérats, grès et schistes ardoisiers  Carbonifère
+   10  calcaire  Dolomies, calcaires et grès  Carbonifère
+   11  calcaire  Dolomies, calcaires et grès  Crétacé supérieur
+   12  acide  Conglomérats, grès et calcaires  
+   13  calcaire  Dolomies, calcaires et marnes  
+   14  calcaire  Dolomies, calcaires et grès  Crétacé inférieur
+   15  calcaire  Calcaires, dolomies et grès  
+   16  calcaire  Calcaires, dolomies et grès  Jurassique inférieur
    17  acide  Grès, conglomérats et argiles  
    18  intermédiaire  Graviers, conglomérats et sables  Pléistocène
    19  intermédiaire  Graviers, conglomérats et sables  Holocène
@@ -253,10 +253,10 @@ Légende (extrait) :
    35  acide  Roches métamorphiques, micaschistes et schistes  Cambrien
    36  acide  Granite  Carbonifère inférieur
    37  acide  Granite  Tournaisien à Viséen
-   38  acide  Granite  Paléogène
-   39  intermédiaire  Roches volcaniques  Carbonifère
-   40  intermédiaire  Basaltes  Carbonifère à Permien
-   41  argileux  Argiles, siltites et grès  Namurien à Westphalien
+   38  argileux  Argiles, siltites et grès  Namurien à Westphalien
+   39  acide  Granite  Paléogène
+   40  intermédiaire  Roches volcaniques  Carbonifère
+   41  intermédiaire  Basaltes  Carbonifère à Permien
    42  argileux  Argiles, siltites et grès  
    43  acide  Micaschistes, amphibolites et gneiss  Cambrien
    44  acide  Migmatites et amphibolites  Cambrien
