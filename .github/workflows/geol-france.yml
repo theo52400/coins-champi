@@ -1,0 +1,40 @@
+name: Sous-sol de la France (carte géologique BRGM)
+# Construit data/geol : la roche sous chaque case de 0,005° (environ 500 m), d'après la carte géologique
+# de la France au 1/1 000 000 du BRGM (CC BY 4.0) lue dans les tuiles vectorielles de Macrostrat.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['tools/geol/build.py', '.github/workflows/geol-france.yml']
+permissions:
+  contents: write
+concurrency:
+  group: geol-france
+  cancel-in-progress: false
+jobs:
+  construire:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Installer les bibliothèques
+        run: pip install -q numpy==2.1.3 mapbox-vector-tile==2.2.0
+      - name: Lire la carte et écrire les tuiles
+        shell: bash
+        run: |
+          set -o pipefail
+          rm -rf /tmp/geol && python3 tools/geol/build.py /tmp/geol 2>&1 | tee tools/geol/build.log
+          rm -rf data/geol && mkdir -p data && cp -r /tmp/geol data/geol
+      - name: Publier dans le dépôt
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A data/geol tools/geol/build.log
+          git diff --cached --quiet && { echo "Rien de neuf"; exit 0; }
+          git commit -qm "Sous-sol de la France : tuiles géologiques (BRGM 1/1 000 000 via Macrostrat)"
+          for i in 1 2 3; do git pull -q --rebase origin main && git push -q origin HEAD:main && exit 0; sleep 5; done
+          exit 1
