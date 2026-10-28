@@ -1,5 +1,5 @@
 {
- "date": "2026-10-28T12:13:35.858Z",
+ "date": "2026-10-28T18:23:48.843Z",
  "checks": [
   {
    "name": "L'appli démarre et se connecte au jeu (Firebase)",
@@ -40,7 +40,7 @@
    "name": "Profil créé, groupe de test créé",
    "ok": true,
    "detail": {
-    "gid": "HUKECBAS"
+    "gid": "REJ9XJZZ"
    }
   },
   {
@@ -54,10 +54,10 @@
    "name": "Au premier plan : la trace avance",
    "ok": true,
    "detail": {
-    "trace": 3,
+    "trace": 4,
     "fix": [
-     49.0407209,
-     7.5207069
+     49.0407566,
+     7.5207569
     ]
    }
   },
@@ -75,9 +75,9 @@
    "ok": true,
    "detail": {
     "presence": {
-     "lat": 49.045286,
-     "lng": 7.522954,
-     "ts": 1793190021949
+     "lat": 49.045275,
+     "lng": 7.522949,
+     "ts": 1793212251504
     },
     "dernierePosition": [
      49.0453,
@@ -90,8 +90,8 @@
    "name": "Écran éteint : la trace a continué (positions enregistrées pendant 6 min)",
    "ok": true,
    "detail": {
-    "points": 24,
-    "pendantEcranEteint": 20
+    "points": 23,
+    "pendantEcranEteint": 19
    }
   },
   {
@@ -99,9 +99,9 @@
    "ok": true,
    "detail": {
     "presence": {
-     "lat": 49.045286,
-     "lng": 7.522954,
-     "ts": 1793190076863
+     "lat": 49.045309,
+     "lng": 7.522965,
+     "ts": 1793212307476
     },
     "derniere": [
      49.0453,
@@ -130,13 +130,13 @@
   }
  ],
  "notes": [
-  "12:14:39 écran éteint, application en arrière-plan",
-  "12:19:41 alerte du robot envoyée"
+  "18:25:09 écran éteint, application en arrière-plan",
+  "18:30:11 alerte du robot envoyée"
  ],
  "logsAppli": [
-  "12:14:11 Connecté (firebase), joueur pzPoRdGS",
-  "12:14:16 Source forêts : LANDCOVER.FORESTINVENTORY.V2:formation_vegetale",
-  "12:14:21 Suivi natif démarré (écran éteint possible)"
+  "18:24:37 Connecté (firebase), joueur HV6z1u0G",
+  "18:24:42 Source forêts : LANDCOVER.FORESTINVENTORY.V2:formation_vegetale",
+  "18:24:50 Suivi natif démarré (écran éteint possible)"
  ],
  "resume": "13/13 vérifications réussies, 8 min"
 }
