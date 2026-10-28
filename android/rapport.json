@@ -1,5 +1,5 @@
 {
- "date": "2026-10-28T06:38:48.377Z",
+ "date": "2026-10-28T06:57:18.943Z",
  "checks": [
   {
    "name": "L'appli démarre et se connecte au jeu (Firebase)",
@@ -13,28 +13,51 @@
    }
   },
   {
-   "name": "Profil créé, groupe de test créé",
+   "name": "À l'ouverture, la carte vient sur ma position",
    "ok": true,
    "detail": {
-    "gid": "3HQ98KGY"
+    "z": 15,
+    "c": {
+     "lat": 49.0399983,
+     "lng": 7.5199983
+    },
+    "fix": [
+     49.0399983,
+     7.5199983
+    ]
    }
   },
   {
-   "name": "Sortie lancée : suivi natif et notification « sortie en cours »",
-   "ok": false,
+   "name": "Sous-sol lu dans l'appli (Vosges du Nord : grès)",
+   "ok": true,
    "detail": {
-    "native": true,
-    "notification": false
+    "c": 1,
+    "n": "Grès, conglomérats et quartzites",
+    "a": "Trias inférieur"
+   }
+  },
+  {
+   "name": "Profil créé, groupe de test créé",
+   "ok": true,
+   "detail": {
+    "gid": "C7QZ9N9C"
+   }
+  },
+  {
+   "name": "Sortie lancée : suivi natif (la notification apparaît quand l'appli passe en arrière-plan)",
+   "ok": true,
+   "detail": {
+    "native": true
    }
   },
   {
    "name": "Au premier plan : la trace avance",
    "ok": true,
    "detail": {
-    "trace": 6,
+    "trace": 4,
     "fix": [
-     49.0407375,
-     7.5207293
+     49.040759,
+     7.5207595
     ]
    }
   },
@@ -44,7 +67,7 @@
   },
   {
    "name": "Écran éteint : l'alerte d'un autre joueur arrive en notification",
-   "ok": false,
+   "ok": true,
    "detail": "alerte envoyée"
   },
   {
@@ -52,9 +75,9 @@
    "ok": true,
    "detail": {
     "presence": {
-     "lat": 49.045239,
-     "lng": 7.522931,
-     "ts": 1793169935530
+     "lat": 49.04527,
+     "lng": 7.522946,
+     "ts": 1793171058475
     },
     "dernierePosition": [
      49.0453,
@@ -67,25 +90,23 @@
    "name": "Écran éteint : la trace a continué (positions enregistrées pendant 6 min)",
    "ok": true,
    "detail": {
-    "points": 41,
-    "pendantEcranEteint": 35
+    "points": 23,
+    "pendantEcranEteint": 19
    }
   },
   {
-   "name": "Écran éteint : la position partagée avec le groupe a suivi (Firestore)",
-   "ok": false,
+   "name": "De retour dans l'appli : position partagée à jour",
+   "ok": true,
    "detail": {
     "presence": {
-     "lat": 49.045298,
-     "lng": 7.522958,
-     "ts": 1793169989586
+     "lat": 49.04531,
+     "lng": 7.522966,
+     "ts": 1793171113433
     },
     "derniere": [
      49.0453,
      7.52296
-    ],
-    "ecritAvantRetour": false,
-    "apres5min": true
+    ]
    }
   },
   {
@@ -108,35 +129,13 @@
   }
  ],
  "notes": [
-  "06:39:52 écran éteint, application en arrière-plan",
-  "06:44:54 alerte du robot envoyée"
+  "06:58:36 écran éteint, application en arrière-plan",
+  "07:03:37 alerte du robot envoyée"
  ],
  "logsAppli": [
-  "06:39:25 Sous-sol 45_3 : HTTP 404",
-  "06:39:25 Sous-sol 45_4 : HTTP 404",
-  "06:39:25 Sous-sol 46_-1 : HTTP 404",
-  "06:39:25 Sous-sol 46_0 : HTTP 404",
-  "06:39:25 Sous-sol 46_1 : HTTP 404",
-  "06:39:25 Sous-sol 46_2 : HTTP 404",
-  "06:39:25 Sous-sol 46_3 : HTTP 404",
-  "06:39:25 Sous-sol 46_4 : HTTP 404",
-  "06:39:25 Sous-sol 47_-1 : HTTP 404",
-  "06:39:25 Sous-sol 47_0 : HTTP 404",
-  "06:39:25 Sous-sol 47_1 : HTTP 404",
-  "06:39:25 Sous-sol 47_2 : HTTP 404",
-  "06:39:25 Sous-sol 47_3 : HTTP 404",
-  "06:39:25 Sous-sol 47_4 : HTTP 404",
-  "06:39:25 Sous-sol 48_-1 : HTTP 404",
-  "06:39:25 Sous-sol 48_0 : HTTP 404",
-  "06:39:25 Sous-sol 48_1 : HTTP 404",
-  "06:39:25 Sous-sol 48_2 : HTTP 404",
-  "06:39:25 Sous-sol 48_3 : HTTP 404",
-  "06:39:25 Sous-sol 48_4 : HTTP 404",
-  "06:39:25 Sous-sol 49_-1 : HTTP 404",
-  "06:39:25 Sous-sol 49_0 : HTTP 404",
-  "06:39:25 Sous-sol 49_1 : HTTP 404",
-  "06:39:26 Connecté (firebase), joueur k52izwrO",
-  "06:39:35 Suivi natif démarré (écran éteint possible)"
+  "06:58:07 Connecté (firebase), joueur FVTSZqcg",
+  "06:58:12 Source forêts : LANDCOVER.FORESTINVENTORY.V2:formation_vegetale",
+  "06:58:19 Suivi natif démarré (écran éteint possible)"
  ],
- "resume": "8/11 vérifications réussies, 8 min"
+ "resume": "13/13 vérifications réussies, 8 min"
 }
