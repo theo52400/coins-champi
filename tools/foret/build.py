@@ -137,6 +137,7 @@ def rasterize_department(name, tif, work):
 
 def build_raster(tif, only, work):
     from osgeo import gdal, osr
+    gdal.UseExceptions()
     drv = gdal.GetDriverByName('GTiff')
     ds = drv.Create(tif, W, H, 1, gdal.GDT_Byte, ['TILED=YES', 'SPARSE_OK=TRUE'])
     ds.SetGeoTransform([X0, PIX, 0, Y1, 0, -PIX])
@@ -271,7 +272,10 @@ def main():
     else:
         deps = build_raster(tif, only, work)
     from osgeo import gdal
-    g = gdal.Open(tif).GetRasterBand(1).ReadAsArray()
+    gdal.UseExceptions()
+    src = gdal.Open(tif)          # garder une référence : sinon le jeu de données est libéré avant la lecture
+    g = src.GetRasterBand(1).ReadAsArray()
+    src = None
     log('raster lu', g.shape, 'cases boisées : %.1f %%' % (100.0 * ((g > 0) & ~OPEN[g]).mean()))
     near = near_open(g)
     log('lisières calculées')
@@ -346,6 +350,7 @@ def main():
 
 def write_diag(diag, coarse, layers, out):
     from osgeo import gdal
+    gdal.UseExceptions()
     os.makedirs(diag, exist_ok=True)
     cols = [(0, 0, 0)] + [tuple(int(c[i:i + 2], 16) for i in (1, 3, 5)) for c in PARAMS['colors']]
 

@@ -27,7 +27,10 @@ jobs:
           sudo apt-get -qq install -y gdal-bin python3-gdal python3-numpy python3-scipy p7zip-full >/dev/null
           gdalinfo --version
       - name: Construire
-        run: python3 tools/foret/build.py data/foret --diag /tmp/diag 2>&1 | tee /tmp/foret.log
+        shell: bash
+        run: |
+          set -o pipefail
+          python3 tools/foret/build.py data/foret --diag /tmp/diag 2>&1 | tee /tmp/foret.log
       - name: Enregistrer les données
         shell: bash
         run: |
@@ -45,6 +48,8 @@ jobs:
         shell: bash
         run: |
           mkdir -p /tmp/diag && cp /tmp/foret.log /tmp/diag/ 2>/dev/null || true
+          git stash -q -u || true
           git fetch -q origin sondes && git switch -q -f sondes || git switch -q --orphan sondes
           rm -rf foret && mkdir -p foret && cp -r /tmp/diag/. foret/
-          git add -A foret && git commit -qm "Forêts de France : contrôle" && git push -q origin sondes || true
+          git add -A foret && git commit -qm "Forêts de France : contrôle" || exit 0
+          for i in 1 2 3; do git push -q origin sondes && exit 0; git pull -q --rebase origin sondes; done
