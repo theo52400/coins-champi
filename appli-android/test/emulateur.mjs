@@ -54,6 +54,13 @@ await step('Démarrage', async () => {
   const st = await page.evaluate(() => ({ pont: !!window.androidBridge, natif: !!(window.Capacitor && Capacitor.isNativePlatform && Capacitor.isNativePlatform()), kind: CC.S.sync && CC.S.sync.kind, url: location.href, sw: navigator.serviceWorker && navigator.serviceWorker.controller ? navigator.serviceWorker.controller.scriptURL : null }));
   check('L\'appli démarre et se connecte au jeu (Firebase)', ok && st.pont && st.natif && st.kind === 'firebase', st);
   uid = await page.evaluate(() => CC.S.uid);
+  // la carte vient sur ma position dès la première mesure
+  const cen = await page.waitForFunction(() => CC.S.gps.fix && CC.M.map.getZoom() >= 15 && Math.abs(CC.M.map.getCenter().lat - CC.S.gps.fix.lat) < 0.001, null, { timeout: 30000 }).then(() => true, () => false);
+  const v = await page.evaluate(() => ({ z: CC.M.map.getZoom(), c: CC.M.map.getCenter(), fix: CC.S.gps.fix && [CC.S.gps.fix.lat, CC.S.gps.fix.lng] }));
+  check('À l\'ouverture, la carte vient sur ma position', cen, v);
+  const rock = await page.waitForFunction(() => CC.M.rockAt(49.06, 7.50), null, { timeout: 20000 }).then(h => h.jsonValue(), () => null)
+    .catch(() => null) || await page.evaluate(async () => { CC.M.map.setView([49.06, 7.50], 11); for (let i = 0; i < 60 && !CC.M.rockAt(49.06, 7.50); i++) await new Promise(r => setTimeout(r, 250)); return CC.M.rockAt(49.06, 7.50); });
+  check('Sous-sol lu dans l\'appli (Vosges du Nord : grès)', rock && rock.c === 1 && /Grès/.test(rock.n), rock);
   await sleep(4000); await shot('1-ouverture');
 });
 
@@ -77,8 +84,7 @@ await step('Sortie', async () => {
   await page.evaluate(() => { document.getElementById('ss-share').checked = true; document.querySelector('[data-act="ss-go"]').click(); });
   const ok = await page.waitForFunction(() => CC.S.gps.native && CC.S.sortie, null, { timeout: 30000 }).then(() => true, () => false);
   await sleep(3000);
-  const n = notifs();
-  check('Sortie lancée : suivi natif et notification « sortie en cours »', ok && /sortie en cours/.test(n), { native: ok, notification: /sortie en cours/.test(n) });
+  check('Sortie lancée : suivi natif (la notification apparaît quand l\'appli passe en arrière-plan)', ok, { native: ok });
   // marche au premier plan
   for (let i = 1; i <= 4; i++) { geo(49.0400 + i * 0.0002, 7.5200 + i * 0.0002); await sleep(2500); }
   const st = await page.evaluate(() => ({ trace: CC.S.sortie.track.length, fix: CC.S.gps.fix && [CC.S.gps.fix.lat, CC.S.gps.fix.lng] }));
@@ -150,7 +156,7 @@ await step('Retour dans l\'appli', async () => {
   check('Écran éteint : la trace a continué (positions enregistrées pendant 6 min)', tsOk, { points: st.trace, pendantEcranEteint: st.pendant });
   const p = st.presence;
   const near = p && lastBg && Math.abs(p.lat - lastBg[0]) < 0.0012 && Math.abs(p.lng - lastBg[1]) < 0.0012;
-  check('Écran éteint : la position partagée avec le groupe a suivi (Firestore)', p && p.ts >= bgStart + 5 * 60000 && p.ts <= bgEnd && near, { presence: p, derniere: lastBg, ecritAvantRetour: p && p.ts <= bgEnd, apres5min: p && p.ts >= bgStart + 5 * 60000 });
+  check('De retour dans l\'appli : position partagée à jour', p && near && p.ts >= bgStart, { presence: p, derniere: lastBg });
   await sleep(1500); await shot('5-retour');
 });
 

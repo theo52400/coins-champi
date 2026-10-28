@@ -6,7 +6,7 @@
 import { Capacitor, CapacitorHttp, registerPlugin } from '../vendor/capacitor-core.js';
 
 const BG = registerPlugin('BackgroundGeolocation');
-const Notif = registerPlugin('LocalNotifications');
+const Alertes = registerPlugin('Alertes');   // module maison de l'appli (AlertesPlugin.java)
 const ShareP = registerPlugin('Share');
 const FS = 'https://firestore.googleapis.com/v1/projects/';
 export const APK_URL = 'https://github.com/theo52400/coins-champi/releases/latest/download/coins-a-champi.apk';
@@ -19,11 +19,7 @@ let watcherId = null, starting = null, notifAsked = false;
 async function askNotifications() {
   if (notifAsked) return;
   notifAsked = true;
-  try {
-    const st = await Notif.checkPermissions();
-    if (st && st.display !== 'granted') await Notif.requestPermissions();
-    await Notif.createChannel({ id: 'alertes', name: 'Alertes du groupe', description: 'SOS, « Venez voir », regroupements', importance: 5, visibility: 1, vibration: true });
-  } catch (e) { /* notifications indisponibles : le suivi marche quand même */ }
+  try { await Alertes.autoriser(); } catch (e) { /* notifications indisponibles : le suivi marche quand même */ }
 }
 // onPos reçoit un objet au format de navigator.geolocation ; onErr reçoit { code, message }
 export function startTracking(onPos, onErr) {
@@ -117,7 +113,7 @@ export async function eventsSince(ctx, gid, since) {
 // ---------- notifications ----------
 let notifId = Math.floor(Date.now() / 1000) % 100000;
 export async function notify(title, body) {
-  try { await Notif.schedule({ notifications: [{ id: ++notifId, title, body, channelId: 'alertes', smallIcon: 'ic_stat_champi', iconColor: '#4A2C8F' }] }); return true; }
+  try { await Alertes.afficher({ id: ++notifId, title, body }); return true; }
   catch (e) { return false; }
 }
 

@@ -35,10 +35,11 @@
         </provider>
     </application>
 
-    <!-- Permissions : réseau, vibreur. La localisation (y compris écran éteint, avec une notification) et les
-         notifications sont déclarées par les modules @capacitor-community/background-geolocation et
-         @capacitor/local-notifications. -->
+    <!-- Permissions : réseau, vibreur, notifications. La localisation (y compris écran éteint) et
+         la notification de suivi viennent du module @capacitor-community/background-geolocation ; les alertes du
+         groupe, du module maison AlertesPlugin. -->
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 </manifest>

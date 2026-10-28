@@ -36,7 +36,7 @@ export function createMap(el, deps) {
     const st = new Blob([u]).stream().pipeThrough(new DecompressionStream('gzip'));
     return new Uint8Array(await new Response(st).arrayBuffer());
   }
-  const geolUrl = k => 'data/geol/' + k + '.bin.gz?v=' + GEOL.ver;
+  const geolUrl = k => 'data/geol/' + k + '.geo?v=' + GEOL.ver;
   function ensureGeol(b) {
     if (!GEOL.idx || !b) return;
     const la0 = Math.floor(b.getSouth()), la1 = Math.floor(b.getNorth()), lo0 = Math.floor(b.getWest()), lo1 = Math.floor(b.getEast());

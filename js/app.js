@@ -87,7 +87,7 @@ async function boot() {
   M = createMap($('#map'), { log, toast, store, onTap, onChange: () => { updatePeek(); refreshMore(); }, onBlocked: () => { $('#blocked').hidden = false; }, onLayerFail: k => { const el = $('#lyr-' + k); if (el) el.checked = false; } });
   M.setBase(S.base); M.setShowLow(S.showLow); M.setSpecies(S.sp); M.setMode('pot');
   M.map.on('moveend', () => loadWeather());
-  M.map.on('dragstart', () => { if (GPS.follow) setFollow(false); });
+  M.map.on('dragstart', () => { GPS.centerNext = false; if (GPS.follow) setFollow(false); });
   autoLocate();
   buildRail(); wireUi(); setSheet('peek'); updatePeek(); refreshMore(); loadWeather(true);
   registerSW();
@@ -562,11 +562,12 @@ async function nativeTrack() {
 // Au lancement : si la localisation est déjà autorisée, le champignon apparaît tout de suite sur la carte
 async function autoLocate() {
   if (!('geolocation' in navigator) || store.get('cc.autoloc', null) === false) return;
+  // à l'ouverture, la carte vient sur moi dès la première position (sauf si on l'a déjà déplacée)
   // dans l'appli, Android demande lui-même l'autorisation la première fois
-  if (IN_APP) { gpsStart('carte'); return; }
+  if (IN_APP) { GPS.centerNext = true; gpsStart('carte'); return; }
   let state = 'prompt';
   try { if (navigator.permissions && navigator.permissions.query) state = (await navigator.permissions.query({ name: 'geolocation' })).state; } catch (e) { /* navigateur sans l'API */ }
-  if (state === 'granted' || (state === 'prompt' && store.get('cc.autoloc', null) === true)) gpsStart('carte');
+  if (state === 'granted' || (state === 'prompt' && store.get('cc.autoloc', null) === true)) { GPS.centerNext = true; gpsStart('carte'); }
   else if (state === 'prompt') S.askLoc = true;
 }
 function askLocation() {
@@ -1330,6 +1331,7 @@ function openTab(name) {
   document.querySelectorAll('.tabs [data-tab]').forEach(b => b.toggleAttribute('aria-current', false));
   const btn = document.querySelector('.tabs [data-tab="' + name + '"]'); if (btn) btn.setAttribute('aria-current', 'page');
   destroyStages('panel');
+  document.body.classList.toggle('panel-open', name !== 'carte');
   if (name === 'carte') { $('#panel').hidden = true; setTimeout(() => M.map.invalidateSize(), 30); return; }
   $('#panel').hidden = false; $('#panel').scrollTop = 0;
   renderPanel(name);

@@ -5,8 +5,9 @@ Source : carte géologique de la France au 1/1 000 000 (BRGM, 2017, licence CC B
 vectorielles de Macrostrat (couche « carto » ; source 249 en France, cartes voisines aux frontières).
 
 Sortie, dans le dossier donné en argument :
-  {lat}_{lon}.bin.gz  tuile de 1° x 1°, 200 x 200 cases de 0,005°, un entier 16 bits (petit-boutiste) par case,
-                      ligne 0 au nord ; la valeur est un numéro de légende, 0 = pas de donnée
+  {lat}_{lon}.geo     tuile de 1° x 1° compressée (gzip), 200 x 200 cases de 0,005°, un entier 16 bits
+                      (petit-boutiste) par case, ligne 0 au nord ; la valeur est un numéro de légende, 0 = pas de donnée.
+                      Pas d'extension .gz : l'appli Android les perdrait (l'empaquetage Android traite les .gz à part).
   index.json          {"v", "n", "src", "tiles": [[lat, lon], ...], "legend": [null, [classe, roche, âge], ...]}
 Classes de sol du modèle : 1 acide, 2 intermédiaire, 3 calcaire, 4 argileux (0 inconnu).
 
@@ -509,10 +510,11 @@ def main():
                 continue
             raw = sub.astype('<u2').tobytes()
             h.update(raw)
-            with open(os.path.join(a.out, '%d_%d.bin.gz' % (la, lo)), 'wb') as fh:
+            with open(os.path.join(a.out, '%d_%d.geo' % (la, lo)), 'wb') as fh:
                 fh.write(gzip.compress(raw, 9, mtime=0))
             tiles.append([la, lo])
     h.update(json.dumps(LEGEND_LIST, ensure_ascii=False).encode())
+    h.update(b'.geo')
     idx = {'v': h.hexdigest()[:8], 'n': N, 'src': SRC, 'tiles': tiles, 'legend': LEGEND_LIST}
     with open(os.path.join(a.out, 'index.json'), 'w', encoding='utf-8') as fh:
         json.dump(idx, fh, ensure_ascii=False, separators=(',', ':'))
