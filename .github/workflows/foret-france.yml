@@ -1,0 +1,50 @@
+name: Forêts de France (vue de loin)
+# Construit data/foret : peuplements BD Forêt V2 de tous les départements résumés en cases d'environ 250 m,
+# et une carte de France des coins par espèce, pour afficher les zones quand on dézoome.
+# Images de contrôle : branche « sondes », dossier foret/.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['tools/foret/**', '.github/workflows/foret-france.yml']
+permissions:
+  contents: write
+concurrency:
+  group: foret-france
+  cancel-in-progress: true
+jobs:
+  construire:
+    runs-on: ubuntu-latest
+    timeout-minutes: 170
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Outils SIG
+        run: |
+          sudo apt-get -qq update
+          sudo apt-get -qq install -y gdal-bin python3-gdal python3-numpy python3-scipy p7zip-full >/dev/null
+          gdalinfo --version
+      - name: Construire
+        run: python3 tools/foret/build.py data/foret --diag /tmp/diag 2>&1 | tee /tmp/foret.log
+      - name: Enregistrer les données
+        shell: bash
+        run: |
+          set -e
+          test -s data/foret/index.json
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A data/foret
+          git diff --cached --quiet && exit 0
+          git commit -qm "Forêts de France pour la vue de loin (BD Forêt V2)"
+          for i in 1 2 3 4; do git pull -q --rebase origin main && git push -q origin main && exit 0; sleep 7; done
+          exit 1
+      - name: Images de contrôle sur la branche sondes
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p /tmp/diag && cp /tmp/foret.log /tmp/diag/ 2>/dev/null || true
+          git fetch -q origin sondes && git switch -q -f sondes || git switch -q --orphan sondes
+          rm -rf foret && mkdir -p foret && cp -r /tmp/diag/. foret/
+          git add -A foret && git commit -qm "Forêts de France : contrôle" && git push -q origin sondes || true
