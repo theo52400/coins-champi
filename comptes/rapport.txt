@@ -1,4 +1,4 @@
-Projet Firebase du jeu : coins-champi-a81fa | heure UTC : 2026-10-28T12:42:33.853Z
+Projet Firebase du jeu : coins-champi-a81fa | heure UTC : 2026-10-28T12:43:58.349Z
 Réglages publics du projet : {"projectId":"995208431778"}
 A. Compte anonyme : 200 OK
 B. Nouveau compte e-mail + mot de passe : 400 OPERATION_NOT_ALLOWED
