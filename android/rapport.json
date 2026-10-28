@@ -1,5 +1,5 @@
 {
- "date": "2026-10-28T10:01:38.607Z",
+ "date": "2026-10-28T10:16:33.924Z",
  "checks": [
   {
    "name": "L'appli démarre et se connecte au jeu (Firebase)",
@@ -40,7 +40,7 @@
    "name": "Profil créé, groupe de test créé",
    "ok": true,
    "detail": {
-    "gid": "2WBMTQZ5"
+    "gid": "89EESX7P"
    }
   },
   {
@@ -52,49 +52,70 @@
   },
   {
    "name": "Au premier plan : la trace avance",
-   "ok": true,
+   "ok": false,
    "detail": {
-    "trace": 6,
+    "trace": 1,
     "fix": [
-     49.0407538,
-     7.5207465
+     49.0401451,
+     7.5201374
     ]
    }
   },
   {
    "name": "Écran éteint : la notification de suivi est toujours là",
-   "ok": false
+   "ok": true
   },
   {
    "name": "Écran éteint : l'alerte d'un autre joueur arrive en notification",
-   "ok": false,
+   "ok": true,
    "detail": "alerte envoyée"
   },
   {
    "name": "Écran éteint : les autres joueurs voient ma position avancer (lue sur le serveur)",
-   "ok": false,
+   "ok": true,
    "detail": {
     "presence": {
-     "lat": 49.040938,
-     "lng": 7.520861,
-     "ts": 1793181777790
+     "lat": 49.045272,
+     "lng": 7.522947,
+     "ts": 1793183015270
     },
     "dernierePosition": [
      49.0453,
      7.52296
     ],
-    "minutesApresExtinction": 0
+    "minutesApresExtinction": 5.7
    }
   },
   {
-   "name": "Retour dans l'appli",
-   "ok": false,
-   "detail": "exception : page.evaluate: TypeError: Cannot read properties of null (reading 'api')"
+   "name": "Écran éteint : la trace a continué (positions enregistrées pendant 6 min)",
+   "ok": true,
+   "detail": {
+    "points": 21,
+    "pendantEcranEteint": 20
+   }
   },
   {
-   "name": "Fin de sortie",
-   "ok": false,
-   "detail": "exception : page.waitForSelector: Timeout 30000ms exceeded."
+   "name": "De retour dans l'appli : position partagée à jour",
+   "ok": true,
+   "detail": {
+    "presence": {
+     "lat": 49.04531,
+     "lng": 7.522966,
+     "ts": 1793183070905
+    },
+    "derniere": [
+     49.0453,
+     7.52296
+    ]
+   }
+  },
+  {
+   "name": "Fin de sortie : suivi natif arrêté, notification retirée",
+   "ok": true,
+   "detail": {
+    "native": false,
+    "sortie": false
+   }
   },
   {
    "name": "Données de test effacées de Firebase",
@@ -109,8 +130,13 @@
   }
  ],
  "notes": [
-  "10:02:57 écran éteint, application en arrière-plan",
-  "10:07:59 alerte du robot envoyée"
+  "10:17:53 écran éteint, application en arrière-plan",
+  "10:22:55 alerte du robot envoyée"
  ],
- "resume": "7/12 vérifications réussies, 9 min"
+ "logsAppli": [
+  "10:17:23 Connecté (firebase), joueur ryGR5DLQ",
+  "10:17:29 Source forêts : LANDCOVER.FORESTINVENTORY.V2:formation_vegetale",
+  "10:17:36 Suivi natif démarré (écran éteint possible)"
+ ],
+ "resume": "12/13 vérifications réussies, 8 min"
 }

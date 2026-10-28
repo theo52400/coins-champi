@@ -1,5 +1,5 @@
-2026-10-28T10:01:38.607Z
-7/12 vérifications réussies, 9 min
+2026-10-28T10:16:33.924Z
+12/13 vérifications réussies, 8 min
 
 OK     L'appli démarre et se connecte au jeu (Firebase)
          {"pont":true,"natif":true,"kind":"firebase","url":"https://localhost/","sw":"https://localhost/sw.js?native=1"}
@@ -8,25 +8,30 @@ OK     À l'ouverture, la carte vient sur ma position
 OK     Sous-sol lu dans l'appli (Vosges du Nord : grès)
          {"c":1,"n":"Grès, conglomérats et quartzites","a":"Trias inférieur"}
 OK     Profil créé, groupe de test créé
-         {"gid":"2WBMTQZ5"}
+         {"gid":"89EESX7P"}
 OK     Sortie lancée : suivi natif (la notification apparaît quand l'appli passe en arrière-plan)
          {"native":true}
-OK     Au premier plan : la trace avance
-         {"trace":6,"fix":[49.0407538,7.5207465]}
-ÉCHEC  Écran éteint : la notification de suivi est toujours là
-ÉCHEC  Écran éteint : l'alerte d'un autre joueur arrive en notification
+ÉCHEC  Au premier plan : la trace avance
+         {"trace":1,"fix":[49.0401451,7.5201374]}
+OK     Écran éteint : la notification de suivi est toujours là
+OK     Écran éteint : l'alerte d'un autre joueur arrive en notification
          "alerte envoyée"
-ÉCHEC  Écran éteint : les autres joueurs voient ma position avancer (lue sur le serveur)
-         {"presence":{"lat":49.040938,"lng":7.520861,"ts":1793181777790},"dernierePosition":[49.0453,7.52296],"minutesApresExtinction":0}
-ÉCHEC  Retour dans l'appli
-         "exception : page.evaluate: TypeError: Cannot read properties of null (reading 'api')"
-ÉCHEC  Fin de sortie
-         "exception : page.waitForSelector: Timeout 30000ms exceeded."
+OK     Écran éteint : les autres joueurs voient ma position avancer (lue sur le serveur)
+         {"presence":{"lat":49.045272,"lng":7.522947,"ts":1793183015270},"dernierePosition":[49.0453,7.52296],"minutesApresExtinction":5.7}
+OK     Écran éteint : la trace a continué (positions enregistrées pendant 6 min)
+         {"points":21,"pendantEcranEteint":20}
+OK     De retour dans l'appli : position partagée à jour
+         {"presence":{"lat":49.04531,"lng":7.522966,"ts":1793183070905},"derniere":[49.0453,7.52296]}
+OK     Fin de sortie : suivi natif arrêté, notification retirée
+         {"native":false,"sortie":false}
 OK     Données de test effacées de Firebase
          {"presence":"ok","membre":"ok","groupe":"ok","profil":"ok","compte":"ok"}
 
 Déroulé :
-10:02:57 écran éteint, application en arrière-plan
-10:07:59 alerte du robot envoyée
+10:17:53 écran éteint, application en arrière-plan
+10:22:55 alerte du robot envoyée
 
 Journal de l'appli :
+10:17:23 Connecté (firebase), joueur ryGR5DLQ
+10:17:29 Source forêts : LANDCOVER.FORESTINVENTORY.V2:formation_vegetale
+10:17:36 Suivi natif démarré (écran éteint possible)
