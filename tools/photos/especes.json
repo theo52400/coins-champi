@@ -1,0 +1,16 @@
+{
+  "cepe": ["Boletus edulis"], "cepe_bronze": ["Boletus aereus"], "cepe_ete": ["Boletus reticulatus"], "cepe_pins": ["Boletus pinophilus"],
+  "girolle": ["Cantharellus cibarius"], "trompette": ["Craterellus cornucopioides"], "hydne": ["Hydnum repandum"], "tube": ["Craterellus tubaeformis"],
+  "bai": ["Imleria badia", "Boletus badius"], "piedbleu": ["Lepista nuda", "Collybia nuda"], "coulemelle": ["Macrolepiota procera"],
+  "morille": ["Morchella esculenta", "Morchella"], "lactaire": ["Lactarius deliciosus"], "pleurote": ["Pleurotus ostreatus"],
+  "mousseron": ["Calocybe gambosa"], "rose": ["Agaricus campestris"], "russule": ["Russula cyanoxantha"], "sparassis": ["Sparassis crispa"],
+  "cesar": ["Amanita caesarea"], "coprin": ["Coprinus comatus"], "vesse": ["Calvatia gigantea", "Langermannia gigantea"],
+  "hygrophore": ["Hygrophorus marzuolus"], "marasme": ["Marasmius oreades"], "leccinum": ["Leccinum aurantiacum"],
+  "phalloide": ["Amanita phalloides"], "amanite_blanche": ["Amanita virosa", "Amanita verna"], "panthere": ["Amanita pantherina"],
+  "tuemouche": ["Amanita muscaria"], "cortinaire": ["Cortinarius rubellus", "Cortinarius orellanus"], "lepiote": ["Lepiota brunneoincarnata", "Lepiota helveola", "Lepiota josserandii"],
+  "galere": ["Galerina marginata"], "gyromitre": ["Gyromitra esculenta"], "entolome": ["Entoloma sinuatum"], "olivier": ["Omphalotus olearius"],
+  "faussegirolle": ["Hygrophoropsis aurantiaca"], "satan": ["Rubroboletus satanas", "Boletus satanas"], "amer": ["Tylopilus felleus"],
+  "clitoblanc": ["Clitocybe rivulosa", "Clitocybe dealbata"], "inocybe": ["Inocybe erubescens", "Inocybe patouillardii"], "equestre": ["Tricholoma equestre"],
+  "paxille": ["Paxillus involutus"], "hypholome": ["Hypholoma fasciculare"], "jaunissant": ["Agaricus xanthodermus"],
+  "toison": ["Lactarius torminosus"], "emetique": ["Russula emetica"]
+}
