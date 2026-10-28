@@ -69,7 +69,7 @@ export function createLearn(x) {
       '<div class="chips" role="group" aria-label="Filtrer">' + [['tous', 'Tous'], ['bons', 'Comestibles'], ['danger', 'Dangereux'], ['saison', 'De saison']].map(([v, n]) =>
         '<button class="chip" data-act="en-filter" data-v="' + v + '" aria-pressed="' + (L.filter === v) + '">' + n + '</button>').join('') + '</div>' +
       '<div class="en-grid" id="en-grid">' + cards() + '</div>' +
-      '<div class="warnbox"><b>Ne mangez jamais un champignon sur la foi d\'une photo ou d\'une fiche.</b> Faites vérifier votre panier par un pharmacien ou une société mycologique. En cas de malaise après un repas de champignons : 15 ou 112.</div>' +
+      '<div class="warnbox"><b>Ne mangez jamais un champignon sur la foi d\'une photo ou d\'une fiche.</b> Faites vérifier votre panier par un pharmacien ou une société mycologique. Les champignons sauvages se mangent toujours cuits (20 à 30 minutes à la poêle), jamais crus. En cas de malaise après un repas de champignons : 15 ou 112.</div>' +
       offlineCard();
   }
   function offlineCard() {
