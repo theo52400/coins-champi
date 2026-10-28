@@ -1,0 +1,40 @@
+name: Photos de l'encyclopédie
+# Télécharge les photos libres choisies sur Wikimedia Commons (tools/photos/choix.json), les recadre et écrit leurs
+# crédits dans data/encyclo/photos.json, sur main (le site publié se met à jour).
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['tools/photos/choix.json', 'tools/photos/construire.mjs', '.github/workflows/photos-encyclo.yml']
+permissions:
+  contents: write
+concurrency:
+  group: photos-encyclo
+  cancel-in-progress: true
+jobs:
+  photos:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Construire
+        shell: bash
+        run: |
+          mkdir -p /tmp/ph && cd /tmp/ph && npm init -y >/dev/null && npm i -s sharp@0.33.5 >/dev/null && cd - >/dev/null
+          cp tools/photos/construire.mjs /tmp/ph/
+          node /tmp/ph/construire.mjs tools/photos/candidats.json tools/photos/choix.json data/encyclo
+      - name: Enregistrer
+        shell: bash
+        run: |
+          set -e
+          test -s data/encyclo/photos.json
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A data/encyclo
+          git diff --cached --quiet && exit 0
+          git commit -qm "Encyclopédie : photos libres (Wikimedia Commons)"
+          for i in 1 2 3 4; do git pull -q --rebase origin main && git push -q origin main && exit 0; sleep 7; done
+          exit 1

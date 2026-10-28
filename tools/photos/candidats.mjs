@@ -28,6 +28,17 @@ function info(p) {
     quality: /quality|featured|valued/i.test((m.Assessments && m.Assessments.value) || '') || /Quality images|Featured pictures|Valued images/i.test((m.Categories && m.Categories.value) || '')
   };
 }
+// Images : Wikimedia limite le débit ; on attend et on réessaie si la réponse n'est pas une image
+async function getImage(url) {
+  for (let k = 0; k < 6; k++) {
+    await new Promise(res => setTimeout(res, 400 + 1500 * k));
+    try {
+      const r = await fetch(url, { headers: { 'User-Agent': UA } });
+      if (r.ok && /^image\//.test(r.headers.get('content-type') || '')) return Buffer.from(await r.arrayBuffer());
+    } catch (e) { /* réessai */ }
+  }
+  throw new Error('image indisponible');
+}
 const IIP = { prop: 'imageinfo', iiprop: 'url|size|mime|extmetadata', iiurlwidth: '480', iiextmetadatafilter: 'Artist|LicenseShortName|LicenseUrl|Assessments|Categories' };
 mkdirSync(OUT, { recursive: true });
 const all = {};
@@ -58,8 +69,7 @@ for (const [id, names] of Object.entries(SP)) {
   const tiles = [];
   for (let i = 0; i < pick.length; i++) {
     try {
-      const r = await fetch(pick[i].thumb, { headers: { 'User-Agent': UA } });
-      const buf = Buffer.from(await r.arrayBuffer());
+      const buf = await getImage(pick[i].thumb);
       const img = await sharp(buf).resize(300, 225, { fit: 'cover' }).jpeg().toBuffer();
       const lab = Buffer.from('<svg width="300" height="225"><rect x="0" y="0" width="44" height="30" fill="#000" opacity=".75"/><text x="8" y="22" font-size="20" font-family="sans-serif" fill="#fff">' + i + (pick[i].lead ? '*' : '') + (pick[i].quality ? 'Q' : '') + '</text></svg>');
       tiles.push({ input: await sharp(img).composite([{ input: lab, top: 0, left: 0 }]).toBuffer(), left: (i % 5) * 304, top: Math.floor(i / 5) * 229 });

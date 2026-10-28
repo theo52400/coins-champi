@@ -1,0 +1,225 @@
+{
+ "cepe": [
+  2,
+  3,
+  5
+ ],
+ "cepe_bronze": [
+  6,
+  2,
+  12
+ ],
+ "cepe_ete": [
+  0,
+  9,
+  14
+ ],
+ "cepe_pins": [
+  3,
+  7,
+  14
+ ],
+ "girolle": [
+  2,
+  10,
+  14
+ ],
+ "trompette": [
+  0,
+  13,
+  9
+ ],
+ "hydne": [
+  1,
+  2,
+  7
+ ],
+ "tube": [
+  11,
+  9,
+  4
+ ],
+ "bai": [
+  0,
+  1,
+  3
+ ],
+ "piedbleu": [
+  0,
+  1,
+  9
+ ],
+ "coulemelle": [
+  2,
+  4,
+  14
+ ],
+ "morille": [
+  0,
+  3,
+  1
+ ],
+ "lactaire": [
+  0,
+  9,
+  4
+ ],
+ "pleurote": [
+  0,
+  2,
+  10
+ ],
+ "mousseron": [
+  0,
+  1,
+  3
+ ],
+ "rose": [
+  2,
+  4,
+  12
+ ],
+ "russule": [
+  1,
+  0,
+  4
+ ],
+ "sparassis": [
+  2,
+  0,
+  4
+ ],
+ "cesar": [
+  2,
+  0,
+  8
+ ],
+ "coprin": [
+  10,
+  4,
+  9
+ ],
+ "vesse": [
+  0,
+  5,
+  3
+ ],
+ "hygrophore": [
+  7,
+  2,
+  4
+ ],
+ "marasme": [
+  0,
+  10,
+  12
+ ],
+ "leccinum": [
+  3,
+  2,
+  8
+ ],
+ "phalloide": [
+  7,
+  4,
+  1
+ ],
+ "amanite_blanche": [
+  0,
+  4,
+  3
+ ],
+ "panthere": [
+  1,
+  10,
+  0
+ ],
+ "tuemouche": [
+  3,
+  12,
+  0
+ ],
+ "cortinaire": [
+  0,
+  11,
+  6
+ ],
+ "lepiote": [
+  2,
+  4,
+  8
+ ],
+ "galere": [
+  0,
+  4,
+  1
+ ],
+ "gyromitre": [
+  8,
+  0,
+  11
+ ],
+ "entolome": [
+  0,
+  6,
+  1
+ ],
+ "olivier": [
+  5,
+  3,
+  0
+ ],
+ "faussegirolle": [
+  1,
+  6,
+  0
+ ],
+ "satan": [
+  1,
+  9,
+  12
+ ],
+ "amer": [
+  0,
+  11,
+  2
+ ],
+ "clitoblanc": [
+  12,
+  13,
+  7
+ ],
+ "inocybe": [
+  4
+ ],
+ "equestre": [
+  8,
+  10,
+  0
+ ],
+ "paxille": [
+  0,
+  2,
+  8
+ ],
+ "hypholome": [
+  3,
+  6,
+  1
+ ],
+ "jaunissant": [
+  0,
+  2,
+  13
+ ],
+ "toison": [
+  6,
+  12,
+  1
+ ],
+ "emetique": [
+  1,
+  14,
+  10
+ ]
+}
