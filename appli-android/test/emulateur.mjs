@@ -178,7 +178,10 @@ await step('Nettoyage', async () => {
   }
   const r = await page.evaluate(async gid => {
     const s = CC.S.sync, d = (...p) => s.api.deleteDoc(s._d(...p)).then(() => 'ok', e => e.code);
-    return { presence: await d('groups', gid, 'presence', s.uid), membre: await d('groups', gid, 'members', s.uid), groupe: await d('groups', gid), profil: await d('users', s.uid) };
+    const r = { presence: await d('groups', gid, 'presence', s.uid), membre: await d('groups', gid, 'members', s.uid), groupe: await d('groups', gid), profil: await d('users', s.uid) };
+    // et le compte anonyme de test lui-même
+    try { const t = await s.auth.currentUser.getIdToken(); const x = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:delete?key=' + s.config.apiKey, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ idToken: t }) }); r.compte = x.ok ? 'ok' : 'HTTP ' + x.status; } catch (e) { r.compte = e.message; }
+    return r;
   }, gid);
   check('Données de test effacées de Firebase', Object.values(r).every(v => v === 'ok'), r);
 });

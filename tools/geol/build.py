@@ -28,7 +28,7 @@ import time
 import urllib.error
 import urllib.request
 from collections import Counter, defaultdict
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import ThreadPoolExecutor
 
 import numpy as np
 import mapbox_vector_tile as mvt
@@ -413,8 +413,8 @@ def read_layer(label, url_t, only, todo, a, grid, sgrid, sids, legend_brgm):
     done = empty = feats = 0
     failed = []
     with ThreadPoolExecutor(max_workers=a.workers) as ex:
-        for fut in as_completed([ex.submit(fetch, t, a.from_dir, url_t) for t in todo]):
-            (z, tx, ty), data, err = fut.result()
+        # dans l'ordre des tuiles (et non à mesure qu'elles arrivent) : mêmes numéros de légende à chaque construction
+        for (z, tx, ty), data, err in ex.map(lambda t: fetch(t, a.from_dir, url_t), todo):
             done += 1
             if data is None:
                 failed.append(((z, tx, ty), err))

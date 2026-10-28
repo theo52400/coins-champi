@@ -171,6 +171,11 @@ await step('Météo', async () => {
 });
 
 R.logs = await page.evaluate(() => (window.CC && CC.logs ? CC.logs.slice(-80) : [])).catch(() => []);
+// le compte anonyme créé par la vérification est supprimé de Firebase
+R.compte = await page.evaluate(async () => {
+  try { const s = CC.S.sync; if (!s || s.kind !== 'firebase') return 'pas de compte'; const t = await s.auth.currentUser.getIdToken(); const r = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:delete?key=' + s.config.apiKey, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ idToken: t }) }); return r.ok ? 'supprimé' : 'HTTP ' + r.status; } catch (e) { return e.message; }
+}).catch(e => e.message);
+console.log('Compte de vérification :', R.compte);
 check('Aucune erreur JavaScript', !R.console.some(l => l.startsWith('pageerror')), R.console.filter(l => l.startsWith('pageerror')));
 const okN = R.checks.filter(c => c.ok).length;
 R.resume = okN + '/' + R.checks.length + ' vérifications réussies';
