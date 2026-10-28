@@ -1,12 +1,12 @@
 {
  "site": "https://theo52400.github.io/coins-champi/",
- "date": "2026-10-28T10:27:44.393Z",
+ "date": "2026-10-28T12:10:04.575Z",
  "checks": [
   {
    "name": "L'appli démarre",
    "ok": true,
    "detail": {
-    "version": "v2026-10-28-e3d038ab"
+    "version": "v2026-10-28-263ad45e"
    }
   },
   {
@@ -14,7 +14,7 @@
    "ok": true,
    "detail": {
     "kind": "firebase",
-    "uid": "5J5qvX",
+    "uid": "BM0x8w",
     "banner": null
    }
   },
@@ -24,7 +24,7 @@
    "detail": {
     "ecriture": true,
     "relu": "Vérification",
-    "ms": 2447
+    "ms": 2574
    }
   },
   {
@@ -60,7 +60,7 @@
   {
    "name": "Fiche d'un point : peuplement, sol, sous-sol, commune, altitude",
    "ok": true,
-   "detail": "CE POINT Peuplement Forêt fermée de chênes décidus purs (Chênes décidus) Sol estimé Sol acide Sous-sol Grès, conglomérats et quartzites (Trias inférieur) Lisière à ≈ 679 m · transition de peuplements Altitude 305 m Distance 991 m de vous Cèpes 77 Girolles 74 Pieds de mouton 72 Pieds bleus 62 Bolets "
+   "detail": "CE POINT Peuplement Forêt fermée de chênes décidus purs (Chênes décidus) Sol estimé Sol acide Sous-sol Grès, conglomérats et quartzites (Trias inférieur) Commune Bitche Lisière à ≈ 679 m · transition de peuplements Altitude 305 m Distance 991 m de vous Cèpes 77 Girolles 74 Pieds de mouton 72 Pieds b"
   },
   {
    "name": "Service d'itinéraire piéton IGN joignable depuis le site (CORS)",
@@ -131,14 +131,14 @@
  ],
  "console": [
   "warning Info: The current domain is not authorized for OAuth operations. This will prevent signInWithPopup, signInWithRedirect, linkWithPopup and linkWithRedirect from working. Add your domain (theo52400.github.io) to the OAuth redirect domains list in the Firebase console -> Authentication -> Settings -> A",
-  "warning [GroupMarkerNotSet(crbug.com/242999)!:A0601C005C160000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.",
-  "warning [GroupMarkerNotSet(crbug.com/242999)!:A0901C005C160000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.",
-  "warning [.WebGL-0x274000d0d00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
-  "warning [.WebGL-0x274000d0d00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
-  "warning [.WebGL-0x274000d0d00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
-  "warning [.WebGL-0x274000d0d00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)",
-  "warning [GroupMarkerNotSet(crbug.com/242999)!:A00043035C160000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.",
-  "warning [GroupMarkerNotSet(crbug.com/242999)!:A06043035C160000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.",
+  "warning [GroupMarkerNotSet(crbug.com/242999)!:A0601C00DC3C0000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.",
+  "warning [GroupMarkerNotSet(crbug.com/242999)!:A0901C00DC3C0000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.",
+  "warning [.WebGL-0x316c00a06300]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+  "warning [.WebGL-0x316c00a06300]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+  "warning [.WebGL-0x316c00a06300]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+  "warning [.WebGL-0x316c00a06300]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)",
+  "warning [GroupMarkerNotSet(crbug.com/242999)!:A0608803DC3C0000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.",
+  "warning [GroupMarkerNotSet(crbug.com/242999)!:A0008803DC3C0000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.",
   "error Failed to load resource: the server responded with a status of 400 ()"
  ],
  "http": [
@@ -147,10 +147,10 @@
  "counts": {
   "sous-sol": 10,
   "Firebase": 14,
-  "météo": 8,
-  "tuiles IGN": 48,
+  "tuiles IGN": 84,
+  "météo": 7,
   "BD Forêt (WFS)": 17,
-  "communes": 10,
+  "communes": 9,
   "altitude IGN": 1,
   "itinéraire IGN": 4
  },
@@ -654,10 +654,10 @@
  ],
  "compteDejaSupprime": false,
  "logs": [
-  "10:27:46 Source forêts : LANDCOVER.FORESTINVENTORY.V2:formation_vegetale",
-  "10:27:46 Connecté (firebase), joueur 5J5qvXzj",
-  "10:28:09 GPS : ",
-  "10:28:13 Écran allumé : Wake Lock permission request denied"
+  "12:10:06 Source forêts : LANDCOVER.FORESTINVENTORY.V2:formation_vegetale",
+  "12:10:06 Connecté (firebase), joueur BM0x8wij",
+  "12:10:18 GPS : ",
+  "12:10:22 Écran allumé : Wake Lock permission request denied"
  ],
  "compte": "supprimé",
  "resume": "15/16 vérifications réussies"
