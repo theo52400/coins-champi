@@ -1,5 +1,5 @@
-2026-10-28T10:28:54.694Z
-12/13 vérifications réussies, 8 min
+2026-10-28T10:50:13.473Z
+13/13 vérifications réussies, 8 min
 
 OK     L'appli démarre et se connecte au jeu (Firebase)
          {"pont":true,"natif":true,"kind":"firebase","url":"https://localhost/","sw":"https://localhost/sw.js?native=1"}
@@ -8,30 +8,30 @@ OK     À l'ouverture, la carte vient sur ma position
 OK     Sous-sol lu dans l'appli (Vosges du Nord : grès)
          {"c":1,"n":"Grès, conglomérats et quartzites","a":"Trias inférieur"}
 OK     Profil créé, groupe de test créé
-         {"gid":"STHY44BX"}
+         {"gid":"3T7FM94J"}
 OK     Sortie lancée : suivi natif (la notification apparaît quand l'appli passe en arrière-plan)
          {"native":true}
-ÉCHEC  Au premier plan : la trace avance
-         {"trace":2,"fix":[49.0402967,7.5202936]}
+OK     Au premier plan : la trace avance
+         {"trace":5,"fix":[49.0407671,7.5207625]}
 OK     Écran éteint : la notification de suivi est toujours là
 OK     Écran éteint : l'alerte d'un autre joueur arrive en notification
          "alerte envoyée"
 OK     Écran éteint : les autres joueurs voient ma position avancer (lue sur le serveur)
-         {"presence":{"lat":49.045268,"lng":7.522945,"ts":1793183756485},"dernierePosition":[49.0453,7.52296],"minutesApresExtinction":5.7}
+         {"presence":{"lat":49.045268,"lng":7.522945,"ts":1793185039378},"dernierePosition":[49.0453,7.52296],"minutesApresExtinction":5.7}
 OK     Écran éteint : la trace a continué (positions enregistrées pendant 6 min)
-         {"points":22,"pendantEcranEteint":20}
+         {"points":25,"pendantEcranEteint":20}
 OK     De retour dans l'appli : position partagée à jour
-         {"presence":{"lat":49.045311,"lng":7.522966,"ts":1793183812175},"derniere":[49.0453,7.52296]}
+         {"presence":{"lat":49.045309,"lng":7.522965,"ts":1793185095849},"derniere":[49.0453,7.52296]}
 OK     Fin de sortie : suivi natif arrêté, notification retirée
          {"native":false,"sortie":false}
 OK     Données de test effacées de Firebase
          {"presence":"ok","membre":"ok","groupe":"ok","profil":"ok","compte":"ok"}
 
 Déroulé :
-10:30:14 écran éteint, application en arrière-plan
-10:35:16 alerte du robot envoyée
+10:51:37 écran éteint, application en arrière-plan
+10:56:39 alerte du robot envoyée
 
 Journal de l'appli :
-10:29:42 Connecté (firebase), joueur oQgbqydv
-10:29:48 Source forêts : LANDCOVER.FORESTINVENTORY.V2:formation_vegetale
-10:29:57 Suivi natif démarré (écran éteint possible)
+10:51:09 Connecté (firebase), joueur YiccWZQ4
+10:51:13 Source forêts : LANDCOVER.FORESTINVENTORY.V2:formation_vegetale
+10:51:19 Suivi natif démarré (écran éteint possible)

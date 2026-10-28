@@ -1,0 +1,1 @@
+Essai 1 : Android a redémarré pendant le test (system_server 550 -> 7336)
