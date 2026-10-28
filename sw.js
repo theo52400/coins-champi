@@ -1,9 +1,11 @@
 // Service worker de Coins à champi : appli disponible sans réseau, fond de carte et peuplements gardés en cache.
-const VERSION = 'v2026-10-28-263ad45e';
+const VERSION = 'v2026-10-28-e4da8e89';
 const SHELL = 'cc-shell-' + VERSION;
 const TILES = 'cc-tiles';
 const DATA = 'cc-data';
 const GEOL = 'cc-geol';
+const FORET = 'cc-foret';
+const ENCY = 'cc-encyclo';
 const MAX_TILES = 6000;
 // Dans l'appli Android (sw.js?native=1), les fichiers de l'appli sont dans le téléphone : on ne garde en cache
 // que ce qui vient d'Internet (fonds de carte, peuplements, météo)
@@ -11,7 +13,7 @@ const NATIVE = new URL(self.location.href).searchParams.get('native') === '1';
 const ASSETS = [
   './', 'index.html', 'manifest.webmanifest', 'config.js',
   'css/app.css',
-  'js/app.js', 'js/core.js', 'js/game.js', 'js/map.js', 'js/sync.js', 'js/localstore.js', 'js/photos.js', 'js/avatar3d.js',
+  'js/app.js', 'js/core.js', 'js/game.js', 'js/map.js', 'js/far.js', 'js/learn.js', 'js/encyclo.js', 'js/sync.js', 'js/localstore.js', 'js/photos.js', 'js/avatar3d.js',
   'vendor/leaflet.js', 'vendor/leaflet.css', 'vendor/three.module.min.js', 'vendor/firebase.js',
   'fonts/alegreya-latin-700-normal.woff2', 'fonts/alegreya-latin-500-italic.woff2',
   'fonts/atkinson-hyperlegible-latin-400-normal.woff2', 'fonts/atkinson-hyperlegible-latin-700-normal.woff2', 'fonts/atkinson-hyperlegible-latin-400-italic.woff2',
@@ -29,7 +31,9 @@ self.addEventListener('install', event => {
       await cache.put(a, res);
     }));
     // index du sous-sol : disponible hors réseau dès la première visite (les tuiles suivent au fil de la carte)
-    try { const g = await caches.open(GEOL); const r = await fetch(new Request('data/geol/index.json', { cache: 'reload' })); if (r.ok) await g.put('data/geol/index.json', r); } catch (e) { /* facultatif */ }
+    for (const [c, f] of [[GEOL, 'data/geol/index.json'], [FORET, 'data/foret/index.json']]) {
+      try { const g = await caches.open(c); const r = await fetch(new Request(f, { cache: 'reload' })); if (r.ok) await g.put(f, r); } catch (e) { /* facultatif */ }
+    }
     // Pas de skipWaiting ici : l'appli propose « Mettre à jour » pour ne pas changer de version en pleine sortie
   })());
 });
@@ -42,13 +46,24 @@ self.addEventListener('activate', event => {
 });
 
 const isTile = u => (u.hostname === 'data.geopf.fr' && u.pathname.startsWith('/wmts')) || /(^|\.)tile\.openstreetmap\.org$/.test(u.hostname) || u.hostname === 'geoservices.brgm.fr' || (u.hostname === 'data.geopf.fr' && /^\/wms/.test(u.pathname));
-const isData = u => (u.hostname === 'data.geopf.fr' && (u.pathname.startsWith('/wfs') || u.pathname.startsWith('/altimetrie')) && !/getcapabilities/i.test(u.search)) || u.hostname === 'services.esrifrance.fr' || u.hostname === 'api.open-meteo.com';
+const isData = u => (u.hostname === 'data.geopf.fr' && (u.pathname.startsWith('/wfs') || u.pathname.startsWith('/altimetrie')) && !/getcapabilities/i.test(u.search)) || u.hostname === 'services.esrifrance.fr' || u.hostname === 'api.open-meteo.com' ||
+  (u.hostname === 'theo52400.github.io' && /\/data\/meteo\//.test(u.pathname));
 
 self.addEventListener('fetch', event => {
   const req = event.request;
   if (req.method !== 'GET') return;
   const u = new URL(req.url);
-  if (u.origin === self.location.origin) { if (NATIVE) return; event.respondWith(/\/data\/geol\//.test(u.pathname) ? geol(req) : shell(req, u)); return; }
+  if (u.origin === self.location.origin) {
+    if (NATIVE) return;
+    if (/\/data\/geol\//.test(u.pathname)) event.respondWith(dataset(req, GEOL));
+    else if (/\/data\/foret\//.test(u.pathname)) event.respondWith(dataset(req, FORET));
+    else if (/\/data\/meteo\//.test(u.pathname)) event.respondWith(data(req));
+    else if (/\/data\/encyclo\//.test(u.pathname)) event.respondWith(dataset(req, ENCY));
+    else event.respondWith(shell(req, u));
+    return;
+  }
+  // appli Android : photos de l'encyclopédie prises sur le site publié, gardées pour le hors-ligne
+  if (u.hostname === 'theo52400.github.io' && /\/data\/encyclo\//.test(u.pathname)) { event.respondWith(dataset(req, ENCY)); return; }
   if (isTile(u)) { event.respondWith(tile(req)); return; }
   if (isData(u)) { event.respondWith(data(req)); return; }
   // Firebase, Google et le reste : directement au réseau
@@ -67,28 +82,30 @@ async function shell(req, u) {
   return fetch(req);
 }
 
-// Sous-sol : l'index d'abord au réseau (il donne la version des données), les tuiles en cache d'abord
+// Sous-sol et forêts de France : l'index d'abord au réseau (il donne la version des données), les tuiles en cache d'abord
 // (le numéro de version est dans leur adresse) ; tout reste disponible hors réseau
-async function geol(req) {
-  const cache = await caches.open(GEOL);
-  if (/index\.json$/.test(new URL(req.url).pathname)) {
-    const net = fetch(req).then(async res => {
+async function dataset(req, name) {
+  const cache = await caches.open(name), key = req.url;
+  // fichier d'un autre site (appli Android : le site publié) : demandé en CORS pour pouvoir le garder en cache
+  const ask = () => (new URL(key).origin !== self.location.origin ? fetch(new Request(key, { mode: 'cors', credentials: 'omit' })) : fetch(req));
+  if (/(index|photos)\.json$/.test(new URL(key).pathname)) {
+    const net = ask().then(async res => {
       if (res.ok) {
-        await cache.put(req, res.clone()).catch(() => {});
-        // nouvelles données : on retire les tuiles des versions précédentes
+        await cache.put(key, res.clone()).catch(() => {});
+        // nouvelles données : on retire les fichiers des versions précédentes (adressés par ?v=)
         try { const v = String((await res.clone().json()).v); for (const k of await cache.keys()) { const kv = new URL(k.url).searchParams.get('v'); if (kv && kv !== v) cache.delete(k); } } catch (e) { /* ignore */ }
       }
       return res;
     });
     net.catch(() => {});
-    const cached = await cache.match(req);
+    const cached = await cache.match(key);
     if (!cached) return net;
     try { const r = await Promise.race([net, new Promise(ok => setTimeout(() => ok(null), 4000))]); return r && r.ok ? r : cached; } catch (e) { return cached; }
   }
-  const hit = await cache.match(req);
+  const hit = await cache.match(key);
   if (hit) return hit;
-  const res = await fetch(req);
-  if (res.ok) cache.put(req, res.clone()).catch(() => {});
+  const res = await ask();
+  if (res.ok) cache.put(key, res.clone()).catch(() => {});
   return res;
 }
 

@@ -2,6 +2,7 @@
 // mode biotope, couches du jeu, brouillard, hors-ligne.
 import { Core as C } from './core.js';
 import { FOG, cellBounds } from './game.js';
+import { createFar, FAR_Z } from './far.js';
 
 const L = window.L;
 const DATA_Z = 13;
@@ -50,7 +51,7 @@ export function createMap(el, deps) {
           const n2 = GEOL.n * GEOL.n; if (u.length !== n2 * 2) throw new Error('taille ' + u.length);
           const d = new Uint16Array(n2), dv = new DataView(u.buffer, u.byteOffset, u.length);
           for (let i = 0; i < n2; i++) d[i] = dv.getUint16(2 * i, true);
-          GEOL.tiles.set(k, { st: 'ok', d }); soilImg.delete(k); scheduleRedraw(); drawSoil();
+          GEOL.tiles.set(k, { st: 'ok', d }); soilImg.delete(k); scheduleRedraw(); drawSoil(); if (far) far.draw();
         })
         .catch(e => { GEOL.tiles.delete(k); log('Sous-sol ' + k + ' : ' + e.message); });
     }
@@ -71,6 +72,12 @@ export function createMap(el, deps) {
     return GEOL.cls[t.d[r * n + c]] || 0;
   }
   const lithoAtXY = (x, y) => classAt(C.latOf(y), C.lonOf(x));
+  // Classes de sol d'un carreau de 1° (n × n), pour la vue de loin ; null tant qu'il n'est pas chargé
+  function geolClasses(la, lo) {
+    const t = GEOL.tiles.get(geolKey(la, lo)); if (!t || t.st !== 'ok') return null;
+    if (!t.cls) { t.cls = new Uint8Array(t.d.length); for (let i = 0; i < t.d.length; i++) t.cls[i] = GEOL.cls[t.d[i]] || 0; }
+    return t.cls;
+  }
 
   // ---------- communes (API Découpage administratif de l'État) ----------
   const communeCache = new Map();
@@ -91,10 +98,10 @@ export function createMap(el, deps) {
   }
 
   // ---------- carte et fonds ----------
-  const map = L.map(el, { zoomControl: false, minZoom: 7, maxZoom: 18, attributionControl: true });
+  const map = L.map(el, { zoomControl: false, minZoom: 5, maxZoom: 18, attributionControl: true });
   map.attributionControl.setPrefix(false);
   map.attributionControl.setPosition('topright');
-  map.attributionControl.addAttribution('BD Forêt® © IGN · géologie © BRGM · météo Open-Meteo');
+  map.attributionControl.addAttribution('BD Forêt® © IGN · géologie © BRGM · météo <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a>');
   map.createPane('soil'); map.getPane('soil').style.zIndex = 340; map.getPane('soil').style.pointerEvents = 'none';
   map.createPane('grid'); map.getPane('grid').style.zIndex = 350; map.getPane('grid').style.pointerEvents = 'none';
   map.createPane('fog'); map.getPane('fog').style.zIndex = 370; map.getPane('fog').style.pointerEvents = 'none';
@@ -144,7 +151,7 @@ export function createMap(el, deps) {
     BASES[k].add(); st.base = k;
   }
 
-  // Calque « sol estimé » : couleurs des classes (affiché seul entre les zooms 8 et 12, ou à la demande)
+  // Calque « sol estimé » : couleurs des classes (à la demande, dans les Calques)
   const SOIL_COL = [null, [179, 16, 61], [199, 125, 18], [44, 111, 176], [122, 106, 46]];
   const soilImg = new Map();
   function soilImage(k) {
@@ -160,7 +167,7 @@ export function createMap(el, deps) {
     g.putImageData(im, 0, 0); soilImg.set(k, cv); return cv;
   }
   let soilForced = false;
-  const soilWanted = () => soilForced || (map.getZoom() >= 8 && map.getZoom() < DATA_Z);
+  const soilWanted = () => soilForced && map.getZoom() >= 7;
   function drawSoil() {
     if (!soilLayer || !map.hasLayer(soilLayer)) return;
     soilLayer.draw(ctx => {
@@ -202,12 +209,16 @@ export function createMap(el, deps) {
   const gridLayer = new CanvasLayer('grid').addTo(map);
   const fogLayer = new CanvasLayer('fog');
   const soilLayer = new CanvasLayer('soil');
+  let far = null;
 
   // ---------- couches du jeu ----------
   const layers = {
     finds: L.layerGroup().addTo(map), friends: L.layerGroup().addTo(map), events: L.layerGroup().addTo(map),
     treasures: L.layerGroup().addTo(map), track: L.layerGroup().addTo(map), car: L.layerGroup().addTo(map), route: L.layerGroup().addTo(map), me: L.layerGroup().addTo(map), tracks: L.layerGroup()
   };
+
+  // ---------- vue de loin (zooms 5 à 12) : forêts précalculées et météo de pousse ----------
+  far = createFar({ map, st, CanvasLayer, POT_COL, log, gunzip, dataUrl: deps.dataUrl || (p => p), MONTH, DATA_Z, ensureGeol, geolClasses, onChange: () => { if (deps.onChange) deps.onChange(); } });
 
   // ---------- BD Forêt (IGN Géoplateforme) ----------
   const tiles = new Map(), feats = new Map(), queue = [];
@@ -482,11 +493,11 @@ export function createMap(el, deps) {
   syncSoil();
 
   return {
-    map, L, C, layers, DATA_Z, POT_COL, feats, tiles,
+    map, L, C, layers, DATA_Z, FAR_Z, POT_COL, feats, tiles, far,
     get G() { return G; }, get st() { return st; },
-    setMode(m) { st.mode = m; el.classList.toggle('mode-bio', m === 'bio'); el.classList.toggle('mode-pot', m !== 'bio'); render(); statsCache = null; },
-    setSpecies(id) { st.sp = id; statsCache = null; render(); },
-    setShowLow(b) { st.showLow = !!b; render(); },
+    setMode(m) { st.mode = m; el.classList.toggle('mode-bio', m === 'bio'); el.classList.toggle('mode-pot', m !== 'bio'); render(); statsCache = null; far.draw(); },
+    setSpecies(id) { st.sp = id; statsCache = null; render(); far.draw(); },
+    setShowLow(b) { st.showLow = !!b; render(); far.draw(); },
     setBase, redraw, scheduleRedraw, render, stats, tileCounts, retry, analyze, setFog, drawFog,
     setSoil(on) { soilForced = !!on; syncSoil(); },
     setGeol(on) { if (on) GEOL50.add(); else GEOL50.remove(); },

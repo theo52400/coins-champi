@@ -173,6 +173,32 @@ await step('Météo', async () => {
   check('Météo Open-Meteo', m.status === 200 && m.jours > 10, m);
 });
 
+// vue de loin : carte de France des coins (forêts précalculées) et météo de pousse du jour
+await step('Vue de loin', async () => {
+  await page.evaluate(() => { const m = document.getElementById('modal'); if (!m.hidden) document.querySelector('#modal [data-act="modal-close"]') && document.querySelector('#modal [data-act="modal-close"]').click(); CC.M.map.setView([46.6, 2.5], 6); });
+  const ok = await wait(() => CC.M.far.state.coarse === 'ok' && CC.M.far.state.wxDate, null, 25000);
+  const st = await page.evaluate(() => ({ etat: CC.M.far.state, bandeau: document.getElementById('status').textContent, today: new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Paris' }) }));
+  await sleep(1500); await shot('8-france');
+  check('Vue de loin : carte de France des coins et météo de pousse', ok && /Ça pousse/.test(st.bandeau), st);
+  const age = st.etat.wxDate ? (Date.parse(st.today) - Date.parse(st.etat.wxDate)) / 864e5 : 99;
+  check('Météo de pousse à jour (moins de 2 jours)', age <= 2, { meteo: st.etat.wxDate, aujourdhui: st.today });
+  await page.evaluate(() => CC.M.map.setView([49.02, 7.45], 11));
+  const ok2 = await wait(() => CC.M.far.state.tiles >= 1 && !CC.M.far.state.wait, null, 20000);
+  await sleep(1500); await shot('9-vosges-du-nord');
+  const g = await page.evaluate(() => CC.M.far.groupAt(49.03, 7.47));
+  check('Vue d\'ensemble en cases de 250 m (Vosges du Nord : forêt)', ok2 && !!g, { peuplement: g });
+});
+
+// encyclopédie : fiches et photos libres
+await step('Encyclopédie', async () => {
+  await page.evaluate(() => { CC.learn.openFiche('girolle'); document.querySelector('.tabs [data-tab="mycodex"]').click(); });
+  const ok = await wait(() => { const i = document.querySelector('.en-carousel img'); return i && i.complete && i.naturalWidth > 100; }, null, 20000);
+  const f = await page.evaluate(() => ({ titre: document.querySelector('.panel h2') && document.querySelector('.panel h2').textContent, photos: document.querySelectorAll('.en-carousel img').length, credit: document.querySelector('.en-carousel figcaption') && document.querySelector('.en-carousel figcaption').textContent }));
+  await sleep(800); await shot('10-encyclopedie');
+  check('Encyclopédie : fiche girolle avec photos libres et crédits', ok && f.titre === 'Girolle' && f.photos >= 2 && /Wikimedia/.test(f.credit || ''), f);
+  await page.evaluate(() => document.querySelector('.tabs [data-tab="carte"]').click());
+});
+
 // comptes e-mail + mot de passe (fournisseur « Adresse e-mail/Mot de passe » de Firebase) : création à partir du compte
 // anonyme, déconnexion, reconnexion : on doit retrouver le même joueur. Le compte de test est supprimé ensuite.
 await step('Comptes', async () => {

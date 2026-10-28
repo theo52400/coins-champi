@@ -4,6 +4,7 @@ import { Core as C } from './core.js';
 import * as Game from './game.js';
 import { connect } from './sync.js';
 import { createMap, POT_COL, SOIL_COLORS } from './map.js';
+import { createLearn } from './learn.js';
 import { pickImage, processPhoto } from './photos.js';
 import { FIREBASE_CONFIG } from '../config.js';
 
@@ -42,7 +43,7 @@ const ICON = {
   eye: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>',
   flag: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 21V4M5 4h11l-2 4 2 4H5"/></svg>',
   sos: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17v.5"/></svg>',
-  medal: { basket: 'M4 10h16l-2 9H6zM8 10l4-6 4 6', cepe: 'M4 12a8 6 0 0 1 16 0zM9 12v6a3 3 0 0 0 6 0v-6', girolle: 'M4 6c4 1 12 1 16 0l-6 8v6h-4v-6z', morille: 'M12 3c3 2 4 6 3 11H9C8 9 9 5 12 3zM10 14v6h4v-6', book: 'M4 5c3-1.5 5.5-1.5 8 0v15c-2.5-1.5-5-1.5-8 0zM12 5c2.5-1.5 5-1.5 8 0v15c-3-1.5-5.5-1.5-8 0', sun: 'M12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zM12 2v2M12 20v2M2 12h2M20 12h2', camera: 'M4 8h3l2-3h6l2 3h3v11H4zM12 10a3 3 0 1 1 0 6 3 3 0 0 1 0-6', boot: 'M6 3h5v9l7 3v5H6z', flag: 'M5 21V4h11l-2 4 2 4H5', compass: 'M12 3a9 9 0 1 1 0 18 9 9 0 0 1 0-18zM15 9l-2 5-4 1 2-5z', lock: 'M5 11h14v10H5zM8 11V8a4 4 0 0 1 8 0v3', share: 'M6 12a2 2 0 1 1 0 .1M18 6a2 2 0 1 1 0 .1M18 18a2 2 0 1 1 0 .1M8 11l8-4M8 13l8 4', star: 'M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z', team: 'M9 8a3 3 0 1 1 0 .1M3 20c.6-3.6 3-5.5 6-5.5s5.4 1.9 6 5.5M17 9a2.5 2.5 0 1 1 0 .1M16 14.6c2.8.1 4.9 1.9 5.5 4.9' }
+  medal: { basket: 'M4 10h16l-2 9H6zM8 10l4-6 4 6', cepe: 'M4 12a8 6 0 0 1 16 0zM9 12v6a3 3 0 0 0 6 0v-6', girolle: 'M4 6c4 1 12 1 16 0l-6 8v6h-4v-6z', morille: 'M12 3c3 2 4 6 3 11H9C8 9 9 5 12 3zM10 14v6h4v-6', book: 'M4 5c3-1.5 5.5-1.5 8 0v15c-2.5-1.5-5-1.5-8 0zM12 5c2.5-1.5 5-1.5 8 0v15c-3-1.5-5.5-1.5-8 0', sun: 'M12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zM12 2v2M12 20v2M2 12h2M20 12h2', camera: 'M4 8h3l2-3h6l2 3h3v11H4zM12 10a3 3 0 1 1 0 6 3 3 0 0 1 0-6', boot: 'M6 3h5v9l7 3v5H6z', flag: 'M5 21V4h11l-2 4 2 4H5', compass: 'M12 3a9 9 0 1 1 0 18 9 9 0 0 1 0-18zM15 9l-2 5-4 1 2-5z', lock: 'M5 11h14v10H5zM8 11V8a4 4 0 0 1 8 0v3', share: 'M6 12a2 2 0 1 1 0 .1M18 6a2 2 0 1 1 0 .1M18 18a2 2 0 1 1 0 .1M8 11l8-4M8 13l8 4', star: 'M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z', team: 'M9 8a3 3 0 1 1 0 .1M3 20c.6-3.6 3-5.5 6-5.5s5.4 1.9 6 5.5M17 9a2.5 2.5 0 1 1 0 .1M16 14.6c2.8.1 4.9 1.9 5.5 4.9' , eye: 'M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12zM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6', shield: 'M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6zM9 12l2 2 4-4' }
 };
 const medalSvg = k => '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="' + (ICON.medal[k] || ICON.medal.star) + '"/></svg>';
 const fmtKm = m => m < 1000 ? Math.round(m) + ' m' : (Math.round(m / 100) / 10).toLocaleString('fr-FR') + ' km';
@@ -69,7 +70,7 @@ const nativeReady = IN_APP ? import('./native.js').then(m => (NativeApp = m.isNa
 const S = {
   sync: null, uid: null, me: null, meLoaded: false, myFinds: [], mySorties: [], loadedFinds: false, loadedSorties: false,
   gid: store.get('cc.gid', null), group: null, members: [], presence: [], groupFinds: [], carnets: [], events: [], treasures: [],
-  sp: store.get('cc.sp', 'all'), mode: 'pot', showLow: store.get('cc.low', false), base: store.get('cc.base', 'plan'),
+  sp: store.get('cc.sp', 'all'), mode: 'pot', showLow: store.get('cc.low', false), farWx: store.get('cc.farwx', true), base: store.get('cc.base', 'plan'),
   wx: null, wxErr: null, wxAt: null, point: null, prof: null, badgesSeen: null,
   settings: Object.assign({ share: true, vis: 'groupe', wake: true, liveShare: false }, store.get('cc.settings', {})),
   sortie: store.get('cc.sortie', null), unsubGroup: [], stages: new Set(), sheet: 'peek', tab: 'carte'
@@ -83,9 +84,21 @@ const spColor = id => { const sp = Game.SPECIES_BY_ID[id]; return Av && sp && Av
 
 // ---------------------------------------------------------------- carte
 let M = null;
+// Données publiées avec le site ; dans l'appli Android, la météo du jour (elle change chaque matin) et les photos
+// de l'encyclopédie (lourdes) viennent du site publié
+const dataUrl = p => (IN_APP && /^data\/(meteo|encyclo)\//.test(p) ? SITE_URL + p : p);
+// Onglet « Apprendre » : encyclopédie, quiz, Mycodex
+const learn = createLearn({
+  $, esc, store, S, MONTH, dataUrl,
+  mycodexHtml: () => mycodexHtml(),
+  rerender: () => renderPanelIfOpen('mycodex'),
+  onPoints: (pts, line) => celebrate(pts, line),
+  openSpeciesMap: id => { openTab('carte'); selectSp(id); },
+  saveQuiz: q => { if (S.sync) S.sync.saveMe({ quiz: q }).catch(() => {}); onProfileData(); }
+});
 async function boot() {
-  M = createMap($('#map'), { log, toast, store, onTap, onChange: () => { updatePeek(); refreshMore(); }, onBlocked: () => { $('#blocked').hidden = false; }, onLayerFail: k => { const el = $('#lyr-' + k); if (el) el.checked = false; } });
-  M.setBase(S.base); M.setShowLow(S.showLow); M.setSpecies(S.sp); M.setMode('pot');
+  M = createMap($('#map'), { log, toast, store, onTap, dataUrl, onChange: () => { updatePeek(); refreshMore(); }, onBlocked: () => { $('#blocked').hidden = false; }, onLayerFail: k => { const el = $('#lyr-' + k); if (el) el.checked = false; } });
+  M.setBase(S.base); M.setShowLow(S.showLow); M.setSpecies(S.sp); M.setMode('pot'); M.far.setWx(S.farWx);
   M.map.on('moveend', () => loadWeather());
   M.map.on('dragstart', () => { GPS.centerNext = false; if (GPS.follow) setFollow(false); });
   autoLocate();
@@ -543,7 +556,7 @@ function updatePeek() {
   const pill = $('#peek-pill'), lab = wxLabel();
   pill.textContent = lab.t; pill.className = 'pill ' + lab.c; pill.hidden = S.mode === 'bio';
   const st = $('#status');
-  if (M.map.getZoom() < M.DATA_Z) { st.innerHTML = 'Zoomez sur un massif forestier pour calculer les coins. <button class="linkish" data-act="massifs">Choisir un massif</button>'; return; }
+  if (M.map.getZoom() < M.DATA_Z) { st.innerHTML = farStatus(); return; }
   const tc = M.tileCounts(), parts = [];
   if (tc && tc.wait) parts.push('Chargement des forêts… ' + tc.ok + '/' + tc.total);
   if (tc && tc.err) parts.push('<span>' + tc.err + ' zone(s) en erreur</span> <button class="linkish" data-act="retry">Réessayer</button>');
@@ -555,6 +568,43 @@ function updatePeek() {
     else if (vs.forest) parts.push('≈ ' + fmtHa(vs.lv[3] * vs.ha) + ' de coins forts, ' + fmtHa(vs.lv[2] * vs.ha) + ' bons dans l\'écran');
   }
   st.innerHTML = parts.join(' · ') || '&nbsp;';
+}
+// ---------------------------------------------------------------- vue de loin (zooms 5 à 12)
+const dateCourte = iso => { const d = new Date(iso + 'T12:00:00'); return isNaN(d) ? iso : d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' }); };
+function farStatus() {
+  const fs = M.far.state, z = M.map.getZoom(), more = ' <button class="linkish" data-act="massifs">Choisir un massif</button>';
+  if (!fs.idx) return 'Zoomez sur un massif forestier pour calculer les coins.' + more;
+  if (z < M.FAR_Z) {
+    if (S.mode === 'bio') return 'Forêts de France : peuplement dominant. Zoomez sur une région.';
+    if (fs.coarse !== 'ok') return 'Chargement de la carte de France…';
+    return (M.far.wxOn && fs.wxDate ? 'Ça pousse en ce moment (météo du ' + esc(dateCourte(fs.wxDate)) + ')' : 'Coins de France d\'après les forêts et le sol') + ' · zoomez sur une région';
+  }
+  return (fs.wait ? 'Chargement des forêts… · ' : '') + 'Vue d\'ensemble en cases de 250 m · zoomez pour le détail';
+}
+function farLegend() {
+  const z = M.map.getZoom(), sw = c => '<i class="sw" style="background:' + c + '"></i>';
+  if (S.mode === 'bio') return '<h3>Légende</h3><div class="legend">' + ['HET', 'CHE', 'FMX', 'CHA', 'SEP', 'PSY', 'PIN', 'DOU', 'MXF', 'MXC', 'PEU', 'LAN'].map(k => '<span>' + sw(C.GROUPS[k].c) + esc(C.GROUPS[k].n) + '</span>').join('') + '</div><p class="note" style="margin-top:8px">' + (z < M.FAR_Z ? 'Peuplement le plus présent dans chaque case d\'environ 5 km (plus la couleur est franche, plus la case est boisée).' : 'Peuplement dominant de chaque case d\'environ 250 m.') + ' D\'après la BD Forêt V2 de l\'IGN.</p>';
+  const lv = '<span>' + sw(POT_COL[3]) + (z < M.FAR_Z ? 'Très favorable' : 'Coin fort') + '</span><span>' + sw(POT_COL[2]) + (z < M.FAR_Z ? 'Favorable' : 'Bon') + '</span>' + (S.showLow ? '<span>' + sw(POT_COL[1]) + 'Possible</span>' : '');
+  if (z < M.FAR_Z) {
+    const fs = M.far.state;
+    return '<h3>Ça pousse</h3><div class="legend">' + lv + '</div>' +
+      '<label class="opt" style="margin-top:8px"><input type="checkbox" data-act="far-wx"' + (S.farWx ? ' checked' : '') + '> <span>Tenir compte de la météo<small>' + (fs.wxDate ? 'Pluie des 14 derniers jours, températures et gel, au ' + esc(dateCourte(fs.wxDate)) : 'Météo du jour en chargement…') + '</small></span></label>' +
+      '<p class="note" style="margin-top:8px">Chaque case fait environ 5 km : part de bons coins (peuplements de la BD Forêt, sol, lisières)' + (S.farWx ? ' × conditions de pousse de l\'espèce' : '') + '. Zoomez : à partir de la région, les coins s\'affichent en cases de 250 m, puis en détail.</p>';
+  }
+  return '<h3>Légende</h3><div class="legend">' + lv + '</div><p class="note" style="margin-top:8px">Vue d\'ensemble en cases d\'environ 250 m, calculée pour toute la France (peuplement dominant, sol, lisières). Zoomez encore pour la carte détaillée en direct.</p>';
+}
+let farNamesT = null;
+function farBest() {
+  if (M.map.getZoom() >= M.DATA_Z || S.mode === 'bio') return '';
+  const fs = M.far.state, list = M.far.best(5), z = M.map.getZoom();
+  const head = '<h3 style="margin-top:14px">' + (z < M.FAR_Z && S.farWx ? 'Où ça pousse dans la vue' : 'Meilleurs secteurs dans la vue') + '</h3>';
+  if (!list.length) return head + '<p class="note">' + (fs.coarse === 'ok' ? 'Aucun secteur favorable dans la vue pour le moment.' : 'Chargement de la carte de France…') + '</p>';
+  return head + '<div class="list">' + list.map((p, i) => {
+    const nm = M.communeCached(p.lat, p.lon);
+    if (!nm) M.communeAt(p.lat, p.lon).then(n => { if (n) { clearTimeout(farNamesT); farNamesT = setTimeout(renderSp, 150); } });
+    const lab = p.score >= 0.75 ? 'Très favorable' : p.score >= 0.45 ? 'Favorable' : 'Possible';
+    return '<button class="li far-li" data-act="far-go" data-lat="' + p.lat.toFixed(4) + '" data-lon="' + p.lon.toFixed(4) + '"><b class="far-n">' + (i + 1) + '</b><div class="grow">' + esc(nm ? 'Autour de ' + nm : 'Secteur ' + p.lat.toFixed(2) + ', ' + p.lon.toFixed(2)) + '<small>' + lab + '</small></div><span class="note">Voir</span></button>';
+  }).join('') + '</div>';
 }
 function refreshMore() { if (!M) return; renderWx(); renderSp(); renderLegend(); if (S.point) renderPoint(); }
 function renderWx() {
@@ -581,15 +631,23 @@ function renderSp() {
       const max = Math.max(1e-9, ...rows.map(r => r.ha));
       h += '<div class="bars">' + rows.map(r => '<div class="bar"><span class="t">' + esc(r.s.n) + '</span><i><b style="width:' + Math.round(100 * r.ha / max) + '%;background:' + POT_COL[2] + '"></b></i><span class="v">' + (r.ha >= 10 ? Math.round(r.ha) : Math.round(r.ha * 10) / 10) + '</span></div>').join('') + '</div><p class="note" style="margin-top:8px">Hectares de coins forts dans l\'écran.</p>';
     }
-    el.innerHTML = h; return;
+    el.innerHTML = h + farBest(); return;
   }
   const months = Object.keys(sp.m).map(Number).sort((a, b) => a - b);
   const mn = m => new Date(2000, m - 1, 1).toLocaleDateString('fr-FR', { month: 'short' }).replace('.', '');
-  el.innerHTML = '<h3>Où chercher</h3><div class="title">' + esc(sp.n) + '</div><div class="latin">' + esc(sp.lat) + '</div><p>' + esc(sp.hab) + '</p><p class="note">Saison : ' + months.map(m => m === MONTH ? '<b>' + mn(m) + '</b>' : mn(m)).join(' · ') + (C.seasonOf(sp, MONTH) ? '' : ' — hors saison : utile pour repérer les coins à l\'avance.') + '</p><div class="warnbox"><b>Confusions :</b> ' + esc(sp.conf) + '</div>';
+  el.innerHTML = '<h3>Où chercher</h3><div class="title">' + esc(sp.n) + '</div><div class="latin">' + esc(sp.lat) + '</div><p>' + esc(sp.hab) + '</p><p class="note">Saison : ' + months.map(m => m === MONTH ? '<b>' + mn(m) + '</b>' : mn(m)).join(' · ') + (C.seasonOf(sp, MONTH) ? '' : ' — hors saison : utile pour repérer les coins à l\'avance.') + '</p><div class="warnbox"><b>Confusions :</b> ' + esc(sp.conf) + '</div>' + farBest();
+}
+function soilLegend() {
+  if (!$('#lyr-soil') || !$('#lyr-soil').checked) return '';
+  return '<h3 style="margin-top:14px">Sol estimé</h3><div class="legend">' + [1, 2, 3, 4].map(c => '<span><i class="sw" style="background:' + SOIL_COLORS[c] + '"></i>' + esc(C.LITHO[c].n) + ' <small class="note">' + esc(C.LITHO[c].d) + '</small></span>').join('') + '</div><p class="note" style="margin-top:8px">D\'après la roche du sous-sol (carte géologique de la France au 1/1 000 000, BRGM).</p>';
 }
 function renderLegend() {
   const el = $('#sec-legend');
-  if (M.map.getZoom() < M.DATA_Z) { el.innerHTML = '<h3>Sol estimé</h3><div class="legend">' + [1, 2, 3, 4].map(c => '<span><i class="sw" style="background:' + SOIL_COLORS[c] + '"></i>' + esc(C.LITHO[c].n) + ' <small class="note">' + esc(C.LITHO[c].d) + '</small></span>').join('') + '</div><p class="note" style="margin-top:8px">' + (M.map.getZoom() < 8 ? 'Zoomez sur une région pour afficher le sol. ' : '') + 'Sols acides : terrains des cèpes, girolles et chanterelles ; sols calcaires : ceux des trompettes, morilles et pieds de mouton. D\'après la roche du sous-sol (carte géologique de la France au 1/1 000 000, BRGM).</p>'; return; }
+  renderLegendMain(el);
+  el.insertAdjacentHTML('beforeend', soilLegend());
+}
+function renderLegendMain(el) {
+  if (M.map.getZoom() < M.DATA_Z) { el.innerHTML = farLegend(); return; }
   if (S.mode === 'bio') {
     const vs = M.stats(), present = vs ? Object.keys(vs.groups).map(Number).sort((a, b) => vs.groups[b] - vs.groups[a]) : [];
     const keys = present.length ? present.map(g => C.GKEYS[g - 1]) : ['HET', 'CHE', 'FMX', 'SEP', 'PSY', 'DOU', 'MXF', 'MXC', 'PEU', 'NUE'];
@@ -614,13 +672,17 @@ async function onTap(ll) {
     if (S.point === p) { p.alt = typeof v === 'number' && v > -500 ? Math.round(v) : null; renderPoint(); }
   } catch (e) { if (S.point === p) { p.alt = null; renderPoint(); } }
 }
+function farGroupText(p) {
+  const g = M.far.groupAt(p.lat, p.lng);
+  return g ? esc(C.GROUPS[g].n) + ' <span class="note">(vue d\'ensemble, zoomez pour le détail)</span>' : M.map.getZoom() >= M.FAR_Z && M.far.state.idx ? 'hors forêt (vue d\'ensemble)' : 'zoomez pour charger les forêts';
+}
 function renderPoint() {
   const p = S.point, el = $('#sec-point');
   if (!p) { el.hidden = true; return; }
   el.hidden = false;
   const L0 = C.LITHO[p.litho] || C.LITHO[0];
   let h = '<h3>Ce point</h3><dl class="kv">';
-  h += '<dt>Peuplement</dt><dd>' + (p.f ? esc(p.f.label || C.GROUPS[p.f.g].n) + (p.f.ess && !/^(NC|NR)$/i.test(p.f.ess) ? ' <span class="note">(' + esc(p.f.ess) + ')</span>' : '') : (M.map.getZoom() < M.DATA_Z ? 'zoomez pour charger les forêts' : 'hors forêt cartographiée')) + '</dd>';
+  h += '<dt>Peuplement</dt><dd>' + (p.f ? esc(p.f.label || C.GROUPS[p.f.g].n) + (p.f.ess && !/^(NC|NR)$/i.test(p.f.ess) ? ' <span class="note">(' + esc(p.f.ess) + ')</span>' : '') : (M.map.getZoom() < M.DATA_Z ? farGroupText(p) : 'hors forêt cartographiée')) + '</dd>';
   h += '<dt>Sol estimé</dt><dd>' + esc(L0.n) + (p.rock ? '' : ' <span class="note">— ' + esc(L0.d) + '</span>') + '</dd>';
   if (p.rock) h += '<dt>Sous-sol</dt><dd>' + esc(p.rock.n) + (p.rock.a ? ' <span class="note">(' + esc(p.rock.a) + ')</span>' : '') + '</dd>';
   if (p.commune) h += '<dt>Commune</dt><dd>' + esc(p.commune) + '</dd>';
@@ -1491,7 +1553,7 @@ function renderPanel(name) {
     const top = $('#panel').scrollTop;
     destroyStages('panel');
     if (name === 'groupe') renderGroupPanel();
-    else if (name === 'mycodex') renderMycodex();
+    else if (name === 'mycodex') learn.render($('#panel-inner'));
     else if (name === 'profil') renderProfil();
     $('#panel').scrollTop = top;
   }, 40);
@@ -1522,13 +1584,14 @@ function renderGroupPanel() {
     '<div class="card"><h3>Activité</h3><div class="feed">' + (feed.length ? feed.map(f => '<div class="feed-item" data-act="' + f.act + '" data-id="' + esc(f.id) + '" style="cursor:pointer">' + f.html + '</div>').join('') : '<p class="note">Rien pour l\'instant : partez en sortie !</p>') + '</div></div>' +
     '<div class="actions"><button class="btn" data-act="group-choose">Changer de groupe</button><button class="btn danger" data-act="group-leave">Quitter le groupe</button></div>';
 }
-function renderMycodex() {
-  const el = $('#panel-inner'), per = (S.prof && S.prof.stats.perSpecies) || {};
+function mycodexHtml() {
+  const per = (S.prof && S.prof.stats.perSpecies) || {};
   const list = Game.CATALOG.filter(s => s.id !== 'autre'), found = list.filter(s => per[s.id]).length;
-  el.innerHTML = '<h2>Mycodex</h2><p class="lead">' + found + ' espèce' + (found > 1 ? 's' : '') + ' trouvée' + (found > 1 ? 's' : '') + ' sur ' + list.length + '. Chaque nouvelle espèce rapporte double.</p>' +
+  return '<h2>Mycodex</h2><p class="lead">' + found + ' espèce' + (found > 1 ? 's' : '') + ' trouvée' + (found > 1 ? 's' : '') + ' sur ' + list.length + '. Chaque nouvelle espèce rapporte double.</p>' +
     '<div class="progress"><b style="width:' + Math.round(100 * found / list.length) + '%"></b></div>' +
     '<div class="dex">' + list.map(s => '<button class="' + (per[s.id] ? '' : 'locked') + '" data-act="species" data-id="' + s.id + '"><img alt="" src="' + speciesImg(s.id, 128) + '">' + esc(per[s.id] ? s.n : '???') + '<small>' + (per[s.id] ? per[s.id] + ' trouvaille' + (per[s.id] > 1 ? 's' : '') : s.pts + ' pts') + '</small></button>').join('') + '</div>';
 }
+function renderMycodex() { renderPanelIfOpen('mycodex'); }
 function openSpecies(id) {
   const s = Game.SPECIES_BY_ID[id]; if (!s) return;
   const core = s.core ? C.SPECIES.find(x => x.id === s.core) : null;
@@ -1538,7 +1601,7 @@ function openSpecies(id) {
     (found ? '<div class="latin" style="text-align:center;margin-top:6px">' + esc(s.lat) + '</div>' : '<p style="text-align:center" class="note">Trouvez-la pour la débloquer : ' + s.pts * 2 + ' points la première fois.</p>') +
     (found ? '<p>' + esc(core ? core.hab : s.hab) + '</p><div class="warnbox"><b>Confusions :</b> ' + esc(core ? core.conf : s.conf) + '</div>' : '<p class="note">Indice : ' + esc((core ? core.hab : s.hab).split(/[,.;]/)[0]) + '.</p>') +
     (mine.length ? '<h3 style="margin-top:14px">Vos trouvailles</h3><div class="list">' + mine.slice(0, 20).map(f => '<div class="li" data-act="myfind" data-id="' + esc(f.id) + '" style="cursor:pointer"><img alt="" src="' + (f.thumb || speciesImg(f.species, 64)) + '"><div class="grow">' + esc(dateFr(f.ts)) + '<small>' + esc((Game.QTY[f.qty] || Game.QTY[1]).n) + (f.commune ? ' · ' + esc(f.commune) : '') + (f.vis === 'prive' ? ' · secret' : '') + '</small></div></div>').join('') + '</div>' : '') +
-    (core ? '<div class="actions"><button class="btn primary" data-act="species-map" data-id="' + esc(core.id) + '">Voir ses coins sur la carte</button></div>' : ''));
+    '<div class="actions">' + (learn.ficheForGame(id) ? '<button class="btn" data-act="en-open" data-id="' + esc(learn.ficheForGame(id)) + '">Fiche complète</button>' : '') + (core ? '<button class="btn primary" data-act="species-map" data-id="' + esc(core.id) + '">Voir ses coins sur la carte</button>' : '') + '</div>');
   card.addEventListener('click', e => {
     const a = e.target.closest('[data-act]'); if (!a) return;
     if (a.dataset.act === 'species-map') { closeModal(); selectSp(a.dataset.id); }
@@ -1636,6 +1699,13 @@ function wireUi() {
     if (t.dataset.sp && t.closest('#rail')) { selectSp(t.dataset.sp); return; }
     if (t.dataset.tab) { openTab(t.dataset.tab); return; }
     const a = t.dataset.act, id = t.dataset.id;
+    if (/^(learn-|en-|qz-|fc-)/.test(a || '')) {
+      if (!$('#modal').hidden) closeModal(true);
+      const r = learn.act(a, t);
+      if (S.tab !== 'mycodex') { if (r === 'top' || r === 'keep') openTab('mycodex'); return; }
+      if (r === 'top') { $('#panel').scrollTop = 0; renderPanel('mycodex'); } else if (r === 'keep') renderPanel('mycodex');
+      return;
+    }
     switch (a) {
       case 'modal-close': closeModal(); break;
       case 'hideblocked': $('#blocked').hidden = true; break;
@@ -1643,6 +1713,8 @@ function wireUi() {
       case 'place-cancel': endPlacing(false); break;
       case 'closepoint': S.point = null; $('#sec-point').hidden = true; if (pointMarker) { M.map.removeLayer(pointMarker); pointMarker = null; } setSheet('peek'); break;
       case 'zoomhere': if (S.point) M.map.setView([S.point.lat, S.point.lng], 15); break;
+      case 'far-go': setSheet('peek'); M.map.setView([+t.dataset.lat, +t.dataset.lon], 11); break;
+      case 'far-wx': S.farWx = !!t.checked; store.set('cc.farwx', S.farWx); M.far.setWx(S.farWx); break;
       case 'find-here': if (S.point) openNewFind({ lat: S.point.lat, lng: S.point.lng }); break;
       case 'treasure-here': if (S.point) openHideTreasure({ lat: S.point.lat, lng: S.point.lng }); break;
       case 'massifs': setSheet('open'); { const el = $('#sec-point'); el.hidden = false; S.point = null; el.innerHTML = '<h3>Aller vers un massif</h3><div class="massifs">' + MASSIFS.map((m, i) => '<button class="btn small" data-act="gomassif" data-i="' + i + '">' + esc(m[0]) + '</button>').join('') + '</div>'; } break;
@@ -1711,7 +1783,7 @@ function wireUi() {
   document.querySelectorAll('input[name="base"]').forEach(r => { r.checked = r.value === S.base; r.addEventListener('change', e => { S.base = e.target.value; store.set('cc.base', S.base); M.setBase(S.base); }); });
   $('#lyr-low').checked = !!S.showLow;
   $('#lyr-low').addEventListener('change', e => { S.showLow = e.target.checked; store.set('cc.low', S.showLow); M.setShowLow(S.showLow); renderLegend(); });
-  $('#lyr-soil').addEventListener('change', e => M.setSoil(e.target.checked));
+  $('#lyr-soil').addEventListener('change', e => { M.setSoil(e.target.checked); renderLegend(); });
   $('#lyr-geol').addEventListener('change', e => M.setGeol(e.target.checked));
   $('#lyr-onf').addEventListener('change', e => M.setOnf(e.target.checked));
   $('#lyr-fog').addEventListener('change', renderTracksAndFog);
@@ -1741,4 +1813,4 @@ async function shareInvite() {
 
 window.addEventListener('beforeunload', () => { if (S.sortie) saveSortieState(); });
 boot().catch(e => { log('Démarrage : ' + e.message); console.error(e); });
-window.CC = { S, get M() { return M; }, Game, C, logs };
+window.CC = { S, get M() { return M; }, Game, C, logs, learn };

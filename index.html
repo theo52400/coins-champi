@@ -77,7 +77,7 @@
     <button data-tab="carte" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14M15 6v14"/></svg>Carte</button>
     <button data-tab="groupe"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.6 3.3-5.5 6.5-5.5s5.9 1.9 6.5 5.5"/><circle cx="17.5" cy="9" r="2.5"/><path d="M16 14.6c2.8.1 4.9 1.9 5.5 4.9"/></svg>Groupe</button>
     <button class="tab-find" id="btn-find" aria-label="Nouvelle trouvaille"><span class="fab-cam"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.6"/></svg></span>Trouvaille</button>
-    <button data-tab="mycodex"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M4 5c3-1.5 5.5-1.5 8 0v15c-2.5-1.5-5-1.5-8 0z"/><path d="M12 5c2.5-1.5 5-1.5 8 0v15c-3-1.5-5.5-1.5-8 0"/></svg>Mycodex</button>
+    <button data-tab="mycodex"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M4 5c3-1.5 5.5-1.5 8 0v15c-2.5-1.5-5-1.5-8 0z"/><path d="M12 5c2.5-1.5 5-1.5 8 0v15c-3-1.5-5.5-1.5-8 0"/></svg>Apprendre</button>
     <button data-tab="profil"><img id="tab-avatar" alt="" src="data:image/gif;base64,R0lGODlhAQABAAAAACw="><span>Profil</span></button>
   </nav>
 </div>
@@ -123,6 +123,7 @@
   <section class="prose">
     <h3>Comment c'est calculé</h3>
     <p>La carte croise les peuplements forestiers de la BD Forêt V2 de l'IGN (chargés en direct, partout en France), le sol estimé d'après la roche du sous-sol (carte géologique de la France au 1/1 000 000 du BRGM : grès, granites et sables pour les sols acides, calcaires et craie pour les sols calcaires, marnes et argiles pour les sols lourds) et la distance aux lisières. Chaque champignon a ses préférences d'arbres, de sol et de position. La météo des 14 derniers jours (Open-Meteo) donne une indication de pousse.</p>
+    <p>De loin, la carte « Ça pousse » résume toute la France en cases d'environ 5 km : la part de bons coins de chaque case (BD Forêt de tous les départements, sol, lisières), multipliée par les conditions de pousse du jour (pluie des 14 derniers jours, températures, gel), mises à jour chaque matin. En zoomant sur une région, les coins s'affichent en cases d'environ 250 m, puis en détail.</p>
     <p class="note">C'est un potentiel d'habitat : il resserre la zone de recherche sans garantir la présence. Le sol est une estimation à 500 m près ; pas encore de pente ni de cours d'eau ; les coupes récentes manquent dans la BD Forêt.</p>
   </section>
   <section class="prose">
@@ -138,7 +139,7 @@
   </section>
   <section class="prose">
     <h3>Sources</h3>
-    <p class="note">BD Forêt® V2, Plan IGN, photos aériennes, altitude et itinéraires piétons © IGN — Géoplateforme (licence ouverte). Sous-sol : carte géologique de la France au 1/1 000 000 © BRGM (CC BY 4.0), via Macrostrat ; cartes géologiques au 1/50 000 © BRGM. Communes : API Découpage administratif (geo.api.gouv.fr). Météo Open-Meteo.com (CC BY 4.0). Fond © contributeurs OpenStreetMap. Moteur 3D three.js, carte Leaflet.</p>
+    <p class="note">BD Forêt® V2, Plan IGN, photos aériennes, altitude et itinéraires piétons © IGN — Géoplateforme (licence ouverte). Sous-sol : carte géologique de la France au 1/1 000 000 © BRGM (CC BY 4.0), via Macrostrat ; cartes géologiques au 1/50 000 © BRGM. Communes : API Découpage administratif (geo.api.gouv.fr). Météo Open-Meteo.com (CC BY 4.0). Photos de l'encyclopédie : Wikimedia Commons, auteur et licence sous chaque photo. Fond © contributeurs OpenStreetMap. Moteur 3D three.js, carte Leaflet.</p>
   </section>
 </aside>
 

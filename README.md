@@ -3,13 +3,15 @@
 Le jeu des chasseurs de champignons, partout en France métropolitaine et en Corse, à jouer entre amis sur le téléphone :
 
 - **Carte des coins** : potentiel d'habitat de 10 champignons comestibles, calculé en direct à partir des peuplements forestiers de l'IGN (BD Forêt V2), du sol estimé d'après la roche du sous-sol (carte géologique de la France du BRGM) et des lisières, plus un indice de pousse d'après la météo des 14 derniers jours.
+- **Vue de loin « Ça pousse »** : en dézoomant jusqu'à la France entière, chaque case d'environ 5 km montre la part de bons coins (BD Forêt de tous les départements, sol, lisières) multipliée par la météo de pousse du jour, avec les meilleurs secteurs de la vue. Plus près, les coins s'affichent en cases d'environ 250 m.
+- **Apprendre** : encyclopédie de 45 champignons (24 comestibles, 21 dangereux) avec photos libres, goût sur 5, cuisine, conservation, critères, saison et sosies face à face ; quiz photo, cartes mémoire, défi photo de la semaine et badges.
 - **Mon champignon sur la carte** : dès l'ouverture, l'avatar suit vos pas, avec la direction de marche ; le bouton de localisation fait suivre la carte.
 - **Itinéraire dans l'appli** : vers un point, une trouvaille, un ami, une alerte ou la voiture. Le chemin à pied de l'IGN est tracé sur la carte avec la ligne droite, la distance restante et le temps de marche.
 - **Mode poche** : écran noir verrouillé qui reste allumé, pour garder le GPS et le partage de position pendant que le téléphone est dans la poche.
 - **Profil et avatar 3D** : chacun crée son champignon animé (espèce, couleur, yeux, bouche, accessoire, chapeau, écharpe).
 - **Sorties en direct** : pendant une sortie, les membres du groupe voient la position de chacun sur la carte. La trace est enregistrée, la voiture aussi (boussole « Retour à la voiture »).
 - **Trouvailles en photo** : photo du coin, espèce, quantité, note, et visibilité au choix : coin **secret**, **groupe**, ou groupe avec **position floutée** (environ 300 m).
-- **Jeu** : points, 10 niveaux, 18 badges, Mycodex de 16 espèces à débloquer, deux défis d'équipe par semaine, « bravos » sur les trouvailles des amis.
+- **Jeu** : points, 10 niveaux, 22 badges, Mycodex de 16 espèces à débloquer, deux défis d'équipe par semaine, « bravos » sur les trouvailles des amis.
 - **Cèpes d'or** : un joueur cache un trésor dans la forêt, les autres voient une zone de 250 m et un indicateur chaud/froid ; le premier à moins de 25 m le ramasse (+100 points).
 - **Alertes** : « Venez voir ! », « Regroupement ici », SOS, avec la position jointe.
 - **Hors réseau** : l'appli s'ouvre sans réseau ; on peut télécharger une zone (fond IGN, peuplements et sous-sol) avant de partir. Les trouvailles faites sans réseau se synchronisent au retour.
@@ -71,6 +73,8 @@ Firestore Spark : 50 000 lectures, 20 000 écritures par jour et 1 Go de donnée
 | `js/app.js` | Orchestration : écrans, GPS, sorties, jeu |
 | `js/core.js` | Modèle d'habitat (peuplements, sol, lisières, météo) |
 | `js/map.js` | Carte Leaflet, BD Forêt en direct (WFS Géoplateforme), sous-sol, communes, grille, brouillard, hors-ligne |
+| `js/far.js` | Vue de loin : carte de France « Ça pousse » et cases de 250 m (`data/foret`, `data/meteo`) |
+| `js/encyclo.js`, `js/learn.js` | Encyclopédie (fiches) et onglet Apprendre (quiz, cartes mémoire, défi photo) |
 | `js/game.js` | Règles : points, niveaux, badges, défis, traces |
 | `js/avatar3d.js` | Avatars champignons en 3D (three.js) |
 | `js/sync.js` | Synchronisation Firestore (et base locale du mode solo, `js/localstore.js`) |
@@ -78,6 +82,9 @@ Firestore Spark : 50 000 lectures, 20 000 écritures par jour et 1 Go de donnée
 | `sw.js` | Service worker : appli et tuiles disponibles hors réseau |
 | `firestore.rules` | Règles de sécurité |
 | `data/geol/` | Sous-sol : tuiles de 1° (cases de 0,005°) et légende, construites par `tools/geol/build.py` |
+| `data/foret/` | Forêts de France : carreaux de 1° (cases de 1/400°, peuplement dominant et lisière) et carte de France au 1/20°, construits par `tools/foret/build.py` (`foret-france.yml`) |
+| `data/meteo/pousse.json` | Météo de pousse, un point tous les 0,5°, recalculée chaque matin par `meteo-france.yml` |
+| `data/encyclo/` | Photos de l'encyclopédie (Wikimedia Commons) choisies dans `tools/photos/choix.json`, construites par `photos-encyclo.yml` |
 | `.github/workflows/geol-france.yml` | Reconstruit `data/geol` sur les machines de GitHub (lecture de la carte géologique) |
 | `.github/workflows/verif-live.yml` | Après chaque mise en ligne, ouvre le site publié dans un navigateur et vérifie les services ; rapport sur la branche `sondes` |
 
@@ -86,4 +93,4 @@ Firestore Spark : 50 000 lectures, 20 000 écritures par jour et 1 Go de donnée
 
 ## Sources et licences
 
-BD Forêt® V2, Plan IGN, photographies aériennes, altimétrie et itinéraires piétons © IGN — Géoplateforme (licence ouverte Etalab). Sous-sol : carte géologique de la France au 1/1 000 000 © BRGM (CC BY 4.0), lue via Macrostrat (cartes voisines aux frontières : Allemagne, Suisse, Espagne) ; cartes géologiques au 1/50 000 © BRGM. Communes : API Découpage administratif, geo.api.gouv.fr (licence ouverte). Météo : Open-Meteo.com (CC BY 4.0). Fond de carte © contributeurs OpenStreetMap (ODbL). Bibliothèques : Leaflet (BSD-2), three.js (MIT), Firebase JS SDK (Apache 2.0). Polices : Alegreya et Atkinson Hyperlegible (SIL OFL).
+BD Forêt® V2, Plan IGN, photographies aériennes, altimétrie et itinéraires piétons © IGN — Géoplateforme (licence ouverte Etalab). Sous-sol : carte géologique de la France au 1/1 000 000 © BRGM (CC BY 4.0), lue via Macrostrat (cartes voisines aux frontières : Allemagne, Suisse, Espagne) ; cartes géologiques au 1/50 000 © BRGM. Communes : API Découpage administratif, geo.api.gouv.fr (licence ouverte). Météo : Open-Meteo.com (CC BY 4.0). Photos de l'encyclopédie : Wikimedia Commons, auteur et licence (CC BY, CC BY-SA, CC0 ou domaine public) indiqués sous chaque photo et dans `data/encyclo/photos.json`. Fond de carte © contributeurs OpenStreetMap (ODbL). Bibliothèques : Leaflet (BSD-2), three.js (MIT), Firebase JS SDK (Apache 2.0). Polices : Alegreya et Atkinson Hyperlegible (SIL OFL).

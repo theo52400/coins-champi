@@ -1,4 +1,5 @@
 // Règles du jeu : espèces du Mycodex, points, niveaux, badges, défis de la semaine, zones explorées.
+import { quizStats, QUIZ_WEEK_PTS } from './encyclo.js';
 
 export const CATALOG = [
   { id: 'cepe', n: 'Cèpe', lat: 'Boletus edulis', cap: 'cepe', pts: 30, core: 'cepe' },
@@ -73,7 +74,9 @@ export function computeProfile(finds, sorties, me) {
   for (const s of sorties) { xp += sortiePoints(s); km += (s.dist || 0) / 1000; }
   const found = (me && me.treasuresFound) || [], hidden = (me && me.treasuresHidden) || [], claimed = (me && me.claimed) || [];
   xp += found.length * TREASURE_FOUND + hidden.length * TREASURE_HIDDEN + claimed.length * CHALLENGE_PTS;
-  const stats = { finds: finds.length, species: [...seen], perSpecies, km, sorties: sorties.length, photos, privees, partagees, paniers, communes: communes.size, matinal, treasures: found.length, hidden: hidden.length, challenges: claimed.length };
+  const qz = quizStats(me);
+  xp += 5 * qz.mastered + QUIZ_WEEK_PTS * qz.weeks;
+  const stats = { finds: finds.length, species: [...seen], perSpecies, km, sorties: sorties.length, photos, privees, partagees, paniers, communes: communes.size, matinal, treasures: found.length, hidden: hidden.length, challenges: claimed.length, quiz: qz.mastered, quizWeeks: qz.weeks, deadlyAll: qz.deadlyAll };
   const badges = BADGES.filter(b => b.test(stats)).map(b => b.id);
   return Object.assign({ xp, badges, stats }, levelOf(xp));
 }
@@ -96,7 +99,11 @@ export const BADGES = [
   { id: 'genereux', n: 'Généreux', d: 'Dix trouvailles partagées', icon: 'share', test: s => s.partagees >= 10 },
   { id: 'tresor', n: 'Cèpe d\'or', d: 'Trouver un trésor caché', icon: 'star', test: s => s.treasures >= 1 },
   { id: 'farceur', n: 'Farceur', d: 'Cacher un cèpe d\'or', icon: 'star', test: s => s.hidden >= 1 },
-  { id: 'equipe', n: 'Esprit d\'équipe', d: 'Réussir un défi de la semaine', icon: 'team', test: s => s.challenges >= 1 }
+  { id: 'equipe', n: 'Esprit d\'équipe', d: 'Réussir un défi de la semaine', icon: 'team', test: s => s.challenges >= 1 },
+  { id: 'quiz10', n: 'Apprenti mycologue', d: 'Maîtriser 10 espèces au quiz', icon: 'book', test: s => s.quiz >= 10 },
+  { id: 'quiz30', n: 'Œil de mycologue', d: 'Maîtriser 30 espèces au quiz', icon: 'eye', test: s => s.quiz >= 30 },
+  { id: 'gardefou', n: 'Garde-fou', d: 'Reconnaître toutes les espèces mortelles', icon: 'shield', test: s => s.deadlyAll },
+  { id: 'quizweek', n: 'Défi photo', d: 'Réussir le défi photo de la semaine', icon: 'camera', test: s => s.quizWeeks >= 1 }
 ];
 
 // ---------- défis de la semaine (pour tout le groupe) ----------
