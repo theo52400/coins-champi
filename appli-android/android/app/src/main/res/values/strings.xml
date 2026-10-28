@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Coins à champi</string>
+    <string name="title_activity_main">Coins à champi</string>
+    <string name="package_name">io.github.theo52400.coinsachampi</string>
+    <string name="custom_url_scheme">io.github.theo52400.coinsachampi</string>
+    <!-- Notification du suivi de position pendant les sorties (@capacitor-community/background-geolocation) -->
+    <string name="capacitor_background_geolocation_notification_channel_name">Suivi pendant les sorties</string>
+    <string name="capacitor_background_geolocation_notification_icon">drawable/ic_tracking</string>
+    <string name="capacitor_background_geolocation_notification_color">#4A2C8F</string>
+</resources>

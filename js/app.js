@@ -56,6 +56,14 @@ function log(msg) { logs.push(new Date().toLocaleTimeString('fr-FR') + ' ' + msg
 let toastT = null;
 function toast(msg, ms, cls) { const el = $('#toast'); el.textContent = msg; el.className = 'toast' + (cls ? ' ' + cls : ''); el.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { el.hidden = true; }, ms || 3500); }
 const vibrate = p => { try { if (navigator.vibrate && (!navigator.userActivation || navigator.userActivation.hasBeenActive)) navigator.vibrate(p); } catch (e) { /* ignore */ } };
+// Appli Android : le pont Capacitor est présent ; son module (suivi écran éteint, notifications, partage) est
+// chargé à la demande. Le site et l'appli partagent les mêmes groupes, en direct.
+const IN_APP = !!window.androidBridge;
+const SITE_URL = 'https://theo52400.github.io/coins-champi/';
+const APK_URL = 'https://github.com/theo52400/coins-champi/releases/latest/download/coins-a-champi.apk';
+const ANDROID_WEB = !IN_APP && /Android/i.test(navigator.userAgent);
+let NativeApp = null;
+const nativeReady = IN_APP ? import('./native.js').then(m => (NativeApp = m.isNative() ? m : null)).catch(e => { log('Appli Android : ' + e.message); return null; }) : Promise.resolve(null);
 
 // ---------------------------------------------------------------- état
 const S = {
@@ -86,6 +94,15 @@ async function boot() {
   window.addEventListener('online', () => startSync());
   await startSync();
   if (S.sortie) resumeSortie();
+  if (IN_APP) checkAppUpdate();
+}
+// Appli Android : une nouvelle version est-elle publiée ? (au plus une fois toutes les 6 heures)
+async function checkAppUpdate() {
+  const n = await nativeReady;
+  if (!n || Date.now() - store.get('cc.appCheck', 0) < 6 * 3600e3) return;
+  store.set('cc.appCheck', Date.now());
+  const v = await n.newerApp();
+  if (v) showBanner('Une nouvelle version de l\'appli est disponible (n° ' + v.n + ').', 'Installer', () => { $('#banner').hidden = true; location.href = APK_URL; });
 }
 // Connexion au jeu ; sans réseau (premier lancement), on réessaie dès que le réseau revient
 let syncing = false, syncRetry = null;
@@ -137,9 +154,9 @@ function registerSW() {
   if (!('serviceWorker' in navigator) || !window.isSecureContext) return;
   const hadController = !!navigator.serviceWorker.controller;
   let reloading = false;
-  navigator.serviceWorker.addEventListener('controllerchange', () => { if (!hadController || reloading) return; reloading = true; if (S.sortie) saveSortieState(); location.reload(); });
-  navigator.serviceWorker.register('sw.js').then(reg => {
-    const offer = w => { if (w && navigator.serviceWorker.controller) showBanner('Une nouvelle version de l\'appli est prête.', 'Mettre à jour', () => w.postMessage('skipWaiting')); };
+  navigator.serviceWorker.addEventListener('controllerchange', () => { if (IN_APP || !hadController || reloading) return; reloading = true; if (S.sortie) saveSortieState(); location.reload(); });
+  navigator.serviceWorker.register(IN_APP ? 'sw.js?native=1' : 'sw.js').then(reg => {
+    const offer = w => { if (w && navigator.serviceWorker.controller && !IN_APP) showBanner('Une nouvelle version de l\'appli est prête.', 'Mettre à jour', () => w.postMessage('skipWaiting')); };
     if (reg.waiting) offer(reg.waiting);
     reg.addEventListener('updatefound', () => { const w = reg.installing; if (w) w.addEventListener('statechange', () => { if (w.state === 'installed') offer(w); }); });
     setInterval(() => reg.update().catch(() => {}), 3600e3);
@@ -492,11 +509,18 @@ async function loadWeather(force) {
 }
 
 // ---------------------------------------------------------------- GPS : avatar en direct, carte qui suit, sorties
-const GPS = { watch: null, reasons: new Set(), follow: false, centerNext: false, fix: null, heading: null, moving: 0 };
+const GPS = { watch: null, native: false, reasons: new Set(), follow: false, centerNext: false, fix: null, heading: null, moving: 0 };
 S.gps = GPS;
 let meMarker = null, meAcc = null, meKey = '', meAnim = 0, walkT = null;
+// Dans l'appli Android, ces usages passent par le suivi natif, qui continue écran éteint (avec une notification)
+const BG_REASONS = ['sortie', 'route', 'tresor'];
 function gpsStart(reason) {
   GPS.reasons.add(reason);
+  if (IN_APP && BG_REASONS.includes(reason)) { nativeTrack(); return true; }
+  if (GPS.watch != null || GPS.native) return true;
+  return webWatch();
+}
+function webWatch() {
   if (GPS.watch != null) return true;
   if (!('geolocation' in navigator)) { toast('La localisation n\'est pas disponible sur cet appareil.'); return false; }
   $('#locate').classList.add('wait');
@@ -508,15 +532,38 @@ function gpsStart(reason) {
   }, { enableHighAccuracy: true, maximumAge: 3000, timeout: 30000 });
   return true;
 }
-function gpsStop(reason) { GPS.reasons.delete(reason); if (!GPS.reasons.size) gpsStopAll(); }
+function gpsStop(reason) { GPS.reasons.delete(reason); if (!GPS.reasons.size) gpsStopAll(); else if (IN_APP) nativeTrack(); }
 function gpsStopAll() {
   if (GPS.watch != null) navigator.geolocation.clearWatch(GPS.watch);
+  if (GPS.native) { GPS.native = false; nativeReady.then(n => n && n.stopTracking()); }
   GPS.watch = null; GPS.reasons.clear(); $('#locate').classList.remove('wait'); setFollow(false);
   if (meMarker) { M.layers.me.clearLayers(); meMarker = meAcc = null; }
+}
+// Bascule entre le suivi du navigateur (carte seule) et le suivi natif (sortie, itinéraire, trésor)
+async function nativeTrack() {
+  const want = [...GPS.reasons].some(r => BG_REASONS.includes(r));
+  const n = await nativeReady;
+  if (!n) { if (GPS.reasons.size) webWatch(); return; }
+  if (want && !GPS.native) {
+    GPS.native = true;
+    if (GPS.watch != null) { navigator.geolocation.clearWatch(GPS.watch); GPS.watch = null; }
+    $('#locate').classList.add('wait');
+    const fallback = why => { log('Suivi natif : ' + why); if (!GPS.native) return; GPS.native = false; n.stopTracking(); if (GPS.reasons.size) webWatch(); };
+    n.startTracking(onFix, err => {
+      $('#locate').classList.remove('wait');
+      if (err && err.code === 'NOT_AUTHORIZED') showBanner('Coins à champi n\'a pas accès à ta position. Autorise-la dans les réglages du téléphone (« Toujours » ou « Pendant l\'utilisation »).', 'Réglages', () => { $('#banner').hidden = true; n.openSettings(); });
+      fallback((err && (err.code || err.message)) || 'erreur');
+    }).then(() => log('Suivi natif démarré (écran éteint possible)')).catch(e => fallback(e.message));
+  } else if (!want && GPS.native) {
+    GPS.native = false; n.stopTracking().catch(() => {});
+    if (GPS.reasons.size) webWatch();
+  }
 }
 // Au lancement : si la localisation est déjà autorisée, le champignon apparaît tout de suite sur la carte
 async function autoLocate() {
   if (!('geolocation' in navigator) || store.get('cc.autoloc', null) === false) return;
+  // dans l'appli, Android demande lui-même l'autorisation la première fois
+  if (IN_APP) { gpsStart('carte'); return; }
   let state = 'prompt';
   try { if (navigator.permissions && navigator.permissions.query) state = (await navigator.permissions.query({ name: 'geolocation' })).state; } catch (e) { /* navigateur sans l'API */ }
   if (state === 'granted' || (state === 'prompt' && store.get('cc.autoloc', null) === true)) gpsStart('carte');
@@ -804,6 +851,7 @@ function onEvents(list) {
 }
 const evText = ev => ev.type === 'sos' ? 'SOS de ' + ev.name : ev.type === 'rally' ? ev.name + ' propose de se regrouper' : ev.type === 'look' ? ev.name + ' : « ' + (ev.msg || 'Venez voir !') + ' »' : ev.type === 'find' ? ev.name + ' a trouvé : ' + ((Game.SPECIES_BY_ID[ev.species] || {}).n || 'un champignon') : ev.type === 'treasure' ? ev.name + ' a trouvé le cèpe d\'or !' : ev.type === 'hidden' ? ev.name + ' a caché un cèpe d\'or' : ev.name + ' : ' + (ev.msg || '');
 function notifyEvent(ev) {
+  if (NativeApp && document.hidden) nativeNotify(ev);
   if (ev.type === 'sos') { vibrate([300, 120, 300, 120, 600]); openEvent(ev); return; }
   toast(evText(ev), 5000, ev.type === 'look' || ev.type === 'rally' ? '' : '');
   vibrate(ev.type === 'look' || ev.type === 'rally' ? [80, 60, 80] : 40);
@@ -921,7 +969,7 @@ function openStartSortie() {
   const card = openModal(modalHead('Démarrer une sortie') +
     '<div class="toggle-row"><span>Ma voiture est garée ici<small>Pour retrouver le chemin du parking</small></span><input type="checkbox" class="switch" id="ss-car" checked></div>' +
     '<div class="toggle-row"><span>Partager ma position avec le groupe<small>' + (S.gid ? 'Visible par les membres pendant la sortie seulement' : 'Rejoignez un groupe pour partager') + '</small></span><input type="checkbox" class="switch" id="ss-share"' + (S.gid && S.settings.share ? ' checked' : '') + (S.gid ? '' : ' disabled') + '></div>' +
-    '<div class="toggle-row"><span>Garder l\'écran allumé<small>Le partage s\'arrête si l\'appli passe en arrière-plan</small></span><input type="checkbox" class="switch" id="ss-wake"' + (S.settings.wake ? ' checked' : '') + '></div>' +
+    (IN_APP ? '<p class="note" style="margin:8px 0 4px">Tu peux éteindre l\'écran et ranger le téléphone : ta trace et ta position continuent (notification « Coins à champi »).</p><input type="checkbox" id="ss-wake" hidden>' : '<div class="toggle-row"><span>Garder l\'écran allumé<small>Le partage s\'arrête si l\'appli passe en arrière-plan</small></span><input type="checkbox" class="switch" id="ss-wake"' + (S.settings.wake ? ' checked' : '') + '></div>') +
     '<div class="actions"><button class="btn forest block" data-act="ss-go">C\'est parti !</button></div>');
   card.querySelector('[data-act="ss-go"]').onclick = () => {
     const car = card.querySelector('#ss-car').checked, share = card.querySelector('#ss-share').checked, wake = card.querySelector('#ss-wake').checked;
@@ -952,6 +1000,7 @@ function updateSortieBar() {
 // Écran gardé allumé (sortie, mode poche) ; wakeFail : le navigateur ne sait pas le faire, il faut régler la mise en veille
 let wakeFail = false;
 async function requestWake() {
+  if (IN_APP) return;
   if (!('wakeLock' in navigator)) { wakeFail = true; return; }
   try { if (!wakeLock) { wakeLock = await navigator.wakeLock.request('screen'); wakeFail = false; wakeLock.addEventListener('release', () => { wakeLock = null; }); } }
   catch (e) { wakeFail = true; log('Écran allumé : ' + e.message); }
@@ -984,8 +1033,39 @@ function pushPresence(force) {
   if (!force && Date.now() - lastPresence.ts < 15000 && moved < 25) return;
   if (!force && Date.now() - lastPresence.ts < 5000) return;
   lastPresence = { ts: Date.now(), lat: fx.lat, lng: fx.lng };
-  S.sync.setPresence(S.gid, { lat: +fx.lat.toFixed(6), lng: +fx.lng.toFixed(6), acc: Math.round(fx.acc), ts: Date.now(), sharing: true, name: S.me.name, avatar: S.me.avatar }).catch(() => {});
+  const doc = { lat: +fx.lat.toFixed(6), lng: +fx.lng.toFixed(6), acc: Math.round(fx.acc), ts: Date.now(), sharing: true, name: S.me.name, avatar: S.me.avatar };
+  if (NativeApp && document.hidden && nativeCtx()) NativeApp.writePresence(nativeCtx(), S.gid, doc).catch(e => { log('Position en arrière-plan : ' + e.message); S.sync.setPresence(S.gid, doc).catch(() => {}); });
+  else S.sync.setPresence(S.gid, doc).catch(() => {});
+  if (NativeApp && document.hidden) bgAlerts();
 }
+// Accès direct à Firestore pour l'appli en arrière-plan (jeton du compte anonyme)
+function nativeCtx() {
+  const sy = S.sync, u = sy && sy.kind === 'firebase' && sy.auth && sy.auth.currentUser, cfg = sy && sy.config;
+  return u && cfg ? { projectId: cfg.projectId, apiKey: cfg.apiKey, user: u } : null;
+}
+// Alertes du groupe pendant que le téléphone est dans la poche : notification du téléphone
+let bgAlertT = 0, bgSince = 0;
+const nativeNotified = new Set();
+function bgAlerts() {
+  if (!NativeApp || !S.gid || !nativeCtx() || Date.now() - bgAlertT < 30000) return;
+  bgAlertT = Date.now();
+  NativeApp.eventsSince(nativeCtx(), S.gid, bgSince || Date.now() - 60000).then(list => {
+    for (const ev of list) { bgSince = Math.max(bgSince, ev.ts || 0); if (ev.uid !== S.uid) nativeNotify(ev); }
+  }).catch(e => log('Alertes en arrière-plan : ' + e.message));
+}
+function nativeNotify(ev) {
+  if (!NativeApp || nativeNotified.has(ev.id) || ev.type === 'hidden') return;
+  nativeNotified.add(ev.id);
+  const d = GPS.fix && ev.lat ? Game.haversine([GPS.fix.lat, GPS.fix.lng], [ev.lat, ev.lng]) : null;
+  NativeApp.notify(evText(ev), (d != null ? 'À ' + fmtKm(d) + ' de toi. ' : '') + 'Touche pour ouvrir la carte.');
+}
+document.addEventListener('visibilitychange', () => {
+  if (!IN_APP) return;
+  if (document.hidden) { bgSince = Math.max(bgSince, Date.now() - 5000); if (NativeApp) NativeApp.warmToken(nativeCtx()); }
+  else bgSince = 0;
+});
+// immobile (pause, pique-nique), le suivi natif ne réveille plus la page : on regarde quand même les alertes
+setInterval(() => { if (IN_APP && document.hidden && GPS.native && S.gid) bgAlerts(); }, 45000);
 function drawSortie() {
   const s = S.sortie, L = M.L;
   M.layers.track.clearLayers(); M.layers.car.clearLayers();
@@ -1202,7 +1282,7 @@ function renderPocket() {
     $('#pk-sub').textContent = Math.floor(sec / 3600) + ' h ' + String(Math.floor(sec / 60) % 60).padStart(2, '0') + ' de sortie · ' + s.finds.length + ' trouvaille' + (s.finds.length > 1 ? 's' : '');
   } else if (routing) { $('#pk-big').textContent = $('#rb-dist').textContent; $('#pk-sub').textContent = 'vers ' + Route.dest.name; }
   else { $('#pk-big').textContent = '—'; $('#pk-sub').textContent = 'Ta position reste suivie tant que l\'écran est allumé'; }
-  $('#pk-tip').textContent = wakeFail ? (/iPhone|iPad/.test(navigator.userAgent) ? 'Ce téléphone ne garde pas l\'écran allumé tout seul : Réglages → Luminosité et affichage → Verrouillage automatique → Jamais, le temps de la sortie.' : 'Ce téléphone ne garde pas l\'écran allumé tout seul : Paramètres → Affichage → Mise en veille de l\'écran → 30 minutes, le temps de la sortie.') : 'Range le téléphone écran allumé, sans le verrouiller : l\'écran noir consomme peu et ignore les appuis.';
+  $('#pk-tip').textContent = IN_APP ? (GPS.native ? 'Tu peux éteindre l\'écran et ranger le téléphone : ta position reste suivie (notification « Coins à champi »).' : 'Pour garder ta position écran éteint, lance une sortie ou un itinéraire.') : wakeFail ? (/iPhone|iPad/.test(navigator.userAgent) ? 'Ce téléphone ne garde pas l\'écran allumé tout seul : Réglages → Luminosité et affichage → Verrouillage automatique → Jamais, le temps de la sortie.' : 'Ce téléphone ne garde pas l\'écran allumé tout seul : Paramètres → Affichage → Mise en veille de l\'écran → 30 minutes, le temps de la sortie.') : 'Range le téléphone écran allumé, sans le verrouiller : l\'écran noir consomme peu et ignore les appuis.';
   $('#pk-live').textContent = sharingNow() ? 'Position partagée avec le groupe' : 'Position non partagée';
   $('#pk-live').classList.toggle('on', sharingNow());
   $('#pk-gps').textContent = !GPS.fix ? 'GPS : recherche…' : Date.now() - GPS.fix.ts > 60000 ? 'GPS : pas de nouvelle position depuis ' + Math.round((Date.now() - GPS.fix.ts) / 60000) + ' min' : 'GPS : ± ' + Math.round(GPS.fix.acc) + ' m';
@@ -1329,7 +1409,9 @@ function renderProfil() {
     '<div class="toggle-row"><span>Partager ma position avec le groupe dès que l\'appli est ouverte<small>Sinon, seulement pendant les sorties où tu l\'as choisi</small></span><input type="checkbox" class="switch" id="st-live"' + (S.settings.liveShare ? ' checked' : '') + (S.gid ? '' : ' disabled') + '></div>' +
     '<div class="toggle-row"><span>Partager ma position en sortie par défaut</span><input type="checkbox" class="switch" id="st-share"' + (S.settings.share ? ' checked' : '') + '></div>' +
     '<div class="toggle-row"><span>Nouvelles trouvailles<small>Visibilité proposée par défaut</small></span><select class="input" id="st-vis" style="width:auto">' + Object.entries(Game.VISIBILITY).map(([k, v]) => '<option value="' + k + '"' + (S.settings.vis === k ? ' selected' : '') + '>' + v + '</option>').join('') + '</select></div>' +
-    '<p class="note" style="margin:10px 0 0">Votre profil est lié à ce navigateur' + (S.sync && S.sync.kind === 'local' ? ' (mode solo).' : '. Pour jouer sur un autre téléphone, recréez un champignon et rejoignez le groupe avec son code.') + '</p></div>';
+    '<p class="note" style="margin:10px 0 0">Votre profil est lié à ' + (IN_APP ? 'cette appli' : 'ce navigateur') + (S.sync && S.sync.kind === 'local' ? ' (mode solo).' : '. Pour jouer sur un autre téléphone, recréez un champignon et rejoignez le groupe avec son code.') + '</p></div>' +
+    (ANDROID_WEB ? '<div class="card"><h3>Appli Android</h3><p>Avec l\'appli, ta position continue d\'être suivie et partagée écran éteint, téléphone dans la poche, et les alertes du groupe arrivent en notification. Tu restes dans les mêmes groupes que les joueurs du site.</p><div class="actions"><a class="btn primary" href="' + APK_URL + '">Télécharger l\'appli</a></div><p class="note" style="margin-top:8px">Ouvre le fichier téléchargé, puis autorise l\'installation depuis ton navigateur. Ton profil du site ne passe pas dans l\'appli : recrée ton champignon et rejoins ton groupe avec son code.</p></div>' : '') +
+    (IN_APP ? '<div class="card"><h3>Appli Android</h3><p class="note" id="app-ver">Version de l\'appli…</p></div>' : '');
   stage(el.querySelector('#pf-stage'), S.me.avatar, { base: true }, 'panel');
   el.querySelector('#st-share').onchange = e => { S.settings.share = e.target.checked; store.set('cc.settings', S.settings); };
   el.querySelector('#st-loc').onchange = e => { store.set('cc.autoloc', e.target.checked); if (e.target.checked) { gpsStart('carte'); GPS.centerNext = true; } else { gpsStop('carte'); setFollow(false); } };
@@ -1339,6 +1421,7 @@ function renderProfil() {
     else if (S.gid && !(S.sortie && S.sortie.share)) S.sync.setPresence(S.gid, { sharing: false, ts: Date.now() }).catch(() => {});
   };
   el.querySelector('#st-vis').onchange = e => { S.settings.vis = e.target.value; store.set('cc.settings', S.settings); };
+  if (IN_APP) fetch('app-version.json').then(r => r.json()).then(v => { const n = el.querySelector('#app-ver'); if (n) n.textContent = 'Appli n° ' + v.build + (v.version && v.version !== 'dev' ? ' (' + v.version + ')' : '') + '. La position continue écran éteint pendant les sorties et les itinéraires.'; }).catch(() => {});
 }
 function showSortie(s) {
   const pts = Game.decodeTrack(s.track || '');
@@ -1492,8 +1575,9 @@ function wireUi() {
   peekRow.appendChild(go);
 }
 async function shareInvite() {
-  const url = location.origin + location.pathname;
-  const text = 'Rejoins mon groupe « ' + ((S.group && S.group.name) || 'Coins à champi') + ' » sur Coins à champi : ' + url + ' — code ' + S.gid;
+  const url = IN_APP ? SITE_URL : location.origin + location.pathname;
+  const text = 'Rejoins mon groupe « ' + ((S.group && S.group.name) || 'Coins à champi') + ' » sur Coins à champi : ' + url + ' — code ' + S.gid + '. Sur Android, l\'appli garde ta position écran éteint : ' + APK_URL;
+  if (NativeApp && await NativeApp.share('Coins à champi', text)) return;
   try { if (navigator.share) { await navigator.share({ title: 'Coins à champi', text }); return; } } catch (e) { /* annulé */ }
   try { await navigator.clipboard.writeText(text); toast('Invitation copiée : collez-la dans un message.'); } catch (e) { toast('Code du groupe : ' + S.gid, 6000); }
 }

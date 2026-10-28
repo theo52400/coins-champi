@@ -1,0 +1,134 @@
+name: Appli Android
+# Construit l'appli Android (le site, plus le suivi de position écran éteint pendant les sorties), la publie dans
+# « Releases » (lien fixe : releases/latest/download/coins-a-champi.apk) et la teste dans un émulateur Android.
+# Rapport et captures du test : branche « sondes », dossier android/.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['index.html', 'manifest.webmanifest', 'config.js', 'sw.js', 'css/**', 'js/**', 'vendor/**', 'fonts/**', 'icons/**', 'data/**', 'appli-android/**', '.github/workflows/android.yml']
+permissions:
+  contents: write
+concurrency:
+  group: appli-android
+  cancel-in-progress: false
+jobs:
+  construire:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    outputs:
+      n: ${{ steps.v.outputs.n }}
+      name: ${{ steps.v.outputs.name }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Numéro de version
+        id: v
+        shell: bash
+        run: |
+          echo "n=$(( 100 + ${{ github.run_number }} ))" >> "$GITHUB_OUTPUT"
+          echo "name=$(date -u +%Y.%m.%d)-${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+      - name: Préparer l'appli (copie du site, modules Capacitor)
+        working-directory: appli-android
+        env:
+          APP_BUILD: ${{ steps.v.outputs.n }}
+          APP_VERSION: ${{ steps.v.outputs.name }}
+        run: |
+          npm ci --no-audit --no-fund
+          node scripts/prepare-www.mjs
+          npx cap sync android
+      - name: Construire
+        working-directory: appli-android/android
+        run: |
+          chmod +x gradlew
+          ./gradlew --no-daemon --stacktrace assembleRelease assembleDebug -PappVersionCode=${{ steps.v.outputs.n }} -PappVersionName=${{ steps.v.outputs.name }}
+      - name: Vérifier la signature
+        shell: bash
+        run: |
+          BT=$(ls "$ANDROID_HOME/build-tools" | sort -V | tail -1)
+          "$ANDROID_HOME/build-tools/$BT/apksigner" verify --print-certs appli-android/android/app/build/outputs/apk/release/app-release.apk | head -5
+          mkdir -p apk
+          cp appli-android/android/app/build/outputs/apk/release/app-release.apk apk/coins-a-champi.apk
+          cp appli-android/android/app/build/outputs/apk/debug/app-debug.apk apk/app-debug.apk
+          ls -la apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: apk
+          path: apk/
+          retention-days: 7
+
+  publier:
+    needs: construire
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: apk
+          path: apk
+      - name: Publier dans Releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          N=${{ needs.construire.outputs.n }}; V=${{ needs.construire.outputs.name }}
+          cat > notes.md <<EOF
+          Appli Android de **Coins à champi**, n° $N ($V).
+
+          Mêmes groupes et même carte que le site : les joueurs de l'appli et du site se voient en direct.
+          Avec l'appli, ta position et ta trace continuent écran éteint pendant les sorties et les itinéraires, et les alertes du groupe arrivent en notification.
+
+          **Installer** : sur le téléphone Android, touche **coins-a-champi.apk** ci-dessous, ouvre le fichier téléchargé et autorise l'installation depuis ton navigateur.
+          **Mettre à jour** : même chose ; la nouvelle version s'installe par-dessus l'ancienne, sans perdre le profil.
+          EOF
+          gh release delete "android-v$N" --repo "$GITHUB_REPOSITORY" --yes --cleanup-tag 2>/dev/null || true
+          gh release create "android-v$N" apk/coins-a-champi.apk --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title "Appli Android n° $N" --notes-file notes.md --latest
+
+  tester:
+    needs: construire
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: apk
+          path: apk
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Préparer le pilote de test
+        run: |
+          mkdir -p /tmp/emu && cp appli-android/test/emulateur.mjs /tmp/emu/
+          cd /tmp/emu && npm init -y >/dev/null && npm i -s playwright@1.48.2
+      - name: Accélération de l'émulateur
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Tester dans l'émulateur (Android 14)
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          profile: pixel_6
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -camera-front none
+          script: bash appli-android/test/emulateur.sh
+      - name: Publier le rapport sur la branche sondes
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p /tmp/android-test
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch -q origin sondes && git switch -q sondes || git switch -q --orphan sondes
+          rm -rf android && mkdir -p android && cp -r /tmp/android-test/. android/
+          rm -f android/logcat-complet.txt
+          git add -A android && git commit -qm "Appli Android : test dans l'émulateur" && git push -q origin sondes || true

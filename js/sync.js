@@ -153,7 +153,9 @@ export async function connect(config) {
       }, e => end(reject, e));
       if (done && un) un();
     });
-    return new Sync(fb, db, user.uid, 'firebase');
+    const sync = new Sync(fb, db, user.uid, 'firebase');
+    sync.auth = auth; sync.config = config;   // pour l'appli Android : écrire en arrière-plan avec le jeton du compte anonyme
+    return sync;
   }
   const L = await import('./localstore.js');
   const db = await L.openLocal();

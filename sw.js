@@ -1,10 +1,13 @@
 // Service worker de Coins à champi : appli disponible sans réseau, fond de carte et peuplements gardés en cache.
-const VERSION = 'v2026-10-27-a6a2c53a';
+const VERSION = 'v2026-10-28-66a08341';
 const SHELL = 'cc-shell-' + VERSION;
 const TILES = 'cc-tiles';
 const DATA = 'cc-data';
 const GEOL = 'cc-geol';
 const MAX_TILES = 6000;
+// Dans l'appli Android (sw.js?native=1), les fichiers de l'appli sont dans le téléphone : on ne garde en cache
+// que ce qui vient d'Internet (fonds de carte, peuplements, météo)
+const NATIVE = new URL(self.location.href).searchParams.get('native') === '1';
 const ASSETS = [
   './', 'index.html', 'manifest.webmanifest', 'config.js',
   'css/app.css',
@@ -16,6 +19,7 @@ const ASSETS = [
 ];
 
 self.addEventListener('install', event => {
+  if (NATIVE) { self.skipWaiting(); return; }
   event.waitUntil((async () => {
     const cache = await caches.open(SHELL);
     // cache: 'reload' : on prend les fichiers sur le serveur, pas dans le cache HTTP du navigateur
@@ -44,7 +48,7 @@ self.addEventListener('fetch', event => {
   const req = event.request;
   if (req.method !== 'GET') return;
   const u = new URL(req.url);
-  if (u.origin === self.location.origin) { event.respondWith(/\/data\/geol\//.test(u.pathname) ? geol(req) : shell(req, u)); return; }
+  if (u.origin === self.location.origin) { if (NATIVE) return; event.respondWith(/\/data\/geol\//.test(u.pathname) ? geol(req) : shell(req, u)); return; }
   if (isTile(u)) { event.respondWith(tile(req)); return; }
   if (isData(u)) { event.respondWith(data(req)); return; }
   // Firebase, Google et le reste : directement au réseau
