@@ -369,7 +369,9 @@ function authWhy(e) {
   if (/invalid-email|missing-email/.test(c)) return 'Adresse e-mail invalide.';
   if (/weak-password|missing-password/.test(c)) return 'Mot de passe trop court : 6 caractères au moins.';
   if (/invalid-credential|wrong-password|user-not-found|invalid-login/.test(c)) return 'E-mail ou mot de passe incorrect.';
-  if (/operation-not-allowed|admin-restricted/.test(c)) return 'Les comptes ne sont pas encore activés dans Firebase (Authentication → Méthode de connexion → Adresse e-mail/Mot de passe → Activer).';
+  // deux réglages de Firebase peuvent bloquer : le fournisseur e-mail (premier interrupteur) et l'inscription
+  if (/operation-not-allowed/.test(c)) return 'Firebase refuse les comptes e-mail + mot de passe : Authentication → Méthode de connexion → crayon de « Adresse e-mail/Mot de passe » → active le PREMIER interrupteur (pas seulement « Lien par e-mail ») → Enregistrer. (' + c + ')';
+  if (/admin-restricted/.test(c)) return 'Firebase refuse la création de comptes : Authentication → Paramètres → Actions de l\'utilisateur → coche « Activer la création (inscription) » → Enregistrer. (' + c + ')';
   if (/too-many-requests/.test(c)) return 'Trop d\'essais : réessaie dans quelques minutes.';
   if (/network-request-failed/.test(c) || navigator.onLine === false) return 'Pas de réseau : réessaie quand tu as du réseau.';
   if (/provider-already-linked/.test(c)) return 'Ce champignon a déjà un compte.';
