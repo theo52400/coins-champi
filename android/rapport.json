@@ -1,0 +1,142 @@
+{
+ "date": "2026-10-28T06:38:48.377Z",
+ "checks": [
+  {
+   "name": "L'appli démarre et se connecte au jeu (Firebase)",
+   "ok": true,
+   "detail": {
+    "pont": true,
+    "natif": true,
+    "kind": "firebase",
+    "url": "https://localhost/",
+    "sw": "https://localhost/sw.js?native=1"
+   }
+  },
+  {
+   "name": "Profil créé, groupe de test créé",
+   "ok": true,
+   "detail": {
+    "gid": "3HQ98KGY"
+   }
+  },
+  {
+   "name": "Sortie lancée : suivi natif et notification « sortie en cours »",
+   "ok": false,
+   "detail": {
+    "native": true,
+    "notification": false
+   }
+  },
+  {
+   "name": "Au premier plan : la trace avance",
+   "ok": true,
+   "detail": {
+    "trace": 6,
+    "fix": [
+     49.0407375,
+     7.5207293
+    ]
+   }
+  },
+  {
+   "name": "Écran éteint : la notification de suivi est toujours là",
+   "ok": true
+  },
+  {
+   "name": "Écran éteint : l'alerte d'un autre joueur arrive en notification",
+   "ok": false,
+   "detail": "alerte envoyée"
+  },
+  {
+   "name": "Écran éteint : les autres joueurs voient ma position avancer (lue sur le serveur)",
+   "ok": true,
+   "detail": {
+    "presence": {
+     "lat": 49.045239,
+     "lng": 7.522931,
+     "ts": 1793169935530
+    },
+    "dernierePosition": [
+     49.0453,
+     7.52296
+    ],
+    "minutesApresExtinction": 5.7
+   }
+  },
+  {
+   "name": "Écran éteint : la trace a continué (positions enregistrées pendant 6 min)",
+   "ok": true,
+   "detail": {
+    "points": 41,
+    "pendantEcranEteint": 35
+   }
+  },
+  {
+   "name": "Écran éteint : la position partagée avec le groupe a suivi (Firestore)",
+   "ok": false,
+   "detail": {
+    "presence": {
+     "lat": 49.045298,
+     "lng": 7.522958,
+     "ts": 1793169989586
+    },
+    "derniere": [
+     49.0453,
+     7.52296
+    ],
+    "ecritAvantRetour": false,
+    "apres5min": true
+   }
+  },
+  {
+   "name": "Fin de sortie : suivi natif arrêté, notification retirée",
+   "ok": true,
+   "detail": {
+    "native": false,
+    "sortie": false
+   }
+  },
+  {
+   "name": "Données de test effacées de Firebase",
+   "ok": true,
+   "detail": {
+    "presence": "ok",
+    "membre": "ok",
+    "groupe": "ok",
+    "profil": "ok"
+   }
+  }
+ ],
+ "notes": [
+  "06:39:52 écran éteint, application en arrière-plan",
+  "06:44:54 alerte du robot envoyée"
+ ],
+ "logsAppli": [
+  "06:39:25 Sous-sol 45_3 : HTTP 404",
+  "06:39:25 Sous-sol 45_4 : HTTP 404",
+  "06:39:25 Sous-sol 46_-1 : HTTP 404",
+  "06:39:25 Sous-sol 46_0 : HTTP 404",
+  "06:39:25 Sous-sol 46_1 : HTTP 404",
+  "06:39:25 Sous-sol 46_2 : HTTP 404",
+  "06:39:25 Sous-sol 46_3 : HTTP 404",
+  "06:39:25 Sous-sol 46_4 : HTTP 404",
+  "06:39:25 Sous-sol 47_-1 : HTTP 404",
+  "06:39:25 Sous-sol 47_0 : HTTP 404",
+  "06:39:25 Sous-sol 47_1 : HTTP 404",
+  "06:39:25 Sous-sol 47_2 : HTTP 404",
+  "06:39:25 Sous-sol 47_3 : HTTP 404",
+  "06:39:25 Sous-sol 47_4 : HTTP 404",
+  "06:39:25 Sous-sol 48_-1 : HTTP 404",
+  "06:39:25 Sous-sol 48_0 : HTTP 404",
+  "06:39:25 Sous-sol 48_1 : HTTP 404",
+  "06:39:25 Sous-sol 48_2 : HTTP 404",
+  "06:39:25 Sous-sol 48_3 : HTTP 404",
+  "06:39:25 Sous-sol 48_4 : HTTP 404",
+  "06:39:25 Sous-sol 49_-1 : HTTP 404",
+  "06:39:25 Sous-sol 49_0 : HTTP 404",
+  "06:39:25 Sous-sol 49_1 : HTTP 404",
+  "06:39:26 Connecté (firebase), joueur k52izwrO",
+  "06:39:35 Suivi natif démarré (écran éteint possible)"
+ ],
+ "resume": "8/11 vérifications réussies, 8 min"
+}
