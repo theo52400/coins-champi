@@ -1,0 +1,28 @@
+3.12.2 2.3.5 1.16.3
+/usr/lib/python3/dist-packages/osgeo/gdal.py:606: FutureWarning: Neither gdal.UseExceptions() nor gdal.DontUseExceptions() has been explicitly called. In GDAL 4.0, exceptions will be enabled by default.
+  warnings.warn(
+17:53:14 2 départements
+17:53:18    1/2 BDFORET_2-0__SHP_LAMB93_D057_2014-04-01 : 17876 polygones, 28 codes, 4 s
+17:53:21    2/2 BDFORET_2-0__SHP_LAMB93_D067_2014-04-01 : 12798 polygones, 27 codes, 3 s
+Traceback (most recent call last):
+  File "/home/runner/work/coins-champi/coins-champi/tools/foret/build.py", line 382, in <module>
+    main()
+    ~~~~^^
+  File "/home/runner/work/coins-champi/coins-champi/tools/foret/build.py", line 274, in main
+    g = gdal.Open(tif).GetRasterBand(1).ReadAsArray()
+  File "/usr/lib/python3/dist-packages/osgeo/gdal.py", line 10549, in ReadAsArray
+    return gdal_array.BandReadAsArray(self, xoff, yoff,
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+                                       win_xsize, win_ysize,
+                                       ^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+                                       callback=callback,
+                                       ^^^^^^^^^^^^^^^^^^
+                                       callback_data=callback_data)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3/dist-packages/osgeo/gdal_array.py", line 600, in BandReadAsArray
+    win_xsize = band.XSize
+                ^^^^^^^^^^
+TypeError: in method 'Band_XSize_get', argument 1 of type 'GDALRasterBandShadow *'
+ls: cannot access '/tmp/foret-out': No such file or directory
+du: cannot access '/tmp/foret-out': No such file or directory
