@@ -1,6 +1,6 @@
 {
  "site": "https://theo52400.github.io/coins-champi/",
- "date": "2026-10-28T10:16:38.761Z",
+ "date": "2026-10-28T10:27:44.393Z",
  "checks": [
   {
    "name": "L'appli démarre",
@@ -14,7 +14,7 @@
    "ok": true,
    "detail": {
     "kind": "firebase",
-    "uid": "koboAD",
+    "uid": "5J5qvX",
     "banner": null
    }
   },
@@ -24,7 +24,7 @@
    "detail": {
     "ecriture": true,
     "relu": "Vérification",
-    "ms": 2163
+    "ms": 2447
    }
   },
   {
@@ -60,7 +60,7 @@
   {
    "name": "Fiche d'un point : peuplement, sol, sous-sol, commune, altitude",
    "ok": true,
-   "detail": "CE POINT Peuplement Forêt fermée de chênes décidus purs (Chênes décidus) Sol estimé Sol acide Sous-sol Grès, conglomérats et quartzites (Trias inférieur) Commune Bitche Lisière à ≈ 679 m · transition de peuplements Altitude 305 m Distance 991 m de vous Cèpes 77 Girolles 74 Pieds de mouton 72 Pieds b"
+   "detail": "CE POINT Peuplement Forêt fermée de chênes décidus purs (Chênes décidus) Sol estimé Sol acide Sous-sol Grès, conglomérats et quartzites (Trias inférieur) Lisière à ≈ 679 m · transition de peuplements Altitude 305 m Distance 991 m de vous Cèpes 77 Girolles 74 Pieds de mouton 72 Pieds bleus 62 Bolets "
   },
   {
    "name": "Service d'itinéraire piéton IGN joignable depuis le site (CORS)",
@@ -75,11 +75,11 @@
   },
   {
    "name": "Itinéraire tracé dans l'appli (chemin IGN + ligne directe)",
-   "ok": false,
+   "ok": true,
    "detail": {
-    "dist": "…",
-    "sub": "Position introuvable : active la localisation.",
-    "calques": 2
+    "dist": "1,1 km",
+    "sub": "Vers ce point (Bitche) · 16 min à pied · 991 m à vol d'oiseau",
+    "calques": 5
    }
   },
   {
@@ -87,8 +87,8 @@
    "ok": true,
    "detail": {
     "ouvert": true,
-    "grand": "…",
-    "gps": "GPS : pas de nouvelle position depuis 2 min"
+    "grand": "1,1 km",
+    "gps": "GPS : ± 10 m"
    }
   },
   {
@@ -131,14 +131,14 @@
  ],
  "console": [
   "warning Info: The current domain is not authorized for OAuth operations. This will prevent signInWithPopup, signInWithRedirect, linkWithPopup and linkWithRedirect from working. Add your domain (theo52400.github.io) to the OAuth redirect domains list in the Firebase console -> Authentication -> Settings -> A",
-  "warning [GroupMarkerNotSet(crbug.com/242999)!:A0601C00443C0000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.",
-  "warning [GroupMarkerNotSet(crbug.com/242999)!:A0901C00443C0000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.",
-  "warning [.WebGL-0x1784000caa00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
-  "warning [.WebGL-0x1784000caa00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
-  "warning [.WebGL-0x1784000caa00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
-  "warning [.WebGL-0x1784000caa00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)",
-  "warning [GroupMarkerNotSet(crbug.com/242999)!:A0303E01443C0000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.",
-  "warning [GroupMarkerNotSet(crbug.com/242999)!:A0603E01443C0000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.",
+  "warning [GroupMarkerNotSet(crbug.com/242999)!:A0601C005C160000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.",
+  "warning [GroupMarkerNotSet(crbug.com/242999)!:A0901C005C160000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.",
+  "warning [.WebGL-0x274000d0d00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+  "warning [.WebGL-0x274000d0d00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+  "warning [.WebGL-0x274000d0d00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+  "warning [.WebGL-0x274000d0d00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)",
+  "warning [GroupMarkerNotSet(crbug.com/242999)!:A00043035C160000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.",
+  "warning [GroupMarkerNotSet(crbug.com/242999)!:A06043035C160000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.",
   "error Failed to load resource: the server responded with a status of 400 ()"
  ],
  "http": [
@@ -146,13 +146,13 @@
  ],
  "counts": {
   "sous-sol": 10,
-  "Firebase": 16,
+  "Firebase": 14,
   "météo": 8,
-  "tuiles IGN": 61,
-  "BD Forêt (WFS)": 15,
+  "tuiles IGN": 48,
+  "BD Forêt (WFS)": 17,
   "communes": 10,
   "altitude IGN": 1,
-  "itinéraire IGN": 3
+  "itinéraire IGN": 4
  },
  "routeCaps": [
   {
@@ -654,10 +654,11 @@
  ],
  "compteDejaSupprime": false,
  "logs": [
-  "10:16:40 Source forêts : LANDCOVER.FORESTINVENTORY.V2:formation_vegetale",
-  "10:16:41 Connecté (firebase), joueur koboADjY",
-  "10:18:18 Écran allumé : Wake Lock permission request denied"
+  "10:27:46 Source forêts : LANDCOVER.FORESTINVENTORY.V2:formation_vegetale",
+  "10:27:46 Connecté (firebase), joueur 5J5qvXzj",
+  "10:28:09 GPS : ",
+  "10:28:13 Écran allumé : Wake Lock permission request denied"
  ],
  "compte": "supprimé",
- "resume": "14/16 vérifications réussies"
+ "resume": "15/16 vérifications réussies"
 }
