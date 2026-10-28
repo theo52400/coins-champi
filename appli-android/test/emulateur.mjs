@@ -87,6 +87,8 @@ await step('Sortie', async () => {
   check('Sortie lancée : suivi natif (la notification apparaît quand l\'appli passe en arrière-plan)', ok, { native: ok });
   // marche au premier plan
   for (let i = 1; i <= 4; i++) { geo(49.0400 + i * 0.0002, 7.5200 + i * 0.0002); await sleep(2500); }
+  // le GPS de l'émulateur livre parfois les positions avec retard
+  await page.waitForFunction(() => CC.S.gps.fix && CC.S.gps.fix.lat > 49.0406 && CC.S.sortie.track.length >= 2, null, { timeout: 40000 }).catch(() => {});
   const st = await page.evaluate(() => ({ trace: CC.S.sortie.track.length, fix: CC.S.gps.fix && [CC.S.gps.fix.lat, CC.S.gps.fix.lng] }));
   check('Au premier plan : la trace avance', st.trace >= 2 && st.fix && Math.abs(st.fix[0] - 49.0408) < 0.0002, st);
   await shot('3-sortie');

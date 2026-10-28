@@ -6,7 +6,8 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ['index.html', 'manifest.webmanifest', 'config.js', 'sw.js', 'css/**', 'js/**', 'vendor/**', 'fonts/**', 'icons/**', 'data/**', 'appli-android/**', '.github/workflows/android.yml']
+    # une nouvelle version de l'appli quand le site ou l'appli change (pas pour le seul test ni la documentation)
+    paths: ['index.html', 'manifest.webmanifest', 'config.js', 'sw.js', 'css/**', 'js/**', 'vendor/**', 'fonts/**', 'icons/**', 'data/**', 'appli-android/**', '!appli-android/test/**', '!appli-android/README.md', '.github/workflows/android.yml']
 permissions:
   contents: write
 concurrency:
