@@ -1,12 +1,12 @@
-https://theo52400.github.io/coins-champi/ — 2026-10-28T09:59:10.473Z
-15/16 vérifications réussies
+https://theo52400.github.io/coins-champi/ — 2026-10-28T10:16:38.761Z
+14/16 vérifications réussies
 
 OK     L'appli démarre
-         {"version":"v2026-10-28-42ac91fc"}
+         {"version":"v2026-10-28-e3d038ab"}
 OK     Connexion au serveur du jeu (Firebase, compte anonyme)
-         {"kind":"firebase","uid":"sL8uDw","banner":null}
+         {"kind":"firebase","uid":"koboAD","banner":null}
 OK     Écriture et relecture dans Firestore (puis effacement)
-         {"ecriture":true,"relu":"Vérification","ms":2427}
+         {"ecriture":true,"relu":"Vérification","ms":2163}
 OK     Ma position s'affiche sur la carte
          "point (pas encore de profil)"
 OK     Sous-sol chargé et cohérent (grès, calcaire, craie, sables, granite)
@@ -17,10 +17,10 @@ OK     Fiche d'un point : peuplement, sol, sous-sol, commune, altitude
          "CE POINT Peuplement Forêt fermée de chênes décidus purs (Chênes décidus) Sol estimé Sol acide Sous-sol Grès, conglomérats et quartzites (Trias inférieur) Commune Bitche Lisière à ≈ 679 m · transition de peuplements Altitude 305 m Distance 991 m de vous Cèpes 77 Girolles 74 Pieds de mouton 72 Pieds b"
 OK     Service d'itinéraire piéton IGN joignable depuis le site (CORS)
          {"status":200,"n":31,"distance":1051.12,"duration":947.008,"unite":"meter"}
-OK     Itinéraire tracé dans l'appli (chemin IGN + ligne directe)
-         {"dist":"1,1 km","sub":"Vers ce point (Bitche) · 16 min à pied · 991 m à vol d'oiseau","calques":5}
+ÉCHEC  Itinéraire tracé dans l'appli (chemin IGN + ligne directe)
+         {"dist":"…","sub":"Position introuvable : active la localisation.","calques":2}
 OK     Mode poche
-         {"ouvert":true,"grand":"1,1 km","gps":"GPS : ± 10 m"}
+         {"ouvert":true,"grand":"…","gps":"GPS : pas de nouvelle position depuis 2 min"}
 OK     Mode poche : appui long pour sortir
 OK     Commune au point (geo.api.gouv.fr)
          "Bitche"
@@ -33,7 +33,7 @@ OK     Météo Open-Meteo
 OK     Aucune erreur JavaScript
          []
 
-Requêtes réussies : {"sous-sol":10,"Firebase":14,"météo":7,"tuiles IGN":53,"BD Forêt (WFS)":17,"communes":9,"altitude IGN":1,"itinéraire IGN":3}
+Requêtes réussies : {"sous-sol":10,"Firebase":16,"météo":8,"tuiles IGN":61,"BD Forêt (WFS)":15,"communes":10,"altitude IGN":1,"itinéraire IGN":3}
 
 Itinéraire, capacités : [
  {
@@ -526,32 +526,29 @@ Itinéraire, variantes : [
  },
  {
   "q": "&resource=bdtopo-valhalla&profile=pedestrian&optimization=shortest&geometryFormat=geojson",
-  "status": 502,
-  "points": null,
-  "corps": "{\n  \"message\":\"An invalid response was received from the upstream server\"\n}"
+  "status": 200,
+  "points": 31
  }
 ]
 
 Communes « fontaineb » : ["Fontainebrux (39, 224 hab.)","Fontainebleau (77, 15583 hab.)"]
 
 Erreurs HTTP :
-502 https://data.geopf.fr/navigation/itineraire?start=7.5200,49.0400&end=7.5310,49.0452&resource=bdtopo-valhalla&profile=pedestrian&optimization=shortest&geometryFo
 400 https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyB-TxQ2MtJ8U4eKHduDjNR_s6WwKvNH9Og
 
 Console :
 warning Info: The current domain is not authorized for OAuth operations. This will prevent signInWithPopup, signInWithRedirect, linkWithPopup and linkWithRedirect from working. Add your domain (theo52400.github.io) to the OAuth redirect domains list in the Firebase console -> Authentication -> Settings -> A
-warning [GroupMarkerNotSet(crbug.com/242999)!:A0601C00342A0000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.
-warning [GroupMarkerNotSet(crbug.com/242999)!:A0901C00342A0000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.
-warning [.WebGL-0x19640168b100]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
-warning [.WebGL-0x19640168b100]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
-warning [.WebGL-0x19640168b100]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
-warning [.WebGL-0x19640168b100]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)
-warning [GroupMarkerNotSet(crbug.com/242999)!:A0800C03342A0000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.
-warning [GroupMarkerNotSet(crbug.com/242999)!:A0E00C03342A0000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.
-error Failed to load resource: the server responded with a status of 502 ()
+warning [GroupMarkerNotSet(crbug.com/242999)!:A0601C00443C0000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.
+warning [GroupMarkerNotSet(crbug.com/242999)!:A0901C00443C0000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.
+warning [.WebGL-0x1784000caa00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
+warning [.WebGL-0x1784000caa00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
+warning [.WebGL-0x1784000caa00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
+warning [.WebGL-0x1784000caa00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)
+warning [GroupMarkerNotSet(crbug.com/242999)!:A0303E01443C0000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.
+warning [GroupMarkerNotSet(crbug.com/242999)!:A0603E01443C0000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.
 error Failed to load resource: the server responded with a status of 400 ()
 
 Journal de l'appli :
-09:59:12 Connecté (firebase), joueur sL8uDwxs
-09:59:12 Source forêts : LANDCOVER.FORESTINVENTORY.V2:formation_vegetale
-09:59:48 Écran allumé : Wake Lock permission request denied
+10:16:40 Source forêts : LANDCOVER.FORESTINVENTORY.V2:formation_vegetale
+10:16:41 Connecté (firebase), joueur koboADjY
+10:18:18 Écran allumé : Wake Lock permission request denied
