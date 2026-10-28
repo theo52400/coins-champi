@@ -181,6 +181,7 @@ function watchGroup(gid) {
   S.unsubGroup.forEach(u => { try { u(); } catch (e) { /* ignore */ } });
   S.unsubGroup = [];
   S.gid = gid; store.set('cc.gid', gid);
+  if (S.me && hasAccounts() && (S.me.gid || null) !== (gid || null)) { S.me.gid = gid || null; S.sync.saveMe({ gid: gid || null }).catch(() => {}); }
   S.group = null; S.members = []; S.presence = []; S.groupFinds = []; S.carnets = []; S.events = []; S.treasures = [];
   if (!gid) { renderAllGroup(); return; }
   const u = S.unsubGroup;
@@ -208,8 +209,15 @@ function memberSync(force) {
     S.sync.updateMember(S.gid, p).catch(() => {});
   }, force ? 50 : 1500);
 }
+let gidChecked = false;
 function onProfileData() {
   if (!S.meLoaded) return;
+  // groupe du compte (connecté sur un autre téléphone) ; les anciens profils l'apprennent ici
+  if (S.me && hasAccounts() && !gidChecked) {
+    gidChecked = true;
+    if (S.me.gid && S.me.gid !== S.gid) watchGroup(S.me.gid);
+    else if (!S.me.gid && S.gid) { S.me.gid = S.gid; S.sync.saveMe({ gid: S.gid }).catch(() => {}); }
+  }
   const prof = Game.computeProfile(S.myFinds, S.mySorties, S.me || {});
   const prev = S.prof; S.prof = prof;
   const ready = S.loadedFinds && S.loadedSorties;
@@ -224,6 +232,7 @@ function onProfileData() {
   }
   if (S.me && ready) memberSync();
   if (S.me) askLocation();
+  if (S.me && ready) askProtect();
   renderMe();
   updateTabAvatar(); renderPanelIfOpen('profil'); renderPanelIfOpen('mycodex');
 }
@@ -271,7 +280,9 @@ async function startOnboarding() {
   const card = openModal(modalHead('Bienvenue !', false) +
     '<canvas class="editor-stage" id="ob-stage"></canvas>' +
     '<p style="margin:6px 0 0;font-size:15.5px">Créez votre champignon, rejoignez vos amis et partez à la chasse : positions en direct, trouvailles en photo, Mycodex à compléter et cèpes d\'or à dénicher.</p>' +
-    '<div class="actions"><button class="btn primary block" data-act="ob-create">Créer mon champignon</button></div>');
+    (INAPP_BROWSER ? '<p class="warnbox" style="margin-top:10px">Ce lien s\'est ouvert dans le navigateur d\'une autre appli : ton champignon risque de ne pas y rester. Ouvre-le plutôt dans Chrome ou Safari (menu ⋮ ou ⋯ → « Ouvrir dans le navigateur »).</p>' : '') +
+    '<div class="actions" style="flex-direction:column"><button class="btn primary block" data-act="ob-create">Créer mon champignon</button>' +
+    (hasAccounts() ? '<button class="btn block" data-act="acc-login">J\'ai déjà un compte</button>' : '') + '</div>');
   stage(card.querySelector('#ob-stage'), cfg, { base: true }, 'modal');
   card.querySelector('[data-act="ob-create"]').onclick = () => openAvatarEditor(cfg, true);
 }
@@ -314,7 +325,7 @@ function openAvatarEditor(initial, onboarding) {
       S.sync.saveMe(patch).catch(() => {});
       S.me = Object.assign({}, S.me || {}, patch);
       memberSync(true); renderFriends(); renderMe();
-      if (onboarding) openGroupChooser(true); else { closeModal(); toast('Champignon enregistré'); }
+      if (onboarding) { const a = accountOf(); if (a && a.anonymous) openProtect(() => openGroupChooser(true)); else openGroupChooser(true); } else { closeModal(); toast('Champignon enregistré'); }
     }
   });
   card.querySelector('#ed-cheeks').onchange = e => { cfg.cheeks = e.target.checked; sync(); };
@@ -344,6 +355,140 @@ function openGroupChooser(onboarding) {
   };
 }
 const profReady = () => !!(S.prof && S.loadedFinds && S.loadedSorties);
+
+// ---------------------------------------------------------------- compte : e-mail et mot de passe
+// Chaque appareil commence avec un compte anonyme. En ajoutant un e-mail et un mot de passe, le joueur garde le
+// même compte (profil, points, trouvailles, groupe) et le retrouve en se connectant ailleurs : autre téléphone,
+// appli Android, site.
+const INAPP_BROWSER = !IN_APP && /FBAN|FBAV|Instagram|Line\/|Snapchat|; wv\)/i.test(navigator.userAgent);
+const hasAccounts = () => !!(S.sync && S.sync.kind === 'firebase' && S.sync.auth);
+const accountOf = () => (hasAccounts() ? S.sync.account : null);
+function authWhy(e) {
+  const c = (e && e.code) || '';
+  if (/email-already-in-use|credential-already-in-use|account-exists/.test(c)) return 'Cette adresse a déjà un compte : touche « J\'ai déjà un compte » pour te connecter.';
+  if (/invalid-email|missing-email/.test(c)) return 'Adresse e-mail invalide.';
+  if (/weak-password|missing-password/.test(c)) return 'Mot de passe trop court : 6 caractères au moins.';
+  if (/invalid-credential|wrong-password|user-not-found|invalid-login/.test(c)) return 'E-mail ou mot de passe incorrect.';
+  if (/operation-not-allowed|admin-restricted/.test(c)) return 'Les comptes ne sont pas encore activés dans Firebase (Authentication → Méthode de connexion → Adresse e-mail/Mot de passe → Activer).';
+  if (/too-many-requests/.test(c)) return 'Trop d\'essais : réessaie dans quelques minutes.';
+  if (/network-request-failed/.test(c) || navigator.onLine === false) return 'Pas de réseau : réessaie quand tu as du réseau.';
+  if (/provider-already-linked/.test(c)) return 'Ce champignon a déjà un compte.';
+  if (/user-disabled/.test(c)) return 'Ce compte est désactivé.';
+  return 'Erreur : ' + (c || (e && e.message) || 'inconnue') + '.';
+}
+const pwField = (id, ac) => '<div class="pw-row"><input class="input" id="' + id + '" type="password" minlength="6" autocomplete="' + ac + '"' + (ac === 'new-password' ? ' placeholder="6 caractères au moins"' : '') + ' required><button class="btn" type="button" data-act="pw-show" data-for="' + id + '">Voir</button></div>';
+function accountCard() {
+  const a = accountOf(); if (!a) return '';
+  if (a.anonymous) return '<div class="card"><h3>Mon compte</h3><p>Ton champignon n\'est enregistré que sur ' + (IN_APP ? 'cette appli' : 'ce navigateur') + '. Crée ton compte (e-mail et mot de passe) pour le retrouver sur un autre téléphone, dans l\'appli Android ou sur le site.</p><div class="actions"><button class="btn primary" data-act="acc-protect">Créer mon compte</button><button class="btn" data-act="acc-login">J\'ai déjà un compte</button></div></div>';
+  return '<div class="card"><h3>Mon compte</h3><p>Connecté avec <b>' + esc(a.email) + '</b>. Connecte-toi avec cette adresse sur un autre téléphone, dans l\'appli Android ou sur le site : tu y retrouveras ton champignon et ton groupe.</p><div class="actions"><button class="btn" data-act="acc-reset">Changer de mot de passe</button><button class="btn" data-act="acc-logout">Me déconnecter</button></div></div>';
+}
+// Ajouter un e-mail et un mot de passe au compte de cet appareil
+function openProtect(onDone) {
+  const card = openModal(modalHead('Garder mon champignon', !onDone) +
+    '<p>Ajoute un e-mail et un mot de passe : tu retrouveras ton champignon, tes points et ton groupe sur un autre téléphone, dans l\'appli Android ou sur le site.</p>' +
+    '<form id="pr-form" novalidate><div class="field"><label for="pr-mail">E-mail</label><input class="input" id="pr-mail" type="email" autocomplete="email" inputmode="email" placeholder="toi@exemple.fr" required></div>' +
+    '<div class="field"><label for="pr-pw">Mot de passe</label>' + pwField('pr-pw', 'new-password') + '</div>' +
+    '<p class="note" id="pr-err" style="color:var(--danger)" hidden></p>' +
+    '<div class="actions" style="flex-direction:column"><button class="btn primary block" type="submit">Créer mon compte</button>' + (onDone ? '<button class="btn block" type="button" data-act="pr-later">Plus tard</button>' : '') + '</div></form>' +
+    '<p class="note" style="margin-top:10px">Ton e-mail ne sert qu\'à te connecter et à retrouver ton mot de passe ; il n\'est montré à personne.</p>');
+  const err = m => { const el = card.querySelector('#pr-err'); el.textContent = m; el.hidden = !m; };
+  const later_ = card.querySelector('[data-act="pr-later"]');
+  if (later_) later_.onclick = () => { store.set('cc.protectAsk', Date.now()); onDone(); };
+  card.querySelector('#pr-form').addEventListener('submit', async ev => {
+    ev.preventDefault();
+    const email = card.querySelector('#pr-mail').value.trim(), pw = card.querySelector('#pr-pw').value;
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { err('Adresse e-mail invalide.'); return; }
+    if (pw.length < 6) { err('Mot de passe trop court : 6 caractères au moins.'); return; }
+    const btn = card.querySelector('button[type="submit"]'); btn.disabled = true; err('');
+    try {
+      await S.sync.protect(email, pw);
+      log('Compte créé : ' + email);
+      toast('Compte créé : connecte-toi avec ' + email + ' sur tes autres appareils.', 6000);
+      renderPanelIfOpen('profil');
+      if (onDone) onDone(); else closeModal();
+    } catch (e) { btn.disabled = false; err(authWhy(e)); log('Compte : ' + (e.code || e.message)); }
+  });
+}
+// Se connecter à son compte sur cet appareil
+function openLogin() {
+  const card = openModal(modalHead('Me connecter') +
+    '<p>Connecte-toi pour retrouver ton champignon, tes points et ton groupe.</p>' +
+    '<form id="lg-form" novalidate><div class="field"><label for="lg-mail">E-mail</label><input class="input" id="lg-mail" type="email" autocomplete="username" inputmode="email" required></div>' +
+    '<div class="field"><label for="lg-pw">Mot de passe</label>' + pwField('lg-pw', 'current-password') + '</div>' +
+    '<p class="warnbox" id="lg-warn" hidden></p><p class="note" id="lg-err" style="color:var(--danger)" hidden></p>' +
+    '<div class="actions"><button class="btn primary block" type="submit">Me connecter</button></div></form>' +
+    '<p class="note" style="margin-top:10px"><a href="#" data-act="lg-forgot">Mot de passe oublié ?</a></p>',
+    () => { if (!S.me && !loggingIn) setTimeout(() => { if (!S.me && $('#modal').hidden) startOnboarding(); }, 250); });
+  const err = m => { const el = card.querySelector('#lg-err'); el.textContent = m; el.hidden = !m; };
+  let confirmed = false, loggingIn = false;
+  card.querySelector('[data-act="lg-forgot"]').onclick = async ev => {
+    ev.preventDefault();
+    const email = card.querySelector('#lg-mail').value.trim();
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { err('Écris d\'abord ton e-mail ci-dessus.'); return; }
+    try { await S.sync.resetPassword(email); err(''); toast('E-mail envoyé à ' + email + ' : suis le lien pour choisir un nouveau mot de passe (regarde aussi dans les indésirables).', 8000); }
+    catch (e) { err(authWhy(e)); }
+  };
+  card.querySelector('#lg-form').addEventListener('submit', async ev => {
+    ev.preventDefault();
+    const email = card.querySelector('#lg-mail').value.trim(), pw = card.querySelector('#lg-pw').value;
+    if (!email || !pw) { err('Écris ton e-mail et ton mot de passe.'); return; }
+    const acc = accountOf();
+    const xp = S.prof ? S.prof.xp : 0, throwaway = !S.me || (xp === 0 && !S.myFinds.length && !S.mySorties.length);
+    // un vrai champignon sur cet appareil (sans compte) : on prévient avant de le remplacer
+    if (acc && acc.anonymous && !throwaway && !confirmed) {
+      const w = card.querySelector('#lg-warn');
+      w.textContent = 'Ce téléphone a déjà le champignon « ' + (S.me.name || '') + ' » (' + xp + ' points), sans compte. En te connectant, il sera remplacé par celui de ton compte.';
+      w.hidden = false; confirmed = true;
+      card.querySelector('button[type="submit"]').textContent = 'Me connecter quand même';
+      return;
+    }
+    const btn = card.querySelector('button[type="submit"]'); btn.disabled = true; err('');
+    const prev = acc && acc.anonymous ? { user: S.sync.auth.currentUser, gid: S.gid, throwaway } : null;
+    if (prev) prev.token = await prev.user.getIdToken().catch(() => null);
+    try { loggingIn = true; await S.sync.login(email, pw); }
+    catch (e) { loggingIn = false; btn.disabled = false; err(authWhy(e)); log('Connexion au compte : ' + (e.code || e.message)); return; }
+    btn.textContent = 'Connecté, chargement…';
+    if (prev && prev.token) await cleanAnonymous(prev);
+    if (S.sortie) { S.sortie = null; saveSortieState(); }
+    store.set('cc.gid', null);   // le groupe vient du profil du compte
+    location.reload();
+  });
+}
+// Le compte anonyme qu'on quitte : retiré du groupe (pas de doublon dans la liste), effacé s'il était vide
+async function cleanAnonymous(prev) {
+  const cfg = S.sync.config || FIREBASE_CONFIG; if (!cfg) return;
+  const base = 'https://firestore.googleapis.com/v1/projects/' + cfg.projectId + '/databases/(default)/documents/';
+  const del = path => fetch(base + path, { method: 'DELETE', headers: { Authorization: 'Bearer ' + prev.token } }).catch(() => null);
+  if (prev.gid) { await del('groups/' + prev.gid + '/presence/' + prev.user.uid); await del('groups/' + prev.gid + '/members/' + prev.user.uid); }
+  if (prev.throwaway) {
+    await del('users/' + prev.user.uid);
+    await fetch('https://identitytoolkit.googleapis.com/v1/accounts:delete?key=' + encodeURIComponent(cfg.apiKey), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ idToken: prev.token }) }).catch(() => null);
+  }
+}
+async function accReset(btn) {
+  const a = accountOf(); if (!a || !a.email) return;
+  try { await S.sync.resetPassword(a.email); btn.disabled = true; toast('E-mail envoyé à ' + a.email + ' : suis le lien pour choisir un nouveau mot de passe.', 7000); }
+  catch (e) { toast(authWhy(e), 6000); }
+}
+async function doLogout() {
+  if (S.sortie) { toast('Termine d\'abord ta sortie.'); return; }
+  try { if (S.gid) await S.sync.setPresence(S.gid, { sharing: false, ts: Date.now() }).catch(() => {}); await S.sync.logout(); } catch (e) { /* on recharge quand même */ }
+  store.set('cc.gid', null);
+  location.reload();
+}
+// Rappel discret : un joueur sans compte qui a déjà un groupe ou des points (au plus une fois par semaine)
+let protectAsked = false;
+function askProtect() {
+  if (protectAsked) return;
+  const a = accountOf(); if (!a || !a.anonymous || !S.me || !(S.gid || (S.prof && S.prof.xp > 0))) return;
+  if (Date.now() - store.get('cc.protectAsk', 0) < 7 * 86400e3) return;
+  protectAsked = true;
+  setTimeout(() => {
+    if (!$('#banner').hidden || !$('#modal').hidden) { protectAsked = false; return; }
+    store.set('cc.protectAsk', Date.now());
+    showBanner('Crée ton compte pour garder ton champignon si tu changes de téléphone ou passes à l\'appli.', 'Créer', () => { $('#banner').hidden = true; openProtect(); });
+  }, 6000);
+}
 // Erreurs Firestore expliquées simplement
 function fbWhy(e) {
   const c = ((e && e.code) || '') + ' ' + ((e && e.message) || '');
@@ -1398,7 +1543,7 @@ function openSpecies(id) {
 }
 function renderProfil() {
   const el = $('#panel-inner');
-  if (!S.me) { el.innerHTML = '<h2>Profil</h2><div class="card"><button class="btn primary block" data-act="ob-start">Créer mon champignon</button></div>'; return; }
+  if (!S.me) { el.innerHTML = '<h2>Profil</h2><div class="card"><div class="actions" style="flex-direction:column"><button class="btn primary block" data-act="ob-start">Créer mon champignon</button>' + (hasAccounts() ? '<button class="btn block" data-act="acc-login">J\'ai déjà un compte</button>' : '') + '</div></div>'; return; }
   const p = S.prof || Game.computeProfile([], [], S.me);
   const st = p.stats, next = p.next;
   el.innerHTML = '<div class="avatar-hero"><canvas id="pf-stage" aria-label="Votre champignon en 3D"></canvas><div><h2>' + esc(S.me.name) + '</h2><div class="level-name">Niveau\u00a0' + p.level + ' · ' + esc(p.name) + '</div><div class="progress" style="margin:8px 0 4px"><b style="width:' + Math.round(100 * p.progress) + '%"></b></div><small class="note">' + p.xp + ' points' + (next ? ' · encore ' + (next - p.xp) + ' pour le niveau\u00a0' + (p.level + 1) : ' · niveau maximal') + '</small><div class="actions"><button class="btn small" data-act="edit-avatar">Modifier mon champignon</button></div></div></div>' +
@@ -1411,8 +1556,9 @@ function renderProfil() {
     '<div class="toggle-row"><span>Partager ma position avec le groupe dès que l\'appli est ouverte<small>Sinon, seulement pendant les sorties où tu l\'as choisi</small></span><input type="checkbox" class="switch" id="st-live"' + (S.settings.liveShare ? ' checked' : '') + (S.gid ? '' : ' disabled') + '></div>' +
     '<div class="toggle-row"><span>Partager ma position en sortie par défaut</span><input type="checkbox" class="switch" id="st-share"' + (S.settings.share ? ' checked' : '') + '></div>' +
     '<div class="toggle-row"><span>Nouvelles trouvailles<small>Visibilité proposée par défaut</small></span><select class="input" id="st-vis" style="width:auto">' + Object.entries(Game.VISIBILITY).map(([k, v]) => '<option value="' + k + '"' + (S.settings.vis === k ? ' selected' : '') + '>' + v + '</option>').join('') + '</select></div>' +
-    '<p class="note" style="margin:10px 0 0">Votre profil est lié à ' + (IN_APP ? 'cette appli' : 'ce navigateur') + (S.sync && S.sync.kind === 'local' ? ' (mode solo).' : '. Pour jouer sur un autre téléphone, recréez un champignon et rejoignez le groupe avec son code.') + '</p></div>' +
-    (ANDROID_WEB ? '<div class="card"><h3>Appli Android</h3><p>Avec l\'appli, ta position continue d\'être suivie et partagée écran éteint, téléphone dans la poche, et les alertes du groupe arrivent en notification. Tu restes dans les mêmes groupes que les joueurs du site.</p><div class="actions"><a class="btn primary" href="' + APK_URL + '">Télécharger l\'appli</a></div><p class="note" style="margin-top:8px">Ouvre le fichier téléchargé, puis autorise l\'installation depuis ton navigateur. Ton profil du site ne passe pas dans l\'appli : recrée ton champignon et rejoins ton groupe avec son code.</p></div>' : '') +
+    (S.sync && S.sync.kind === 'local' ? '<p class="note" style="margin:10px 0 0">Mode solo : votre profil reste sur ce téléphone.</p>' : '') + '</div>' +
+    accountCard() +
+    (ANDROID_WEB ? '<div class="card"><h3>Appli Android</h3><p>Avec l\'appli, ta position continue d\'être suivie et partagée écran éteint, téléphone dans la poche, et les alertes du groupe arrivent en notification. Tu restes dans les mêmes groupes que les joueurs du site.</p><div class="actions"><a class="btn primary" href="' + APK_URL + '">Télécharger l\'appli</a></div><p class="note" style="margin-top:8px">Ouvre le fichier téléchargé, puis autorise l\'installation depuis ton navigateur. Dans l\'appli, touche « J\'ai déjà un compte » pour retrouver ton champignon (crée d\'abord ton compte ci-dessus).</p></div>' : '') +
     (IN_APP ? '<div class="card"><h3>Appli Android</h3><p class="note" id="app-ver">Version de l\'appli…</p></div>' : '');
   stage(el.querySelector('#pf-stage'), S.me.avatar, { base: true }, 'panel');
   el.querySelector('#st-share').onchange = e => { S.settings.share = e.target.checked; store.set('cc.settings', S.settings); };
@@ -1509,6 +1655,11 @@ function wireUi() {
       case 'retry': M.retry(); break;
       case 'diag': openDrawer(true); break;
       case 'group-choose': openGroupChooser(false); break;
+      case 'acc-protect': e.preventDefault(); openProtect(); break;
+      case 'acc-login': e.preventDefault(); openLogin(); break;
+      case 'acc-reset': accReset(t); break;
+      case 'acc-logout': if (t.dataset.confirm) doLogout(); else { t.dataset.confirm = '1'; t.textContent = 'Confirmer : me déconnecter'; } break;
+      case 'pw-show': { const f = document.getElementById(t.dataset.for); if (f) { f.type = f.type === 'password' ? 'text' : 'password'; t.textContent = f.type === 'password' ? 'Voir' : 'Cacher'; } } break;
       case 'group-share': shareInvite(); break;
       case 'group-leave': if (t.dataset.confirm) { const g = S.gid; watchGroup(null); S.sync.leaveGroup(g).catch(() => {}); toast('Vous avez quitté le groupe'); } else { t.dataset.confirm = '1'; t.textContent = 'Confirmer : quitter le groupe'; } break;
       case 'claim': { const key = t.dataset.key; const claimed = (S.me && S.me.claimed) || []; if (!claimed.includes(key)) { S.sync.saveMe({ claimed: [...claimed, key] }).catch(() => {}); celebrate(Game.CHALLENGE_PTS, 'Défi réussi en équipe !'); } } break;

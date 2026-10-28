@@ -26,6 +26,22 @@ export class Sync {
   watchMe(cb) { return this._on(this._d('users', this.uid), s => cb(s.exists() ? s.data() : null, s.metadata || {}), 'profil'); }
   saveMe(patch) { return this._w(this.api.setDoc(this._d('users', this.uid), clean(patch), { merge: true }), 'profil'); }
 
+  // ---- compte : e-mail et mot de passe, pour retrouver son champignon sur un autre téléphone ou dans l'appli ----
+  // Le joueur commence avec un compte anonyme lié à l'appareil ; « protéger » ajoute un e-mail et un mot de passe
+  // à ce même compte (même identifiant : profil, trouvailles et groupe sont gardés).
+  get account() {
+    const u = this.auth && this.auth.currentUser;
+    return u ? { anonymous: u.isAnonymous, email: u.email || null, uid: u.uid } : null;
+  }
+  async protect(email, password) {
+    const cred = this.api.EmailAuthProvider.credential(email, password);
+    await this.api.linkWithCredential(this.auth.currentUser, cred);
+    return this.account;
+  }
+  login(email, password) { return this.api.signInWithEmailAndPassword(this.auth, email, password); }
+  resetPassword(email) { return this.api.sendPasswordResetEmail(this.auth, email); }
+  logout() { return this.api.signOut(this.auth); }
+
   // ---- groupes (l'identifiant du groupe est son code d'invitation) ----
   async createGroup(name, member) {
     const gid = groupCode();
@@ -135,7 +151,9 @@ function firebaseInit(config) {
     let db;
     try { db = fb.initializeFirestore(app, { localCache: fb.persistentLocalCache({ tabManager: fb.persistentMultipleTabManager() }) }); }
     catch (e) { db = fb.initializeFirestore(app, { localCache: fb.memoryLocalCache() }); }
-    return { fb, db, auth: fb.getAuth(app) };
+    const auth = fb.getAuth(app);
+    auth.languageCode = 'fr';   // e-mails de Firebase (mot de passe oublié) en français
+    return { fb, db, auth };
   })().catch(e => { fbInit = null; throw e; });
   return fbInit;
 }

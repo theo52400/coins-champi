@@ -170,9 +170,30 @@ await step('Météo', async () => {
   check('Météo Open-Meteo', m.status === 200 && m.jours > 10, m);
 });
 
+// comptes e-mail + mot de passe (fournisseur « Adresse e-mail/Mot de passe » de Firebase) : création à partir du compte
+// anonyme, déconnexion, reconnexion : on doit retrouver le même joueur. Le compte de test est supprimé ensuite.
+await step('Comptes', async () => {
+  const r = await page.evaluate(async () => {
+    const s = CC.S.sync; if (!s || s.kind !== 'firebase') return { protect: 'pas de connexion Firebase' };
+    const uid0 = s.uid, email = 'verif-' + Date.now() + '@example.com', pw = 'Verif-' + Math.random().toString(36).slice(2, 12);
+    try { await s.protect(email, pw); } catch (e) { return { protect: e.code || e.message }; }
+    const linked = s.account;
+    await s.logout();
+    let uid1 = null;
+    try { uid1 = (await s.login(email, pw)).user.uid; } catch (e) { return { protect: 'ok', login: e.code || e.message }; }
+    let reset = 'non testé';
+    try { await s.resetPassword(email); reset = 'ok'; } catch (e) { reset = e.code || e.message; }
+    const t = await s.auth.currentUser.getIdToken();
+    const d = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:delete?key=' + s.config.apiKey, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ idToken: t }) });
+    return { protect: 'ok', sansCompteAvant: true, apresCreation: linked && !linked.anonymous ? 'compte e-mail' : 'toujours anonyme', memeJoueur: uid0 === uid1, motDePasseOublie: reset, suppression: d.ok ? 'ok' : 'HTTP ' + d.status };
+  });
+  const why = /operation-not-allowed|admin-restricted/.test(r.protect || '') ? ' (à activer : Firebase → Authentication → Méthode de connexion → Adresse e-mail/Mot de passe)' : '';
+  check('Comptes e-mail : création, déconnexion, reconnexion au même joueur' + why, r.protect === 'ok' && r.memeJoueur && r.apresCreation === 'compte e-mail', r);
+  R.compteDejaSupprime = r.suppression === 'ok';
+});
 R.logs = await page.evaluate(() => (window.CC && CC.logs ? CC.logs.slice(-80) : [])).catch(() => []);
 // le compte anonyme créé par la vérification est supprimé de Firebase
-R.compte = await page.evaluate(async () => {
+R.compte = R.compteDejaSupprime ? 'supprimé (test des comptes)' : await page.evaluate(async () => {
   try { const s = CC.S.sync; if (!s || s.kind !== 'firebase') return 'pas de compte'; const t = await s.auth.currentUser.getIdToken(); const r = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:delete?key=' + s.config.apiKey, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ idToken: t }) }); return r.ok ? 'supprimé' : 'HTTP ' + r.status; } catch (e) { return e.message; }
 }).catch(e => e.message);
 console.log('Compte de vérification :', R.compte);

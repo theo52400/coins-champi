@@ -21,8 +21,8 @@ Le jeu des chasseurs de champignons, partout en France métropolitaine et en Cor
 ## Jouer
 
 1. Ouvrez l'adresse de l'appli dans Chrome (Android) ou Safari (iPhone), puis « Ajouter à l'écran d'accueil ».
-2. Créez votre champignon, puis créez un groupe : un **code de 8 caractères** s'affiche. Vos amis ouvrent l'appli, créent leur champignon et entrent ce code (bouton « Inviter » pour l'envoyer).
-3. En forêt : bouton **Sortie** (dans le volet du bas), puis **Poche** avant de ranger le téléphone. Un navigateur coupe le GPS quand l'écran s'éteint ou qu'on change d'appli : le mode poche garde l'écran allumé (noir, verrouillé, appui long pour sortir). Pour un suivi écran éteint, il faudrait une appli installée (Android : gratuite ; iPhone : compte développeur Apple payant).
+2. Créez votre champignon, puis votre **compte** (e-mail et mot de passe) pour le retrouver sur un autre téléphone, dans l'appli Android ou sur le site (« J'ai déjà un compte »). Créez ensuite un groupe : un **code de 8 caractères** s'affiche. Vos amis ouvrent l'appli, créent leur champignon et entrent ce code (bouton « Inviter » pour l'envoyer).
+3. En forêt : bouton **Sortie** (dans le volet du bas), puis **Poche** avant de ranger le téléphone. Un navigateur coupe le GPS quand l'écran s'éteint ou qu'on change d'appli : le mode poche garde l'écran allumé (noir, verrouillé, appui long pour sortir). Sur Android, l'appli (Profil → Appli Android, ou [le lien direct](https://github.com/theo52400/coins-champi/releases/latest/download/coins-a-champi.apk)) garde la position écran éteint ; sur iPhone, il faudrait un compte développeur Apple payant.
 4. Bouton photo au centre : **Trouvaille**.
 
 ## Mise en place (une seule fois)
@@ -30,7 +30,7 @@ Le jeu des chasseurs de champignons, partout en France métropolitaine et en Cor
 ### 1. Firebase (gratuit, formule Spark)
 
 1. <https://console.firebase.google.com> → projet `coins-champi`.
-2. **Authentication** → Méthode de connexion → **Anonyme** : activer.
+2. **Authentication** → Méthode de connexion → **Anonyme** : activer, puis **Ajouter un fournisseur** → **Adresse e-mail/Mot de passe** : activer (le premier interrupteur seulement) → Enregistrer. Le premier sert à jouer tout de suite, le second aux comptes qui suivent le joueur d'un appareil à l'autre.
 3. **Firestore Database** → créer la base (mode production, région `europe-west9`).
 4. Firestore → onglet **Règles** → remplacer tout par le contenu de [`firestore.rules`](firestore.rules) → **Publier**.
 5. Paramètres du projet → Vos applications → **Web** (`</>`) → copier le bloc `firebaseConfig` dans [`config.js`](config.js) :
@@ -57,11 +57,11 @@ Firestore Spark : 50 000 lectures, 20 000 écritures par jour et 1 Go de donnée
 
 ## Vie privée
 
-- Chaque joueur a un compte anonyme lié à son navigateur ; aucun e-mail n'est demandé.
+- Chaque joueur commence avec un compte anonyme lié à son navigateur. S'il ajoute un e-mail et un mot de passe, c'est le même compte (rien n'est perdu) et il le retrouve en se connectant ailleurs ; l'e-mail ne sert qu'à se connecter et à retrouver le mot de passe, il n'est montré à personne.
 - La position n'est partagée qu'avec le groupe, seulement pendant une sortie et si le joueur l'a choisi.
 - Les coins secrets restent dans l'espace privé du joueur ; ils n'apparaissent ni sur la carte des autres, ni dans les carnets partagés.
 - Les photos sont recompressées et ne gardent pas leurs métadonnées (GPS, appareil).
-- Changer de téléphone ou effacer les données du navigateur crée un nouveau profil.
+- Sans compte, changer de téléphone ou effacer les données du navigateur crée un nouveau profil ; avec un compte, il suffit de se reconnecter.
 
 ## Développement
 
