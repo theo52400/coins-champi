@@ -1,0 +1,153 @@
+cepe               54 fichiers,  42 libres et nets, planche de 15
+cepe_bronze        51 fichiers,  38 libres et nets, planche de 15
+cepe_ete           52 fichiers,  39 libres et nets, planche de 15
+cepe_pins          50 fichiers,  43 libres et nets, planche de 15
+girolle            55 fichiers,  52 libres et nets, planche de 15
+trompette          52 fichiers,  41 libres et nets, planche de 15
+hydne              50 fichiers,  35 libres et nets, planche de 15
+tube               52 fichiers,  42 libres et nets, planche de 15
+bai 2 vignette Input buffer contains unsupported image format
+bai 3 vignette Input buffer contains unsupported image format
+bai 4 vignette Input buffer contains unsupported image format
+bai 5 vignette Input buffer contains unsupported image format
+bai 6 vignette Input buffer contains unsupported image format
+bai 7 vignette Input buffer contains unsupported image format
+bai 8 vignette Input buffer contains unsupported image format
+bai 9 vignette Input buffer contains unsupported image format
+bai 10 vignette Input buffer contains unsupported image format
+bai 11 vignette Input buffer contains unsupported image format
+bai 12 vignette Input buffer contains unsupported image format
+bai 13 vignette Input buffer contains unsupported image format
+bai 14 vignette Input buffer contains unsupported image format
+bai                51 fichiers,  39 libres et nets, planche de 15
+piedbleu           51 fichiers,  47 libres et nets, planche de 15
+coulemelle         55 fichiers,  51 libres et nets, planche de 15
+morille           103 fichiers,  86 libres et nets, planche de 15
+lactaire           50 fichiers,  46 libres et nets, planche de 15
+pleurote           51 fichiers,  45 libres et nets, planche de 15
+mousseron          50 fichiers,  46 libres et nets, planche de 15
+rose               50 fichiers,  49 libres et nets, planche de 15
+russule            51 fichiers,  46 libres et nets, planche de 15
+sparassis 7 vignette Input buffer contains unsupported image format
+sparassis 8 vignette Input buffer contains unsupported image format
+sparassis 9 vignette Input buffer contains unsupported image format
+sparassis 10 vignette Input buffer contains unsupported image format
+sparassis 11 vignette Input buffer contains unsupported image format
+sparassis 12 vignette Input buffer contains unsupported image format
+sparassis 13 vignette Input buffer contains unsupported image format
+sparassis 14 vignette Input buffer contains unsupported image format
+sparassis          51 fichiers,  43 libres et nets, planche de 15
+cesar              51 fichiers,  47 libres et nets, planche de 15
+coprin             52 fichiers,  47 libres et nets, planche de 15
+vesse              51 fichiers,  48 libres et nets, planche de 15
+hygrophore         26 fichiers,  18 libres et nets, planche de 15
+marasme            51 fichiers,  47 libres et nets, planche de 15
+leccinum           52 fichiers,  51 libres et nets, planche de 15
+phalloide          56 fichiers,  55 libres et nets, planche de 15
+amanite_blanche 0 vignette Input buffer contains unsupported image format
+amanite_blanche 1 vignette Input buffer contains unsupported image format
+amanite_blanche 2 vignette Input buffer contains unsupported image format
+amanite_blanche 3 vignette Input buffer contains unsupported image format
+amanite_blanche 4 vignette Input buffer contains unsupported image format
+amanite_blanche 5 vignette Input buffer contains unsupported image format
+amanite_blanche 6 vignette Input buffer contains unsupported image format
+amanite_blanche 7 vignette Input buffer contains unsupported image format
+amanite_blanche 8 vignette Input buffer contains unsupported image format
+amanite_blanche 9 vignette Input buffer contains unsupported image format
+amanite_blanche 10 vignette Input buffer contains unsupported image format
+amanite_blanche 11 vignette Input buffer contains unsupported image format
+amanite_blanche 12 vignette Input buffer contains unsupported image format
+amanite_blanche 13 vignette Input buffer contains unsupported image format
+amanite_blanche 14 vignette Input buffer contains unsupported image format
+amanite_blanche    63 fichiers,  51 libres et nets, planche de 15
+panthere           51 fichiers,  45 libres et nets, planche de 15
+tuemouche         102 fichiers,  94 libres et nets, planche de 15
+cortinaire         40 fichiers,  30 libres et nets, planche de 15
+lepiote            15 fichiers,  10 libres et nets, planche de 10
+galere             52 fichiers,  49 libres et nets, planche de 15
+gyromitre          50 fichiers,  46 libres et nets, planche de 15
+entolome           50 fichiers,  45 libres et nets, planche de 15
+olivier            51 fichiers,  46 libres et nets, planche de 15
+faussegirolle 4 vignette Input buffer contains unsupported image format
+faussegirolle 5 vignette Input buffer contains unsupported image format
+faussegirolle 6 vignette Input buffer contains unsupported image format
+faussegirolle 7 vignette Input buffer contains unsupported image format
+faussegirolle 8 vignette Input buffer contains unsupported image format
+faussegirolle 9 vignette Input buffer contains unsupported image format
+faussegirolle 10 vignette Input buffer contains unsupported image format
+faussegirolle 11 vignette Input buffer contains unsupported image format
+faussegirolle 12 vignette Input buffer contains unsupported image format
+faussegirolle 13 vignette Input buffer contains unsupported image format
+faussegirolle 14 vignette Input buffer contains unsupported image format
+faussegirolle      52 fichiers,  43 libres et nets, planche de 15
+satan              51 fichiers,  37 libres et nets, planche de 15
+amer               50 fichiers,  45 libres et nets, planche de 15
+clitoblanc         47 fichiers,  36 libres et nets, planche de 15
+inocybe             1 fichiers,   1 libres et nets, planche de 1
+equestre           52 fichiers,  47 libres et nets, planche de 15
+paxille            51 fichiers,  38 libres et nets, planche de 15
+hypholome          51 fichiers,  47 libres et nets, planche de 15
+jaunissant         50 fichiers,  46 libres et nets, planche de 15
+toison 3 vignette Input buffer contains unsupported image format
+toison 4 vignette Input buffer contains unsupported image format
+toison 5 vignette Input buffer contains unsupported image format
+toison 6 vignette Input buffer contains unsupported image format
+toison 7 vignette Input buffer contains unsupported image format
+toison 8 vignette Input buffer contains unsupported image format
+toison 9 vignette Input buffer contains unsupported image format
+toison 10 vignette Input buffer contains unsupported image format
+toison 11 vignette Input buffer contains unsupported image format
+toison 12 vignette Input buffer contains unsupported image format
+toison 13 vignette Input buffer contains unsupported image format
+toison 14 vignette Input buffer contains unsupported image format
+toison             50 fichiers,  41 libres et nets, planche de 15
+emetique           51 fichiers,  40 libres et nets, planche de 15
+total 11576
+drwxr-xr-x  2 runner runner   4096 Oct 28 17:57 .
+drwxrwxrwt 24 root   root     4096 Oct 28 17:54 ..
+-rw-r--r--  1 runner runner   6393 Oct 28 17:56 amanite_blanche.jpg
+-rw-r--r--  1 runner runner 309668 Oct 28 17:57 amer.jpg
+-rw-r--r--  1 runner runner  49767 Oct 28 17:54 bai.jpg
+-rw-r--r--  1 runner runner 410818 Oct 28 17:57 candidats.json
+-rw-r--r--  1 runner runner 328879 Oct 28 17:54 cepe.jpg
+-rw-r--r--  1 runner runner 305818 Oct 28 17:54 cepe_bronze.jpg
+-rw-r--r--  1 runner runner 201490 Oct 28 17:54 cepe_ete.jpg
+-rw-r--r--  1 runner runner 308067 Oct 28 17:54 cepe_pins.jpg
+-rw-r--r--  1 runner runner 252249 Oct 28 17:55 cesar.jpg
+-rw-r--r--  1 runner runner 239555 Oct 28 17:57 clitoblanc.jpg
+-rw-r--r--  1 runner runner 289457 Oct 28 17:55 coprin.jpg
+-rw-r--r--  1 runner runner 290368 Oct 28 17:56 cortinaire.jpg
+-rw-r--r--  1 runner runner 337684 Oct 28 17:55 coulemelle.jpg
+-rw-r--r--  1 runner runner 284197 Oct 28 17:57 emetique.jpg
+-rw-r--r--  1 runner runner 268819 Oct 28 17:56 entolome.jpg
+-rw-r--r--  1 runner runner 328791 Oct 28 17:57 equestre.jpg
+-rw-r--r--  1 runner runner  99963 Oct 28 17:56 faussegirolle.jpg
+-rw-r--r--  1 runner runner 304251 Oct 28 17:56 galere.jpg
+-rw-r--r--  1 runner runner 257174 Oct 28 17:54 girolle.jpg
+-rw-r--r--  1 runner runner 295760 Oct 28 17:56 gyromitre.jpg
+-rw-r--r--  1 runner runner 234984 Oct 28 17:54 hydne.jpg
+-rw-r--r--  1 runner runner 333979 Oct 28 17:55 hygrophore.jpg
+-rw-r--r--  1 runner runner 357944 Oct 28 17:57 hypholome.jpg
+-rw-r--r--  1 runner runner  28791 Oct 28 17:57 inocybe.jpg
+-rw-r--r--  1 runner runner 345923 Oct 28 17:57 jaunissant.jpg
+-rw-r--r--  1 runner runner 298859 Oct 28 17:55 lactaire.jpg
+-rw-r--r--  1 runner runner 278778 Oct 28 17:56 leccinum.jpg
+-rw-r--r--  1 runner runner 175767 Oct 28 17:56 lepiote.jpg
+-rw-r--r--  1 runner runner 264332 Oct 28 17:56 marasme.jpg
+-rw-r--r--  1 runner runner 256268 Oct 28 17:55 morille.jpg
+-rw-r--r--  1 runner runner 267409 Oct 28 17:55 mousseron.jpg
+-rw-r--r--  1 runner runner 259162 Oct 28 17:56 olivier.jpg
+-rw-r--r--  1 runner runner 219615 Oct 28 17:56 panthere.jpg
+-rw-r--r--  1 runner runner 324963 Oct 28 17:57 paxille.jpg
+-rw-r--r--  1 runner runner 232923 Oct 28 17:56 phalloide.jpg
+-rw-r--r--  1 runner runner 283979 Oct 28 17:55 piedbleu.jpg
+-rw-r--r--  1 runner runner 278988 Oct 28 17:55 pleurote.jpg
+-rw-r--r--  1 runner runner 282544 Oct 28 17:55 rose.jpg
+-rw-r--r--  1 runner runner 274091 Oct 28 17:55 russule.jpg
+-rw-r--r--  1 runner runner 207258 Oct 28 17:56 satan.jpg
+-rw-r--r--  1 runner runner 169715 Oct 28 17:55 sparassis.jpg
+-rw-r--r--  1 runner runner  61550 Oct 28 17:57 toison.jpg
+-rw-r--r--  1 runner runner 260966 Oct 28 17:54 trompette.jpg
+-rw-r--r--  1 runner runner 235310 Oct 28 17:54 tube.jpg
+-rw-r--r--  1 runner runner 323914 Oct 28 17:56 tuemouche.jpg
+-rw-r--r--  1 runner runner 318395 Oct 28 17:55 vesse.jpg
