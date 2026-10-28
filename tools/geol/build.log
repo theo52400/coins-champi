@@ -1,15 +1,15 @@
 Légende de la carte du BRGM : 507 unités
 
 toutes cartes : 1890 tuiles Macrostrat à lire (zoom 10)
-  800/1890 tuiles, 31017 unités, 12 s
-  1200/1890 tuiles, 77866 unités, 23 s
-  1600/1890 tuiles, 96767 unités, 28 s
-toutes cartes : 1890 tuiles (517 vides, 0 en échec), 116076 polygones, 34 s
+  800/1890 tuiles, 31017 unités, 14 s
+  1200/1890 tuiles, 77897 unités, 27 s
+  1600/1890 tuiles, 96767 unités, 32 s
+toutes cartes : 1890 tuiles (517 vides, 0 en échec), 116076 polygones, 38 s
 
 carte du BRGM : 1890 tuiles Macrostrat à lire (zoom 10)
-  1200/1890 tuiles, 20148 unités, 9 s
-carte du BRGM : 1890 tuiles (999 vides, 0 en échec), 29483 polygones, 11 s
-Écrit : 149 tuiles de 1°, 805 entrées de légende, 0.6 Mo, version c6581f1c
+  1200/1890 tuiles, 20148 unités, 14 s
+carte du BRGM : 1890 tuiles (999 vides, 0 en échec), 29483 polygones, 21 s
+Écrit : 149 tuiles de 1°, 805 entrées de légende, 0.6 Mo, version 77236997
 
 Répartition des cases renseignées (4040659) :
   acide           39.0 %
@@ -47,7 +47,7 @@ Points de contrôle :
   ok  Bretagne intérieure                acide         Quartzites, grès et schistes (Ordovicien)
         source 249 : quartzite [50.0%..95.0%]; sandstone [5.0%..50.0%]; schist [5.0%..50.0%] | Ordovician
   ok  Limousin (granite)                 acide         Granite (Viséen)
-        source 249 : granite [95.0%..100.0%] | Visean - Carboniferous
+        source 249 : granitoid [95.0%..100.0%] (granite) | Visean - Carboniferous
   ok  Bresse                             argileux      Argiles, graviers et sables (Pléistocène moyen à supérieur)
         source 249 : clay [50.0%..95.0%]; gravel [5.0%..50.0%]; sand [5.0%..50.0%] | Ionian - Upper Pleistocene
   ok  Jura (calcaire)                    calcaire      Calcaires marneux, calcaires et schistes (Jurassique supérieur)
@@ -59,7 +59,7 @@ Points de contrôle :
   ok  Ardennes (schistes)                acide         Grauwackes, quartzites et schistes (Cambrien)
         source 249 : quartzite [5.0%..50.0%]; schist [5.0%..50.0%]; greywacke [50.0%..95.0%] | Cambrian
   ok  Vosges cristallines                acide         Granite (Viséen)
-        source 249 : granite [95.0%..100.0%] | Visean - Carboniferous
+        source 249 : granitoid [95.0%..100.0%] (granite) | Visean - Carboniferous
   ok  Plaine d'Alsace                    intermédiaire Alluvions : sables, argiles et graviers (Holocène)
         source 249 : clay [5.0%..50.0%]; gravel [5.0%..50.0%]; sand [50.0%..95.0%] | Holocene
   ok  Sainte-Baume (calcaire)            calcaire      Calcaires marneux, argiles et calcaires (Jurassique supérieur)
@@ -202,10 +202,10 @@ Termes non reconnus :
       1  redwitzite
       1  snow
       1  trass
+      1  sporadic kieselkalk
       1  carbonatite
       1  essexite
       1  theralite
-      1  sporadic kieselkalk
       1  olivine nephelinite
       1  ries
       1  diatexite
@@ -220,11 +220,11 @@ Termes non reconnus :
       1  dislocated blocks
 
 Légende (extrait) :
-    1  intermédiaire  Laves  Dévonien
-    2  argileux  Argiles, siltites et grès  Dévonien
-    3  acide  Granite  Carbonifère à Permien
-    4  intermédiaire  Basaltes  Dévonien
-    5  argileux  Argiles, siltites et grès  Dévonien supérieur
+    1  intermédiaire  Basaltes  Dévonien
+    2  argileux  Argiles, siltites et grès  Dévonien supérieur
+    3  intermédiaire  Laves  Dévonien
+    4  argileux  Argiles, siltites et grès  Dévonien
+    5  acide  Granite  Carbonifère à Permien
     6  argileux  Argiles, limons et sables  Éocène à Miocène
     7  intermédiaire  Graviers, sables et limons  Néogène
     8  calcaire  Dolomies, calcaires et marnes  
@@ -236,14 +236,14 @@ Légende (extrait) :
    14  calcaire  Dolomies, calcaires et grès  Carbonifère
    15  calcaire  Calcaires, dolomies et grès  Jurassique inférieur
    16  acide  Conglomérats, grès et calcaires  
-   17  intermédiaire  Graviers, conglomérats et sables  Holocène
-   18  acide  Grès, conglomérats et argiles  
-   19  acide  Conglomérats, grès et argiles  
-   20  intermédiaire  Graviers, conglomérats et sables  Pléistocène
-   21  acide  Grès, schistes ardoisiers et calcaires  
-   22  acide  Quartzites, schistes ardoisiers et grès  
-   23  acide  Conglomérats, grès et schistes ardoisiers  Carbonifère supérieur
-   24  acide  Conglomérats, grès et schistes ardoisiers  
+   17  acide  Grès, conglomérats et argiles  
+   18  acide  Conglomérats, grès et argiles  
+   19  acide  Grès, schistes ardoisiers et calcaires  
+   20  acide  Quartzites, schistes ardoisiers et grès  
+   21  acide  Conglomérats, grès et schistes ardoisiers  Carbonifère supérieur
+   22  acide  Conglomérats, grès et schistes ardoisiers  
+   23  intermédiaire  Graviers, conglomérats et sables  Holocène
+   24  intermédiaire  Graviers, conglomérats et sables  Pléistocène
    25  calcaire  Calcaires et argiles  Dévonien
    26  acide  Grès et conglomérats  Dévonien inférieur
    27  argileux  Argiles, siltites et grès  Dévonien inférieur
@@ -266,24 +266,24 @@ Légende (extrait) :
    44  acide  Migmatites et amphibolites  Cambrien
    45  acide  Roches métamorphiques et amphibolites  Ordovicien supérieur à Silurien
    46  acide  Gneiss  Cambrien à Ordovicien moyen
-   47  acide  Granite  Viséen
-   48  acide  Micaschistes et gneiss  Cambrien
-   49  acide  Roches métamorphiques et gneiss  Cambrien à Ordovicien moyen
-   50  acide  Grès, charbon et conglomérats  Carbonifère supérieur
-   51  acide  Grauwackes, grès et schistes  Cambrien
-   52  acide  Schistes, calcaires et quartzites  Dévonien inférieur
-   53  acide  Roches métamorphiques  Cambrien à Ordovicien moyen
-   54  acide  Schistes, quartzites et grès  Silurien
-   55  acide  Quartzites, grès et schistes  Ordovicien
-   56  argileux  Argiles, graviers et sables  Pléistocène moyen à supérieur
-   57  argileux  Argiles, calcaires marneux et calcaires  Oligocène
-   58  acide  Schistes et quartzites  Silurien à Dévonien inférieur
-   59  acide  Micaschistes, gneiss et quartzites  Cambrien
+   47  acide  Schistes, calcaires et quartzites  Dévonien inférieur
+   48  acide  Roches métamorphiques  Cambrien à Ordovicien moyen
+   49  acide  Schistes, quartzites et grès  Silurien
+   50  acide  Quartzites, grès et schistes  Ordovicien
+   51  argileux  Argiles, graviers et sables  Pléistocène moyen à supérieur
+   52  argileux  Argiles, calcaires marneux et calcaires  Oligocène
+   53  acide  Schistes et quartzites  Silurien à Dévonien inférieur
+   54  acide  Grauwackes, grès et schistes  Cambrien
+   55  acide  Micaschistes, gneiss et quartzites  Cambrien
+   56  acide  Granite  Viséen
+   57  acide  Micaschistes et gneiss  Cambrien
+   58  acide  Roches métamorphiques et gneiss  Cambrien à Ordovicien moyen
+   59  acide  Grès, charbon et conglomérats  Carbonifère supérieur
    60  acide  Granite  
    61  acide  Grès et conglomérats  Dévonien supérieur
    62  acide  Grès et conglomérats  Permien
-   63  intermédiaire  Laves et roches volcaniques  Dévonien
-   64  intermédiaire  Laves et roches volcaniques  Carbonifère
+   63  intermédiaire  Laves et roches volcaniques  Carbonifère
+   64  intermédiaire  Laves et roches volcaniques  Dévonien
    65  intermédiaire  Laves  Carbonifère
    66  intermédiaire  Alluvions : sables et argiles  Holocène
    67  intermédiaire  Alluvions : sables, argiles et graviers  Holocène
