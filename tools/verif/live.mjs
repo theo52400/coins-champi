@@ -103,7 +103,8 @@ await step('BD Forêt', async () => {
 await step('Point', async () => {
   await clickAt(49.0452, 7.5310);
   const ok = await wait(() => document.querySelector('[data-act="route-point"]'), null, 10000);
-  await sleep(2500);
+  // l'altitude de l'IGN arrive parfois après quelques secondes
+  await wait(() => /Altitude\s*\n?\s*(\d|—)/.test((document.getElementById('sec-point') || {}).innerText || ''), null, 12000);
   const info = await page.evaluate(() => (document.getElementById('sec-point') || {}).innerText || '');
   check('Fiche d\'un point : peuplement, sol, sous-sol, commune, altitude', ok && /Sous-sol/.test(info) && /Altitude\s*\n?\s*\d/.test(info), info.replace(/\s+/g, ' ').slice(0, 300));
   await shot('4-point');
