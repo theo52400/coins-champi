@@ -1,5 +1,5 @@
 {
- "date": "2026-10-28T07:10:43.371Z",
+ "date": "2026-10-28T10:01:38.607Z",
  "checks": [
   {
    "name": "L'appli démarre et se connecte au jeu (Firebase)",
@@ -40,7 +40,7 @@
    "name": "Profil créé, groupe de test créé",
    "ok": true,
    "detail": {
-    "gid": "KZJKUHP5"
+    "gid": "2WBMTQZ5"
    }
   },
   {
@@ -56,66 +56,45 @@
    "detail": {
     "trace": 6,
     "fix": [
-     49.0407335,
-     7.520725
+     49.0407538,
+     7.5207465
     ]
    }
   },
   {
    "name": "Écran éteint : la notification de suivi est toujours là",
-   "ok": true
+   "ok": false
   },
   {
    "name": "Écran éteint : l'alerte d'un autre joueur arrive en notification",
-   "ok": true,
+   "ok": false,
    "detail": "alerte envoyée"
   },
   {
    "name": "Écran éteint : les autres joueurs voient ma position avancer (lue sur le serveur)",
-   "ok": true,
+   "ok": false,
    "detail": {
     "presence": {
-     "lat": 49.045276,
-     "lng": 7.522949,
-     "ts": 1793171855539
+     "lat": 49.040938,
+     "lng": 7.520861,
+     "ts": 1793181777790
     },
     "dernierePosition": [
      49.0453,
      7.52296
     ],
-    "minutesApresExtinction": 5.7
+    "minutesApresExtinction": 0
    }
   },
   {
-   "name": "Écran éteint : la trace a continué (positions enregistrées pendant 6 min)",
-   "ok": true,
-   "detail": {
-    "points": 26,
-    "pendantEcranEteint": 20
-   }
+   "name": "Retour dans l'appli",
+   "ok": false,
+   "detail": "exception : page.evaluate: TypeError: Cannot read properties of null (reading 'api')"
   },
   {
-   "name": "De retour dans l'appli : position partagée à jour",
-   "ok": true,
-   "detail": {
-    "presence": {
-     "lat": 49.04531,
-     "lng": 7.522965,
-     "ts": 1793171911714
-    },
-    "derniere": [
-     49.0453,
-     7.52296
-    ]
-   }
-  },
-  {
-   "name": "Fin de sortie : suivi natif arrêté, notification retirée",
-   "ok": true,
-   "detail": {
-    "native": false,
-    "sortie": false
-   }
+   "name": "Fin de sortie",
+   "ok": false,
+   "detail": "exception : page.waitForSelector: Timeout 30000ms exceeded."
   },
   {
    "name": "Données de test effacées de Firebase",
@@ -130,13 +109,8 @@
   }
  ],
  "notes": [
-  "07:11:53 écran éteint, application en arrière-plan",
-  "07:16:55 alerte du robot envoyée"
+  "10:02:57 écran éteint, application en arrière-plan",
+  "10:07:59 alerte du robot envoyée"
  ],
- "logsAppli": [
-  "07:11:24 Connecté (firebase), joueur xTy70vsT",
-  "07:11:29 Source forêts : LANDCOVER.FORESTINVENTORY.V2:formation_vegetale",
-  "07:11:35 Suivi natif démarré (écran éteint possible)"
- ],
- "resume": "13/13 vérifications réussies, 8 min"
+ "resume": "7/12 vérifications réussies, 9 min"
 }
