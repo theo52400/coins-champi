@@ -1,12 +1,12 @@
 {
  "site": "https://theo52400.github.io/coins-champi/",
- "date": "2026-10-27T23:31:01.052Z",
+ "date": "2026-10-28T06:34:55.371Z",
  "checks": [
   {
    "name": "L'appli démarre",
    "ok": true,
    "detail": {
-    "version": "v2026-10-27-a6a2c53a"
+    "version": "v2026-10-28-66a08341"
    }
   },
   {
@@ -14,7 +14,7 @@
    "ok": true,
    "detail": {
     "kind": "firebase",
-    "uid": "wu1IfJ",
+    "uid": "8RQzGY",
     "banner": null
    }
   },
@@ -24,7 +24,7 @@
    "detail": {
     "ecriture": true,
     "relu": "Vérification",
-    "ms": 2634
+    "ms": 2221
    }
   },
   {
@@ -53,7 +53,7 @@
      "wait": 0,
      "total": 2
     },
-    "peuplements": 232,
+    "peuplements": 299,
     "erreur": null
    }
   },
@@ -124,13 +124,13 @@
  ],
  "console": [
   "warning Info: The current domain is not authorized for OAuth operations. This will prevent signInWithPopup, signInWithRedirect, linkWithPopup and linkWithRedirect from working. Add your domain (theo52400.github.io) to the OAuth redirect domains list in the Firebase console -> Authentication -> Settings -> A",
-  "warning [GroupMarkerNotSet(crbug.com/242999)!:A0901C001C0A0000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.",
-  "warning [.WebGL-0x1aec00a41b00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
-  "warning [.WebGL-0x1aec00a41b00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
-  "warning [.WebGL-0x1aec00a41b00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
-  "warning [.WebGL-0x1aec00a41b00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)",
-  "warning [GroupMarkerNotSet(crbug.com/242999)!:A0601C001C0A0000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.",
-  "warning [GroupMarkerNotSet(crbug.com/242999)!:A0802C031C0A0000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content."
+  "warning [GroupMarkerNotSet(crbug.com/242999)!:A0901C00F41E0000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.",
+  "warning [.WebGL-0x273c00def800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+  "warning [.WebGL-0x273c00def800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+  "warning [.WebGL-0x273c00def800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+  "warning [.WebGL-0x273c00def800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)",
+  "warning [GroupMarkerNotSet(crbug.com/242999)!:A0601C00F41E0000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.",
+  "warning [GroupMarkerNotSet(crbug.com/242999)!:A0C03B01F41E0000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content."
  ],
  "http": [],
  "counts": {
@@ -642,9 +642,9 @@
   "Fontainebleau (77, 15583 hab.)"
  ],
  "logs": [
-  "23:31:02 Connecté (firebase), joueur wu1IfJPE",
-  "23:31:13 Source forêts : LANDCOVER.FORESTINVENTORY.V2:formation_vegetale",
-  "23:31:21 Écran allumé : Wake Lock permission request denied"
+  "06:34:56 Connecté (firebase), joueur 8RQzGYd3",
+  "06:35:05 Source forêts : LANDCOVER.FORESTINVENTORY.V2:formation_vegetale",
+  "06:35:13 Écran allumé : Wake Lock permission request denied"
  ],
  "resume": "15/15 vérifications réussies"
 }
