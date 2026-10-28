@@ -1,5 +1,5 @@
 {
- "date": "2026-10-28T06:57:18.943Z",
+ "date": "2026-10-28T07:10:43.371Z",
  "checks": [
   {
    "name": "L'appli démarre et se connecte au jeu (Firebase)",
@@ -40,7 +40,7 @@
    "name": "Profil créé, groupe de test créé",
    "ok": true,
    "detail": {
-    "gid": "C7QZ9N9C"
+    "gid": "KZJKUHP5"
    }
   },
   {
@@ -54,10 +54,10 @@
    "name": "Au premier plan : la trace avance",
    "ok": true,
    "detail": {
-    "trace": 4,
+    "trace": 6,
     "fix": [
-     49.040759,
-     7.5207595
+     49.0407335,
+     7.520725
     ]
    }
   },
@@ -75,9 +75,9 @@
    "ok": true,
    "detail": {
     "presence": {
-     "lat": 49.04527,
-     "lng": 7.522946,
-     "ts": 1793171058475
+     "lat": 49.045276,
+     "lng": 7.522949,
+     "ts": 1793171855539
     },
     "dernierePosition": [
      49.0453,
@@ -90,8 +90,8 @@
    "name": "Écran éteint : la trace a continué (positions enregistrées pendant 6 min)",
    "ok": true,
    "detail": {
-    "points": 23,
-    "pendantEcranEteint": 19
+    "points": 26,
+    "pendantEcranEteint": 20
    }
   },
   {
@@ -100,8 +100,8 @@
    "detail": {
     "presence": {
      "lat": 49.04531,
-     "lng": 7.522966,
-     "ts": 1793171113433
+     "lng": 7.522965,
+     "ts": 1793171911714
     },
     "derniere": [
      49.0453,
@@ -124,18 +124,19 @@
     "presence": "ok",
     "membre": "ok",
     "groupe": "ok",
-    "profil": "ok"
+    "profil": "ok",
+    "compte": "ok"
    }
   }
  ],
  "notes": [
-  "06:58:36 écran éteint, application en arrière-plan",
-  "07:03:37 alerte du robot envoyée"
+  "07:11:53 écran éteint, application en arrière-plan",
+  "07:16:55 alerte du robot envoyée"
  ],
  "logsAppli": [
-  "06:58:07 Connecté (firebase), joueur FVTSZqcg",
-  "06:58:12 Source forêts : LANDCOVER.FORESTINVENTORY.V2:formation_vegetale",
-  "06:58:19 Suivi natif démarré (écran éteint possible)"
+  "07:11:24 Connecté (firebase), joueur xTy70vsT",
+  "07:11:29 Source forêts : LANDCOVER.FORESTINVENTORY.V2:formation_vegetale",
+  "07:11:35 Suivi natif démarré (écran éteint possible)"
  ],
  "resume": "13/13 vérifications réussies, 8 min"
 }
