@@ -1,0 +1,115 @@
+=== BDFORET resource listing
+HTTP 200 14422
+<?xml version='1.0' encoding='UTF-8' standalone='yes'?>
+<feed xmlns:georss="http://www.georss.org/georss" xmlns:gpf_dl="https://data.geopf.fr/annexes/ressources/xsd/gpf_dl.xsd" xmlns="http://www.w3.org/2005/Atom" xmlns:inspire_dls="http://inspire.ec.europa.eu/schemas/inspire_dls/1.0" xml:lang="en" gpf_dl:page="1" gpf_dl:pagesize="10" gpf_dl:pagecount="20" gpf_dl:totalentries="193">
+  <title>BD FORET®</title>
+  <subtitle>La BD Forêt® version 2.0 est une base de données de référence pour l’espace forestier et les milieux semi-naturels. Elle constitue le référentiel géographique de description des essences forestières. Elle décrit les formations végétales forestières et naturelles par une approche de la couverture du sol traduisant une description de la densité de couvert du peuplement, de sa composition et de l’essence dominante, pour les éléments de plus de 5 000 m² (soit 0,5 hectare). La BD Forêt® version 1.0, prédécesseur de la BD Forêt® version 2.0, est une base de données des formations végétales forestières et naturelles qui présente la couverture du sol pour les éléments de plus de 22 500 m² (soit 2,25 ha)(par description de la structure, de la composition et de l'essence dominante des formations boisées ou naturelles) en s’appuyant sur une nomenclature départementale qui varie de 11 à 84 postes selon la diversité forestière du département cartographié (33 en moyenne). Constituée, jusqu'en 2006, par emprises départementales, elle est disponible sur l'ensemble du territoire métropolitain.</subtitle>
+  <id>https://data.geopf.fr/telechargement/resource/BDFORET</id>
+  <updated>2024-06-13T14:59:00+01:00</updated>
+  <link href="https://data.geopf.fr/telechargement/resource/BDFORET?lang=fr" hreflang="fr" rel="alternate" type="application/atom+xml" title="BD FORET®"/>
+  <link href="https://data.geopf.fr/telechargement/resource/BDFORET" rel="self" type="application/atom+xml" title="This document"/>
+  <link href="https://data.geopf.fr/telechargement/capabilities" rel="up" type="application/atom+xml"/>
+  <category term="https://registre.ign.fr/ign/IGNF/crs/IGNF/LAMB93" label="IGNF:LAMB93"/>
+  <gpf_dl:zone term="D019" label="D019 Corrèze"/>
+  <gpf_dl:zone term="D014" label="D014 Calvados"/>
+  <gpf_dl:zone term="D043" label="D043 Haute-Loire"/>
+  <gpf_dl:zone term="D057" label="D057 Moselle"/>
+  <gpf_dl:zone term="D036" label="D036 Indre"/>
+  <gpf_dl:zone term="D078" label="D078 Yvelines"/>
+  <gpf_dl:zone term="D027" label="D027 Eure"/>
+  <gpf_dl:zone term="D054" label="D054 Meurthe-et-Moselle"/>
+  <gpf_dl:zone term="D064" label="D064 Pyrénées-Atlantiques"/>
+  <gpf_dl:zone term="D013" label="D013 Bouches-du-Rhône"/>
+  <gpf_dl:zone term="D068" label="D068 Haut-Rhin"/>
+  <gpf_dl:zone term="D010" label="D010 Aube"/>
+  <gpf_dl:zone term="D087" label="D087 Haute-Vienne"/>
+  <gpf_dl:zone term="D089" label="D089 Yonne"/>
+  <gpf_dl:zone term="D041" label="D041 Loir-et-Cher"/>
+  <gpf_dl:zone term="D061" label="
+--- names
+BDFORET_1-0__SHP_LAMB93_D001_2014-04-01
+BDFORET_1-0__SHP_LAMB93_D002_2013-01-01
+BDFORET_1-0__SHP_LAMB93_D003_2014-04-01
+BDFORET_1-0__SHP_LAMB93_D004_2014-04-01
+BDFORET_1-0__SHP_LAMB93_D005_2013-01-01
+BDFORET_1-0__SHP_LAMB93_D006_2014-04-01
+BDFORET_1-0__SHP_LAMB93_D007_2014-04-01
+BDFORET_1-0__SHP_LAMB93_D008_2014-04-01
+BDFORET_1-0__SHP_LAMB93_D009_2013-01-01
+BDFORET_1-0__SHP_LAMB93_D010_2014-04-01
+10
+<link href="https://data.geopf.fr/telechargement/resource/BDFORET?lang=fr" hreflang="fr" rel="alternate" type="application/atom+xml" title="BD FORET®"/>
+<link href="https://data.geopf.fr/telechargement/resource/BDFORET" rel="self" type="application/atom+xml" title="This document"/>
+<link href="https://data.geopf.fr/telechargement/capabilities" rel="up" type="application/atom+xml"/>
+<link href="https://data.geopf.fr/telechargement/resource/BDFORET/BDFORET_1-0__SHP_LAMB93_D001_2014-04-01" rel="alternate" type="application/atom+xml" title="BDFORET_1-0__SHP_LAMB93_D001_2014-04-01"/>
+<link href="https://data.geopf.fr/telechargement/resource/BDFORET/BDFORET_1-0__SHP_LAMB93_D002_2013-01-01" rel="alternate" type="application/atom+xml" title="BDFORET_1-0__SHP_LAMB93_D002_2013-01-01"/>
+<link href="https://data.geopf.fr/telechargement/resource/BDFORET/BDFORET_1-0__SHP_LAMB93_D003_2014-04-01" rel="alternate" type="application/atom+xml" title="BDFORET_1-0__SHP_LAMB93_D003_2014-04-01"/>
+<link href="https://data.geopf.fr/telechargement/resource/BDFORET/BDFORET_1-0__SHP_LAMB93_D004_2014-04-01" rel="alternate" type="application/atom+xml" title="BDFORET_1-0__SHP_LAMB93_D004_2014-04-01"/>
+<link href="https://data.geopf.fr/telechargement/resource/BDFORET/BDFORET_1-0__SHP_LAMB93_D005_2013-01-01" rel="alternate" type="application/atom+xml" title="BDFORET_1-0__SHP_LAMB93_D005_2013-01-01"/>
+<link href="https://data.geopf.fr/telechargement/resource/BDFORET/BDFORET_1-0__SHP_LAMB93_D006_2014-04-01" rel="alternate" type="application/atom+xml" title="BDFORET_1-0__SHP_LAMB93_D006_2014-04-01"/>
+<link href="https://data.geopf.fr/telechargement/resource/BDFORET/BDFORET_1-0__SHP_LAMB93_D007_2014-04-01" rel="alternate" type="application/atom+xml" title="BDFORET_1-0__SHP_LAMB93_D007_2014-04-01"/>
+=== sub resource 
+HTTP 404
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="/telechargement/style/dsfr.min.css">
+</head>
+<header role="banner" class="fr-header">
+  <div class="fr-header__body">
+    <div class="fr-container">
+      <div class="fr-header__body-row">
+        <div class="fr-header__brand fr-enlarge-link">
+          <div class="fr-header__brand-top">
+            <div class="fr-header__logo">
+              <a href="/" title="Accueil - Géoplateforme">
+                <p class="fr-logo">
+                  Géoplateforme
+                  <br>Service Téléchargement
+                </p>
+              </a>
+            </div>
+            <div class="fr-header__navbar">
+              <button class="fr-btn--menu fr-btn" data-fr-opened="false" aria-controls="modal-491" aria-haspopup="menu" id="button-492" title="Menu">
+                Menu
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="fr-header__menu fr-modal" id="modal-491" aria-labelledby="button-492">
+    <div class="fr-container">
+      <button class="fr-btn--close fr-btn" aria-controls="modal-491" title="Fermer">
+        Fermer
+      </button>
+      <div class="fr-header__menu-links">
+      </div>
+    </div>
+  </div>
+</header>
+<body>
+<main role="main" id="content">
+  <div class="fr-container">
+    <div class="fr-my-7w fr-mt-md-12w fr-mb-md-10w fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-grid-row--center">
+      <div class="fr-py-0 fr-col-12 fr-col-md-6">
+        <h1>Page non trouvée</h1>
+        <p class="fr-text--sm fr-mb-3w">Erreur 404</p>
+        <p class="fr-text--lead fr-mb-3w">La page que vous cherchez est introuvable. Excusez-nous pour la gêne occasionnée.</p>
+        <p class="fr-text--sm fr-mb-5w">Si vous avez tapé l&#39;adresse web dans le navigateur, vérifiez qu&#39;elle est correcte. La page n’est peut-être plus disponible.</p>
+      </div>
+      <div class="fr-col-12 fr-col-md-3 fr-col-offset-md-1 fr-px-6w fr-px-md-0 fr-py-0">
+        <svg xmlns="http://www.w3.org/2000/svg" class="fr-responsive-img fr-artwork" aria-hidden="true" width="160" height="200" viewBox="0 0 160 200">
+          <use class="fr-artwork-motif" href="style/icons/system/ovoid.svg#artwork-motif"></use>
+          <use class="fr-artwork-background" href="style/
+URL: 
+=== Wikimedia
+{"batchcomplete":"","query":{"normalized":[{"from":"C\u00e8pe_de_Bordeaux","to":"C\u00e8pe de Bordeaux"}],"redirects":[{"from":"C\u00e8pe de Bordeaux","to":"Boletus edulis"}],"pages":{"181665":{"pageid":181665,"ns":0,"title":"Boletus edulis","original":{"source":"https://upload.wikimedia.org/wikipedia/commons/5/52/Boletus_edulis_0.jpg?utm_source=fr.wikipedia.org&utm_campaign=api&utm_content=original","width":1167,"height":1186}}}}}
+{"batchcomplete":"","continue":{"cmcontinue":"file|3230303830383236204745574f4f4e2045454b484f4f524e544a455342524f4f442e4a5047|98089707","continue":"-||"},"query":{"categorymembers":[{"pageid":2782350,"ns":6,"title":"File:Boletus edulis1.jpg"},{"pageid":5045416,"ns":6,"title":"File:Boletus edulis2.jpg"},{"pageid":139308463,"ns":6,"title":"File:\"El oto\u00f1o en Italia\".jpg"},{"pageid":2782141,"ns":6,"title":"File:(Boletus edulis).jpg"},{"pageid":75251851,"ns":6,"title":"File:(Gemeine Steinpilz) Boletus edulis.jpg"},{"pageid":1656019,"ns":6,"title":"File:- Boletus edulis -.jpg"},{"pageid":1704365,"ns":6,"title":"File:- Dried Boletus edulis -.jpg"},{"pageid":196675856,"ns":6,"title":"File:0884Fb. \u0421\u0430\u043d\u043a\u0442-\u041f\u0435\u0442\u0435\u0440\u0431\u0443\u0440\u0433. \u0417\u0430\u043a\u0430\u0437\u043d\u0438\u043a \"\u041e\u0437\u0435\u0440\u043e \u0429\u0443\u0447\u044c\u0435\".jpg"},{"pageid":2783825,"ns":6,"title":"File:08baravyks.jpg"},{"pageid":98089778,"ns":6,"title":"File:20070912 gewoon eekhoorntjesbrood.jpg"}]}}
+{"batchcomplete":"","query":{"normalized":[{"from":"File:Boletus_edulis_EtgHollande_041031_091.jpg","to":"File:Boletus edulis EtgHollande 041031 091.jpg"}],"pages":{"179148":{"pageid":179148,"ns":6,"title":"File:Boletus edulis EtgHollande 041031 091.jpg","imagerepository":"local","imageinfo":[{"size":682439,"width":2048,"height":1536,"thumburl":"https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b0/Boletus_edulis_EtgHollande_041031_091.jpg/960px-Boletus_edulis_EtgHollande_041031_091.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail","thumbwidth":640,"thumbheight":480,"responsiveUrls":{"2":"https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b0/Boletus_edulis_EtgHollande_041031_091.jpg/1280px-Boletus_edulis_EtgHollande_041031_091.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail"},"thumbattribs":{"src":"https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b0/Boletus_edulis_EtgHollande_041031_091.jpg/960px-Boletus_edulis_EtgHollande_041031_091.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail","decoding":"async","loading":"lazy","width":640,"height":480,"srcset":"https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b0/Boletus_edulis_EtgHollande_041031_091.jpg/1280px-Boletus_edulis_EtgHollande_041031_091.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail 2x"},"url":"https://upload.wikimedia.org/wikipedia/commons/b/b0/Boletus_edulis_EtgHollande_041031_091.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original","descriptionurl":"https://commons.wikimedia.org/wiki/File:Boletus_edulis_EtgHollande_041031_091.jpg","descriptionshorturl":"https://commons.wikimedia.org/w/index.php?curid=179148","extmetadata":{"DateTime":{"value":"2005-06-06 18:48:40","source":"mediawiki-metadata","hidden":""},"ObjectName":{"value":"Boletus edulis EtgHollande 041031 091","source":"mediawiki-metadata"},"CommonsMetadataExtension":{"value":1.2,"source":"extension","hidden":""},"Categories":{"value":"Boletus edulis|GFDL|License migration redundant|Self-published work|Boletus edulis in \u00cele-de-France","source":"commons-categories","hidden":""},"Assessments":{"value":"","source":"commons-categories","hidden":""},"ImageDescription":{"value":"<i>Boletus edulis</i> (ceps) in a French wood near Rambouillet.","source":"commons-desc-page"},"DateTimeOriginal":{"value":"2014-10-31","source":"commons-desc-page"},"Credit":{"value":"<span cl
+=== Open-Meteo multi
+[{"latitude":48.501717,"longitude":6.515204,"generationtime_ms":26.702523231506348,"utc_offset_seconds":3600,"timezone":"Europe/Paris","timezone_abbreviation":"GMT+1","elevation":233.0,"daily_units":{"time":"iso8601","precipitation_sum":"mm","temperature_2m_mean":"°C","temperature_2m_min":"°C","temperature_2m_max":"°C"},"daily":{"time":["2026-10-07","2026-10-08","2026-10-09","2026-10-10","2026-10-11","2026-10-12","2026-10-13","2026-10-14","2026-10-15","2026-10-16","2026-10-17","2026-10-18","2026-10-19","2026-10-20","2026-10-21","2026-10-22","2026-10-23","2026-10-24","2026-10-25","2026-10-26","2026-10-27","2026-10-28","2026-10-29","2026-10-30","2026-10-31","2026-11-01","2026-11-02","2026-1
