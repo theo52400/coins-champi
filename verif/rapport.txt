@@ -1,12 +1,12 @@
-https://theo52400.github.io/coins-champi/ — 2026-10-28T06:53:54.158Z
+https://theo52400.github.io/coins-champi/ — 2026-10-28T07:07:08.856Z
 15/15 vérifications réussies
 
 OK     L'appli démarre
          {"version":"v2026-10-28-38ecc11c"}
 OK     Connexion au serveur du jeu (Firebase, compte anonyme)
-         {"kind":"firebase","uid":"EkMl55","banner":null}
+         {"kind":"firebase","uid":"kOdm2h","banner":null}
 OK     Écriture et relecture dans Firestore (puis effacement)
-         {"ecriture":true,"relu":"Vérification","ms":2107}
+         {"ecriture":true,"relu":"Vérification","ms":1518}
 OK     Ma position s'affiche sur la carte
          "point (pas encore de profil)"
 OK     Sous-sol chargé et cohérent (grès, calcaire, craie, sables, granite)
@@ -31,7 +31,7 @@ OK     Météo Open-Meteo
 OK     Aucune erreur JavaScript
          []
 
-Requêtes réussies : {"sous-sol":10,"Firebase":12,"météo":7,"tuiles IGN":74,"BD Forêt (WFS)":17,"communes":9,"altitude IGN":1,"itinéraire IGN":4}
+Requêtes réussies : {"sous-sol":10,"Firebase":18,"météo":8,"tuiles IGN":80,"BD Forêt (WFS)":17,"communes":10,"altitude IGN":1,"itinéraire IGN":4}
 
 Itinéraire, capacités : [
  {
@@ -535,16 +535,16 @@ Erreurs HTTP :
 
 Console :
 warning Info: The current domain is not authorized for OAuth operations. This will prevent signInWithPopup, signInWithRedirect, linkWithPopup and linkWithRedirect from working. Add your domain (theo52400.github.io) to the OAuth redirect domains list in the Firebase console -> Authentication -> Settings -> A
-warning [GroupMarkerNotSet(crbug.com/242999)!:A0601C009C000000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.
-warning [GroupMarkerNotSet(crbug.com/242999)!:A0901C009C000000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.
-warning [.WebGL-0xbec000ea200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
-warning [.WebGL-0xbec000ea200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
-warning [.WebGL-0xbec000ea200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
-warning [.WebGL-0xbec000ea200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)
-warning [GroupMarkerNotSet(crbug.com/242999)!:A00065039C000000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.
-warning [GroupMarkerNotSet(crbug.com/242999)!:A06065039C000000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.
+warning [GroupMarkerNotSet(crbug.com/242999)!:A0601C00141C0000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.
+warning [GroupMarkerNotSet(crbug.com/242999)!:A0901C00141C0000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.
+warning [.WebGL-0x395c01fcdc00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
+warning [.WebGL-0x395c01fcdc00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
+warning [.WebGL-0x395c01fcdc00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
+warning [.WebGL-0x395c01fcdc00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)
+warning [GroupMarkerNotSet(crbug.com/242999)!:A0601C00141C0000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.
+warning [GroupMarkerNotSet(crbug.com/242999)!:A0703E01141C0000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.
 
 Journal de l'appli :
-06:53:55 Source forêts : LANDCOVER.FORESTINVENTORY.V2:formation_vegetale
-06:53:55 Connecté (firebase), joueur EkMl55q1
-06:54:12 Écran allumé : Wake Lock permission request denied
+07:07:10 Source forêts : LANDCOVER.FORESTINVENTORY.V2:formation_vegetale
+07:07:10 Connecté (firebase), joueur kOdm2h3h
+07:07:27 Écran allumé : Wake Lock permission request denied
