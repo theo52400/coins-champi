@@ -101,6 +101,8 @@ await step('BD Forêt', async () => {
 });
 
 await step('Point', async () => {
+  // un vrai téléphone donne une position toutes les secondes ; le navigateur de test une seule fois : on la redonne
+  await ctx.setGeolocation({ latitude: 49.0400, longitude: 7.5200, accuracy: 10 }); await sleep(800);
   await clickAt(49.0452, 7.5310);
   const ok = await wait(() => document.querySelector('[data-act="route-point"]'), null, 10000);
   // l'altitude de l'IGN arrive parfois après quelques secondes
