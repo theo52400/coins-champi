@@ -61,6 +61,8 @@ export class Sync {
   }
   watchGroup(gid, cb) { return this._on(this._d('groups', gid), s => cb(s.exists() ? Object.assign({ id: gid }, s.data()) : null, s.metadata || {}), 'groupe'); }
   watchMembers(gid, cb) { return this._on(this._c('groups', gid, 'members'), s => cb(this._list(s)), 'membres'); }
+  // le créateur du groupe peut en retirer un membre (règle Firestore : propriétaire du groupe)
+  removeMember(gid, uid) { return this._w(this.api.deleteDoc(this._d('groups', gid, 'members', uid)), 'retrait d\'un membre'); }
   updateMember(gid, patch) { return this._w(this.api.setDoc(this._d('groups', gid, 'members', this.uid), clean(patch), { merge: true }), 'membre'); }
 
   // ---- positions en direct ----
