@@ -1,4 +1,4 @@
-2026-10-29T20:45:34.175Z
+2026-10-29T21:15:28.103Z
 13/13 vérifications réussies, 8 min
 
 OK     L'appli démarre et se connecte au jeu (Firebase)
@@ -8,30 +8,30 @@ OK     À l'ouverture, la carte vient sur ma position
 OK     Sous-sol lu dans l'appli (Vosges du Nord : grès)
          {"c":1,"n":"Grès, conglomérats et quartzites","a":"Trias inférieur"}
 OK     Profil créé, groupe de test créé
-         {"gid":"FEJEY2JJ"}
+         {"gid":"FQC2687X"}
 OK     Sortie lancée : suivi natif (la notification apparaît quand l'appli passe en arrière-plan)
          {"native":true}
 OK     Au premier plan : la trace avance
-         {"trace":2,"fix":[49.0407946,7.520793]}
+         {"trace":5,"fix":[49.0407975,7.5207933]}
 OK     Écran éteint : la notification de suivi est toujours là
 OK     Écran éteint : l'alerte d'un autre joueur arrive en notification
          "alerte envoyée"
 OK     Écran éteint : les autres joueurs voient ma position avancer (lue sur le serveur)
-         {"presence":{"lat":49.045288,"lng":7.522955,"ts":1793307158770},"dernierePosition":[49.0453,7.52296],"minutesApresExtinction":5.7}
+         {"presence":{"lat":49.045266,"lng":7.522944,"ts":1793308926100},"dernierePosition":[49.0453,7.52296],"minutesApresExtinction":5.7}
 OK     Écran éteint : la trace a continué (positions enregistrées pendant 6 min)
-         {"points":21,"pendantEcranEteint":19}
+         {"points":24,"pendantEcranEteint":19}
 OK     De retour dans l'appli : position partagée à jour
-         {"presence":{"lat":49.045288,"lng":7.522955,"ts":1793307213776},"derniere":[49.0453,7.52296]}
+         {"presence":{"lat":49.04531,"lng":7.522966,"ts":1793308981446},"derniere":[49.0453,7.52296]}
 OK     Fin de sortie : suivi natif arrêté, notification retirée
          {"native":false,"sortie":false}
 OK     Données de test effacées de Firebase
          {"presence":"ok","membre":"ok","groupe":"ok","profil":"ok","compte":"ok"}
 
 Déroulé :
-20:46:56 écran éteint, application en arrière-plan
-20:51:57 alerte du robot envoyée
+21:16:24 écran éteint, application en arrière-plan
+21:21:25 alerte du robot envoyée
 
 Journal de l'appli :
-20:46:21 Connecté (firebase), joueur mdSb7GGh
-20:46:26 Source forêts : LANDCOVER.FORESTINVENTORY.V2:formation_vegetale
-20:46:33 Suivi natif démarré (écran éteint possible)
+21:15:56 Connecté (firebase), joueur rF0Ljg4c
+21:16:00 Source forêts : LANDCOVER.FORESTINVENTORY.V2:formation_vegetale
+21:16:06 Suivi natif démarré (écran éteint possible)
