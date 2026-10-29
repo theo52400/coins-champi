@@ -1,28 +1,26 @@
-|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 2.3 MiB
-|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 2.3 MiB
-FFMPEG playwright build v1010 downloaded to /home/runner/.cache/ms-playwright/ffmpeg-1010
-E: Unable to locate package libx264-164
-Failed to install browsers
-Error: Installation process exited with code: 100
-chromium-1140
-ffmpeg-1010
-groupe créé F374SA29
-node:internal/modules/run_main:123
-    triggerUncaughtException(
-    ^
-
-browserType.launch: Executable doesn't exist at /home/runner/.cache/ms-playwright/webkit-2083/pw_run.sh
-╔═════════════════════════════════════════════════════════════════════════╗
-║ Looks like Playwright Test or Playwright was just installed or updated. ║
-║ Please run the following command to download new browsers:              ║
-║                                                                         ║
-║     npx playwright install                                              ║
-║                                                                         ║
-║ <3 Playwright Team                                                      ║
-╚═════════════════════════════════════════════════════════════════════════╝
-    at open (/tmp/pw/t.mjs:5:22)
-    at /tmp/pw/t.mjs:16:17 {
-  name: 'Error'
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 120 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 120 MiB
+Chrome Headless Shell 156.0.8078.4 (playwright chromium-headless-shell v1248) downloaded to /home/runner/.cache/ms-playwright/chromium_headless_shell-1248
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 96.1 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 96.1 MiB
+WebKit 27.2 (playwright webkit v2370) downloaded to /home/runner/.cache/ms-playwright/webkit-2370
+chromium-1248
+chromium_headless_shell-1248
+ffmpeg-1013
+webkit-2370
+groupe créé ND3Q4H5A
+iPhone (WebKit) : {
+ "uid": "fEd5lMajRIOfjAqH0YWbzmhXIDj2",
+ "authUid": "fEd5lMajRIOfjAqH0YWbzmhXIDj2",
+ "anon": true,
+ "me": null,
+ "get": "ok",
+ "getLucas": "existe",
+ "set": "ok",
+ "join": "ok"
 }
-
-Node.js v22.23.4
+Android (Chromium) : ok
+interface iPhone : { err: '', gid: 'ND3Q4H5A' }
+erreurs iPhone : warning Info: The current domain is not authorized for OAuth operations. This will prevent signInWithPopup, signInWithRedirect, linkWithPopup and linkWithRedirect from working. Add your domain (theo52400.github.io) to the OAuth redirect domains list in the Firebase console -> Authentication -> Settings -> A
+warning Info: The current domain is not authorized for OAuth operations. This will prevent signInWithPopup, signInWithRedirect, linkWithPopup and linkWithRedirect from working. Add your domain (theo52400.github.io) to the OAuth redirect domains list in the Firebase console -> Authentication -> Settings -> A
+nettoyage fait
