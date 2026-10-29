@@ -1,8 +1,17 @@
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 2.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 2.3 MiB
+FFMPEG playwright build v1010 downloaded to /home/runner/.cache/ms-playwright/ffmpeg-1010
+E: Unable to locate package libx264-164
+Failed to install browsers
+Error: Installation process exited with code: 100
+chromium-1140
+ffmpeg-1010
+groupe créé F374SA29
 node:internal/modules/run_main:123
     triggerUncaughtException(
     ^
 
-browserType.launch: Executable doesn't exist at /home/runner/.cache/ms-playwright/chromium-1140/chrome-linux/chrome
+browserType.launch: Executable doesn't exist at /home/runner/.cache/ms-playwright/webkit-2083/pw_run.sh
 ╔═════════════════════════════════════════════════════════════════════════╗
 ║ Looks like Playwright Test or Playwright was just installed or updated. ║
 ║ Please run the following command to download new browsers:              ║
@@ -12,7 +21,7 @@ browserType.launch: Executable doesn't exist at /home/runner/.cache/ms-playwrigh
 ║ <3 Playwright Team                                                      ║
 ╚═════════════════════════════════════════════════════════════════════════╝
     at open (/tmp/pw/t.mjs:5:22)
-    at /tmp/pw/t.mjs:13:17 {
+    at /tmp/pw/t.mjs:16:17 {
   name: 'Error'
 }
 
