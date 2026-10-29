@@ -1,0 +1,9 @@
+site à jour : v2026-10-29-d82a8007
+groupe G8S36VMB
+compte supprimé côté serveur dLo5cs0gzHSWQi3FF9CqCntXIq63 200
+rejoindre sans recharger : ok
+bandeau : (aucun)
+après rechargement : nouveau compte true 72nEiSRSxTN016qmVtqoJAse0ne2
+rejoindre par l'interface : {"err":"","gid":"G8S36VMB"}
+erreurs : Failed to load resource: the server responded with a status of 400 (Bad Request)
+nettoyage fait
