@@ -1,5 +1,5 @@
 {
- "date": "2026-10-29T21:15:28.103Z",
+ "date": "2026-10-29T21:28:05.845Z",
  "checks": [
   {
    "name": "L'appli démarre et se connecte au jeu (Firebase)",
@@ -40,7 +40,7 @@
    "name": "Profil créé, groupe de test créé",
    "ok": true,
    "detail": {
-    "gid": "FQC2687X"
+    "gid": "LT4C8RLZ"
    }
   },
   {
@@ -52,57 +52,42 @@
   },
   {
    "name": "Au premier plan : la trace avance",
-   "ok": true,
+   "ok": false,
    "detail": {
-    "trace": 5,
+    "trace": 0,
     "fix": [
-     49.0407975,
-     7.5207933
+     49.0399983,
+     7.5199983
     ]
    }
   },
   {
    "name": "Écran éteint : la notification de suivi est toujours là",
-   "ok": true
+   "ok": false
   },
   {
    "name": "Écran éteint : l'alerte d'un autre joueur arrive en notification",
-   "ok": true,
+   "ok": false,
    "detail": "alerte envoyée"
   },
   {
    "name": "Écran éteint : les autres joueurs voient ma position avancer (lue sur le serveur)",
-   "ok": true,
-   "detail": {
-    "presence": {
-     "lat": 49.045266,
-     "lng": 7.522944,
-     "ts": 1793308926100
-    },
-    "dernierePosition": [
-     49.0453,
-     7.52296
-    ],
-    "minutesApresExtinction": 5.7
-   }
+   "ok": false,
+   "detail": "GET uments/groups/LT4C8RLZ/presence/HiwJqWbW3SSFyOZ8VGWFOAELOOw1 : HTTP 404 {\n  \"error\": {\n    \"code\": 404,\n    \"message\": \"Document \\\"projects/coins-champi-a81fa/databases/(default)/documents/groups/LT4C8RLZ/presence/HiwJqWbW3SSFyOZ8VGWFOAELOOw1\\\" not found.\",\n    \"status\": "
   },
   {
    "name": "Écran éteint : la trace a continué (positions enregistrées pendant 6 min)",
-   "ok": true,
+   "ok": false,
    "detail": {
-    "points": 24,
-    "pendantEcranEteint": 19
+    "points": 0,
+    "pendantEcranEteint": 0
    }
   },
   {
    "name": "De retour dans l'appli : position partagée à jour",
-   "ok": true,
+   "ok": false,
    "detail": {
-    "presence": {
-     "lat": 49.04531,
-     "lng": 7.522966,
-     "ts": 1793308981446
-    },
+    "presence": null,
     "derniere": [
      49.0453,
      7.52296
@@ -130,13 +115,12 @@
   }
  ],
  "notes": [
-  "21:16:24 écran éteint, application en arrière-plan",
-  "21:21:25 alerte du robot envoyée"
+  "21:29:58 écran éteint, application en arrière-plan",
+  "21:35:00 alerte du robot envoyée"
  ],
  "logsAppli": [
-  "21:15:56 Connecté (firebase), joueur rF0Ljg4c",
-  "21:16:00 Source forêts : LANDCOVER.FORESTINVENTORY.V2:formation_vegetale",
-  "21:16:06 Suivi natif démarré (écran éteint possible)"
+  "21:28:49 Source forêts : LANDCOVER.FORESTINVENTORY.V2:formation_vegetale",
+  "21:28:50 Connecté (firebase), joueur HiwJqWbW"
  ],
- "resume": "13/13 vérifications réussies, 8 min"
+ "resume": "7/13 vérifications réussies, 9 min"
 }
