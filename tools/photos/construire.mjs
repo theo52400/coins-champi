@@ -1,5 +1,5 @@
 // Photos libres de l'encyclopédie, étape 2 : télécharge les photos choisies (tools/photos/choix.json, numéros des planches
-// de candidats.mjs), les recadre en 4:3 (720 × 540 et vignette 280 × 210) et écrit les crédits dans data/encyclo/photos.json.
+// de candidats.mjs), les réduit sans les recadrer (800 px et vignette 360 px au plus grand côté) et écrit les crédits dans data/encyclo/photos.json.
 // Usage : node construire.mjs <candidats.json> <choix.json> <dossier data/encyclo>
 import { readFileSync, writeFileSync, mkdirSync, rmSync } from 'node:fs';
 import { createHash } from 'node:crypto';
@@ -34,8 +34,8 @@ for (const [id, nums] of Object.entries(choix)) {
     const ii = j.query.pages[0].imageinfo[0];
     const buf = await image(ii.thumburl || ii.url);
     const k = list.length, f = id + '-' + k + '.jpg', t = id + '-' + k + '-t.jpg';
-    const big = await sharp(buf).rotate().resize(720, 540, { fit: 'cover', position: 'attention' }).jpeg({ quality: 70, mozjpeg: true }).toBuffer();
-    const sm = await sharp(buf).rotate().resize(280, 210, { fit: 'cover', position: 'attention' }).jpeg({ quality: 66, mozjpeg: true }).toBuffer();
+    const big = await sharp(buf).rotate().resize(800, 800, { fit: 'inside', withoutEnlargement: true }).jpeg({ quality: 70, mozjpeg: true }).toBuffer();
+    const sm = await sharp(buf).rotate().resize(360, 360, { fit: 'inside', withoutEnlargement: true }).jpeg({ quality: 66, mozjpeg: true }).toBuffer();
     writeFileSync(dir + '/' + f, big); writeFileSync(dir + '/' + t, sm);
     h.update(big); total += big.length + sm.length;
     list.push({ f, t, a: c.artist, l: c.license, u: c.url });

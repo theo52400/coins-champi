@@ -128,7 +128,7 @@ export function createLearn(x) {
       const w = e => 1 + 4 * ((L.flash[e.id] || 0) < 1) + 2 * (e.cat === 'm');
       const deck = []; const bag = pool.slice();
       while (deck.length < Math.min(12, pool.length) && bag.length) { let t = bag.reduce((a, e) => a + w(e), 0) * r(); const i = bag.findIndex(e => (t -= w(e)) <= 0); deck.push(bag.splice(Math.max(0, i), 1)[0]); }
-      return { mode, i: 0, items: deck.map(e => ({ id: e.id, k: Math.floor(r() * photos(e.id).length) })), flipped: false, ok: 0 };
+      return { mode, i: 0, items: deck.map(e => ({ id: e.id, k: Math.floor(r() * Math.min(2, photos(e.id).length)) })), flipped: false, ok: 0 };
     }
     const n = mode === 'week' ? WEEK_N : 10;
     let picks = shuffle(pool, r).slice(0, n);
@@ -137,7 +137,7 @@ export function createLearn(x) {
       picks = shuffle(a.concat(b), r);
     }
     const items = picks.map(e => {
-      const k = Math.floor(r() * photos(e.id).length);
+      const k = Math.floor(r() * Math.min(2, photos(e.id).length));
       if (mode === 'eat') return { id: e.id, k, choices: ['c', 'x'], good: isEdible(e) ? 'c' : 'x' };
       const sos = (e.sosies || []).map(s => s[0]).filter(id => id && photos(id).length);
       const same = shuffle(pool.filter(o => o.id !== e.id && !sos.includes(o.id) && (o.cat === 'c') === (e.cat === 'c')), r);
