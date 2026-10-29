@@ -1,6 +1,6 @@
 {
  "site": "https://theo52400.github.io/coins-champi/",
- "date": "2026-10-29T21:02:14.483Z",
+ "date": "2026-10-29T21:11:26.112Z",
  "checks": [
   {
    "name": "L'appli démarre",
@@ -14,7 +14,7 @@
    "ok": true,
    "detail": {
     "kind": "firebase",
-    "uid": "bKKRfD",
+    "uid": "MJWF2j",
     "banner": null
    }
   },
@@ -24,7 +24,7 @@
    "detail": {
     "ecriture": true,
     "relu": "Vérification",
-    "ms": 2426
+    "ms": 4701
    }
   },
   {
@@ -147,10 +147,11 @@
    }
   },
   {
-   "name": "Discussion du groupe : envoi, lecture, effacement (règles Firestore à publier)",
-   "ok": false,
+   "name": "Discussion du groupe : envoi, lecture, effacement",
+   "ok": true,
    "detail": {
-    "err": "permission-denied"
+    "relu": true,
+    "efface": true
    }
   },
   {
@@ -182,22 +183,22 @@
  ],
  "console": [
   "warning Info: The current domain is not authorized for OAuth operations. This will prevent signInWithPopup, signInWithRedirect, linkWithPopup and linkWithRedirect from working. Add your domain (theo52400.github.io) to the OAuth redirect domains list in the Firebase console -> Authentication -> Settings -> A",
-  "warning [GroupMarkerNotSet(crbug.com/242999)!:A0601C000C220000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.",
-  "warning [GroupMarkerNotSet(crbug.com/242999)!:A0901C000C220000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.",
-  "warning [.WebGL-0x16ec01bf2900]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
-  "warning [.WebGL-0x16ec01bf2900]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
-  "warning [GroupMarkerNotSet(crbug.com/242999)!:A0400A020C220000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.",
-  "warning [GroupMarkerNotSet(crbug.com/242999)!:A0700A020C220000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.",
-  "warning [.WebGL-0x16ec00a18e00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
-  "warning [.WebGL-0x16ec00a18e00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+  "warning [GroupMarkerNotSet(crbug.com/242999)!:A0601C00E4070000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.",
+  "warning [GroupMarkerNotSet(crbug.com/242999)!:A0901C00E4070000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.",
+  "warning [.WebGL-0x3f5c016d6300]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+  "warning [.WebGL-0x3f5c016d6300]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+  "warning [.WebGL-0x3f5c016d6300]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+  "warning [.WebGL-0x3f5c016d6300]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)",
+  "warning [GroupMarkerNotSet(crbug.com/242999)!:A0E03C01E4070000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.",
+  "warning [GroupMarkerNotSet(crbug.com/242999)!:A0B03C01E4070000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content."
  ],
  "http": [],
  "counts": {
   "sous-sol": 11,
   "Firebase": 36,
+  "tuiles IGN": 92,
   "météo": 9,
   "BD Forêt (WFS)": 17,
-  "tuiles IGN": 98,
   "communes": 16,
   "altitude IGN": 1,
   "itinéraire IGN": 4
@@ -702,12 +703,11 @@
  ],
  "compteDejaSupprime": true,
  "logs": [
-  "21:02:15 Source forêts : LANDCOVER.FORESTINVENTORY.V2:formation_vegetale",
-  "21:02:16 Connecté (firebase), joueur bKKRfD2U",
-  "21:02:28 GPS : ",
-  "21:02:32 Écran allumé : Wake Lock permission request denied",
-  "21:02:44 Synchro message : permission-denied Missing or insufficient permissions."
+  "21:11:28 Source forêts : LANDCOVER.FORESTINVENTORY.V2:formation_vegetale",
+  "21:11:28 Connecté (firebase), joueur MJWF2j2C",
+  "21:11:43 GPS : ",
+  "21:11:47 Écran allumé : Wake Lock permission request denied"
  ],
  "compte": "supprimé (test des comptes)",
- "resume": "20/21 vérifications réussies"
+ "resume": "21/21 vérifications réussies"
 }
