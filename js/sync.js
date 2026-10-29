@@ -45,15 +45,32 @@ export class Sync {
   // ---- groupes (l'identifiant du groupe est son code d'invitation) ----
   async createGroup(name, member) {
     const gid = groupCode();
-    await this._w(this.api.setDoc(this._d('groups', gid), clean({ name, owner: this.uid, ts: Date.now() })), 'création du groupe');
+    await this._retryAuth(() => this._w(this.api.setDoc(this._d('groups', gid), clean({ name, owner: this.uid, ts: Date.now() })), 'création du groupe'));
     await this.joinGroup(gid, member);
     return gid;
   }
   async joinGroup(gid, member) {
-    const g = await this._w(this.api.getDoc(this._d('groups', gid)), 'groupe');
-    if (!g.exists()) { const e = new Error('Aucun groupe ne porte ce code.'); e.code = 'not-found'; throw e; }
-    await this._w(this.api.setDoc(this._d('groups', gid, 'members', this.uid), clean(Object.assign({ joinedAt: Date.now() }, member)), { merge: true }), 'adhésion');
-    return Object.assign({ id: gid }, g.data());
+    return this._retryAuth(async () => {
+      const g = await this._w(this.api.getDoc(this._d('groups', gid)), 'groupe');
+      if (!g.exists()) { const e = new Error('Aucun groupe ne porte ce code.'); e.code = 'not-found'; throw e; }
+      await this._w(this.api.setDoc(this._d('groups', gid, 'members', this.uid), clean(Object.assign({ joinedAt: Date.now() }, member)), { merge: true }), 'adhésion');
+      return Object.assign({ id: gid }, g.data());
+    });
+  }
+  // Le compte de ce navigateur est-il toujours accepté par le serveur ? (jeton renouvelé)
+  async authOk() {
+    if (this.kind !== 'firebase' || !this.auth) return true;
+    const u = this.auth.currentUser;
+    if (!u || u.uid !== this.uid) return false;
+    try { await u.getIdToken(true); return true; } catch (e) { return !/user-token-expired|user-not-found|user-disabled|invalid-user-token|token-expired/.test((e && e.code) || ''); }
+  }
+  // « accès refusé » : souvent un jeton périmé ; on le renouvelle et on réessaie une fois, sinon compte perdu
+  async _retryAuth(fn) {
+    try { return await fn(); } catch (e) {
+      if (!/permission|unauthenticated/i.test(((e && e.code) || '') + ' ' + ((e && e.message) || ''))) throw e;
+      if (!(await this.authOk())) { const x = new Error('Connexion au jeu expirée sur ce téléphone.'); x.code = 'auth-lost'; throw x; }
+      return fn();
+    }
   }
   async leaveGroup(gid) {
     try { await this.api.deleteDoc(this._d('groups', gid, 'presence', this.uid)); } catch (e) { /* pas de position enregistrée */ }
@@ -173,7 +190,19 @@ export async function connect(config) {
       }, e => end(reject, e));
       if (done && un) un();
     });
-    const sync = new Sync(fb, db, user.uid, 'firebase');
+    // Compte gardé par le navigateur mais refusé par le serveur (supprimé, désactivé, jeton périmé) : on repart
+    // d'un compte anonyme neuf plutôt que d'essuyer des « accès refusé » partout
+    let u = user;
+    if (navigator.onLine !== false) {
+      try { await Promise.race([u.getIdToken(true), new Promise((_, rej) => setTimeout(() => rej(Object.assign(new Error('délai'), { code: 'timeout' })), 8000))]); }
+      catch (e) {
+        if (/user-token-expired|user-not-found|user-disabled|invalid-user-token|token-expired/.test((e && e.code) || '')) {
+          try { await fb.signOut(auth); } catch (e2) { /* ignore */ }
+          u = (await fb.signInAnonymously(auth)).user;
+        }
+      }
+    }
+    const sync = new Sync(fb, db, u.uid, 'firebase');
     sync.auth = auth; sync.config = config;   // pour l'appli Android : écrire en arrière-plan avec le jeton du compte anonyme
     return sync;
   }

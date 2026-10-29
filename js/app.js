@@ -125,6 +125,15 @@ async function startSync() {
   try {
     const sync = await connect(FIREBASE_CONFIG);
     S.sync = sync; S.uid = sync.uid;
+    // Compte refusé en cours de route (jeton impossible à renouveler) : proposer de recharger pour repartir d'un compte valide
+    if (sync.auth && sync.api.onAuthStateChanged) {
+      let lostT = null;
+      sync.api.onAuthStateChanged(sync.auth, u => {
+        clearTimeout(lostT);
+        if (u && u.uid === sync.uid) return;
+        lostT = setTimeout(() => { log('Compte : connexion perdue'); showBanner('La connexion au jeu a expiré sur ce téléphone.', 'Recharger', () => location.reload()); }, 4000);
+      });
+    }
     sync.onError = (what, e) => {
       log('Synchro ' + what + ' : ' + (e.code || '') + ' ' + e.message);
       if (/does not exist|not-found.*database|database.*not.*exist/i.test((e.code || '') + ' ' + (e.message || ''))) { toast('La base de données Firestore n\'existe pas encore : Firebase → Firestore Database → Créer une base de données.', 9000); return; }
@@ -508,6 +517,7 @@ function askProtect() {
 function fbWhy(e) {
   const c = ((e && e.code) || '') + ' ' + ((e && e.message) || '');
   if (/does not exist|database.*not.*exist/i.test(c)) return 'la base de données Firestore n\'existe pas encore (Firebase → Firestore Database → Créer une base de données).';
+  if (/auth-lost/.test(c)) return 'la connexion au jeu a expiré sur ce téléphone. Recharge la page (ou ferme et rouvre l\'appli) : un nouveau compte se crée, puis reconnecte-toi avec « J\'ai déjà un compte » si tu en avais un.';
   if (/permission/i.test(c)) return 'accès refusé par les règles Firestore : vérifie qu\'elles sont bien publiées.';
   if (/unavailable|offline|network/i.test(c)) return 'pas de réseau pour joindre le serveur du jeu.';
   return (e && (e.message || e.code)) || String(e);
