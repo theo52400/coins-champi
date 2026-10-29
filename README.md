@@ -13,6 +13,7 @@ Le jeu des chasseurs de champignons, partout en France métropolitaine et en Cor
 - **Trouvailles en photo** : photo du coin, espèce, quantité, note, et visibilité au choix : coin **secret**, **groupe**, ou groupe avec **position floutée** (environ 300 m).
 - **Jeu** : points, 10 niveaux, 22 badges, Mycodex de 16 espèces à débloquer, deux défis d'équipe par semaine, « bravos » sur les trouvailles des amis.
 - **Cèpes d'or** : un joueur cache un trésor dans la forêt, les autres voient une zone de 250 m et un indicateur chaud/froid ; le premier à moins de 25 m le ramasse (+100 points).
+- **Discussion de groupe** et **fiche de chaque joueur** : niveau, badges, statistiques, d'où viennent ses points et ses derniers gains (une trouvaille secrète reste anonyme).
 - **Alertes** : « Venez voir ! », « Regroupement ici », SOS, avec la position jointe.
 - **Hors réseau** : l'appli s'ouvre sans réseau ; on peut télécharger une zone (fond IGN, peuplements et sous-sol) avant de partir. Les trouvailles faites sans réseau se synchronisent au retour.
 - **Recherche** de n'importe quelle commune de France, et 20 grands massifs forestiers en accès direct.

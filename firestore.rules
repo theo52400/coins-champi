@@ -75,6 +75,15 @@ service cloud.firestore {
         allow delete: if signedIn() && (resource == null || resource.data.createdBy == request.auth.uid);
       }
 
+      // Discussion du groupe : les membres lisent et écrivent ; chacun efface ses messages, le créateur du groupe peut tout effacer
+      match /messages/{mid} {
+        allow read: if isMember(gid);
+        allow create: if isMember(gid) && request.resource.data.uid == request.auth.uid
+          && request.resource.data.text is string && request.resource.data.text.size() > 0 && request.resource.data.text.size() <= 600
+          && shortText(request.resource.data.get('name', ''), 40);
+        allow delete: if signedIn() && (resource == null || resource.data.uid == request.auth.uid || get(groupPath(gid)).data.owner == request.auth.uid);
+      }
+
       match /carnets/{sid} {
         allow read: if isMember(gid);
         allow create, update: if isMember(gid) && request.resource.data.uid == request.auth.uid;

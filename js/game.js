@@ -59,10 +59,17 @@ export function computeProfile(finds, sorties, me) {
   const seen = new Set(), communes = new Set();
   let xp = 0, photos = 0, privees = 0, partagees = 0, paniers = 0, matinal = false;
   const perSpecies = {};
+  // détail des points (montré aux autres membres du groupe) et derniers gains
+  const pts = { trouvailles: 0, nouvelles: 0, photos: 0, paniers: 0, partage: 0, sorties: 0, tresors: 0, caches: 0, defis: 0, quiz: 0 }, hist = [];
   for (const f of sorted) {
     const first = !seen.has(f.species);
     if (f.species && f.species !== 'autre') seen.add(f.species);
-    xp += findPoints(f, first && f.species !== 'autre');
+    const sp = SPECIES_BY_ID[f.species] || SPECIES_BY_ID.autre, isNew = first && f.species !== 'autre';
+    const q = (QTY[f.qty] || QTY[1]).pts, sh = f.vis === 'groupe' || f.vis === 'flou' ? 3 : 0, ph = f.hasPhoto ? 5 : 0;
+    pts.trouvailles += sp.pts; if (isNew) pts.nouvelles += sp.pts; pts.photos += ph; pts.paniers += q; pts.partage += sh;
+    // une trouvaille secrète reste secrète : ni l'espèce ni le lieu ne sont montrés
+    hist.push({ ts: f.ts || 0, k: 'find', n: f.vis === 'prive' ? 'Trouvaille gardée secrète' : sp.n + (isNew ? ' (nouvelle espèce)' : ''), p: findPoints(f, isNew) });
+    xp += findPoints(f, isNew);
     perSpecies[f.species] = (perSpecies[f.species] || 0) + 1;
     if (f.hasPhoto) photos++;
     if (f.vis === 'prive') privees++; else partagees++;
@@ -71,14 +78,24 @@ export function computeProfile(finds, sorties, me) {
     if (new Date(f.ts).getHours() < 8) matinal = true;
   }
   let km = 0;
-  for (const s of sorties) { xp += sortiePoints(s); km += (s.dist || 0) / 1000; }
+  for (const s of sorties) {
+    const sp2 = sortiePoints(s); xp += sp2; pts.sorties += sp2; km += (s.dist || 0) / 1000;
+    if (sp2) hist.push({ ts: s.end || s.start || 0, k: 'sortie', n: 'Sortie de ' + (Math.round((s.dist || 0) / 100) / 10).toLocaleString('fr-FR') + ' km', p: sp2 });
+  }
   const found = (me && me.treasuresFound) || [], hidden = (me && me.treasuresHidden) || [], claimed = (me && me.claimed) || [];
   xp += found.length * TREASURE_FOUND + hidden.length * TREASURE_HIDDEN + claimed.length * CHALLENGE_PTS;
   const qz = quizStats(me);
   xp += 5 * qz.mastered + QUIZ_WEEK_PTS * qz.weeks;
+  pts.tresors = found.length * TREASURE_FOUND; pts.caches = hidden.length * TREASURE_HIDDEN; pts.defis = claimed.length * CHALLENGE_PTS; pts.quiz = 5 * qz.mastered + QUIZ_WEEK_PTS * qz.weeks;
+  found.forEach(t => hist.push({ ts: (t && t.ts) || 0, k: 'tresor', n: 'Cèpe d\'or trouvé', p: TREASURE_FOUND }));
+  hidden.forEach(t => hist.push({ ts: (t && t.ts) || 0, k: 'cache', n: 'Cèpe d\'or caché', p: TREASURE_HIDDEN }));
+  claimed.forEach(key => { const ch = CHALLENGES.find(c => String(key).endsWith(':' + c.id)); hist.push({ ts: weekOfKey(key), k: 'defi', n: 'Défi : ' + (ch ? ch.n : 'de la semaine'), p: CHALLENGE_PTS }); });
+  ((me && me.quiz && me.quiz.w) || []).forEach(key => hist.push({ ts: weekOfKey(key), k: 'quiz', n: 'Défi photo réussi', p: QUIZ_WEEK_PTS }));
+  if (qz.mastered) hist.push({ ts: 0, k: 'quiz', n: qz.mastered + ' espèce' + (qz.mastered > 1 ? 's' : '') + ' maîtrisée' + (qz.mastered > 1 ? 's' : '') + ' au quiz', p: 5 * qz.mastered });
+  hist.sort((a, b) => b.ts - a.ts);
   const stats = { finds: finds.length, species: [...seen], perSpecies, km, sorties: sorties.length, photos, privees, partagees, paniers, communes: communes.size, matinal, treasures: found.length, hidden: hidden.length, challenges: claimed.length, quiz: qz.mastered, quizWeeks: qz.weeks, deadlyAll: qz.deadlyAll };
   const badges = BADGES.filter(b => b.test(stats)).map(b => b.id);
-  return Object.assign({ xp, badges, stats }, levelOf(xp));
+  return Object.assign({ xp, badges, stats, pts, hist }, levelOf(xp));
 }
 
 export const BADGES = [
@@ -105,6 +122,20 @@ export const BADGES = [
   { id: 'gardefou', n: 'Garde-fou', d: 'Reconnaître toutes les espèces mortelles', icon: 'shield', test: s => s.deadlyAll },
   { id: 'quizweek', n: 'Défi photo', d: 'Réussir le défi photo de la semaine', icon: 'camera', test: s => s.quizWeeks >= 1 }
 ];
+
+// Libellés du détail des points
+export const PTS_LABELS = [
+  ['trouvailles', 'Trouvailles', 'points de chaque espèce trouvée'], ['nouvelles', 'Nouvelles espèces', 'points doublés la première fois'],
+  ['photos', 'Photos', '+5 par trouvaille en photo'], ['paniers', 'Quantité', 'poignée +5, panier +15'], ['partage', 'Partage', '+3 par trouvaille partagée'],
+  ['sorties', 'Sorties', '4 points par km, +5 dès 1 km'], ['tresors', 'Cèpes d\'or trouvés', '+100 chacun'], ['caches', 'Cèpes d\'or cachés', '+10 chacun'],
+  ['defis', 'Défis de la semaine', '+50 chacun'], ['quiz', 'Quiz', 'espèces maîtrisées et défis photo']
+];
+// Lundi de la semaine d'une clé « 2026-S44:… » (date approximative d'un défi)
+export function weekOfKey(key) {
+  const m = /^(\d{4})-S(\d{1,2})/.exec(String(key || '')); if (!m) return 0;
+  const y = +m[1], w = +m[2], jan4 = new Date(Date.UTC(y, 0, 4)), d = jan4.getUTCDay() || 7;
+  return Date.UTC(y, 0, 4 - d + 1) + (w - 1) * 7 * 864e5;
+}
 
 // ---------- défis de la semaine (pour tout le groupe) ----------
 export function isoWeek(d) {

@@ -1,6 +1,6 @@
 // Synchronisation : profils, groupes, positions, trouvailles, photos, alertes, trésors, carnets.
 // Même code pour Firebase (Firestore) et pour la base locale du mode solo, qui imite la même API.
-import { groupCode } from './game.js';
+import { groupCode, newId } from './game.js';
 
 export function clean(v) {
   if (Array.isArray(v)) return v.map(clean).filter(x => x !== undefined);
@@ -125,6 +125,10 @@ export class Sync {
 
   // ---- cèpes d'or (trésors cachés) ----
   hideTreasure(gid, t) { return this._w(this.api.setDoc(this._d('groups', gid, 'challenges', t.id), clean(Object.assign({ type: 'treasure', ts: Date.now() }, t, { createdBy: this.uid }))), 'trésor'); }
+  // discussion du groupe : 80 derniers messages
+  watchMessages(gid, cb) { return this._on(this.api.query(this._c('groups', gid, 'messages'), this.api.orderBy('ts', 'desc'), this.api.limit(80)), s => cb(this._list(s)), 'discussion'); }
+  sendMessage(gid, msg) { const id = newId('m'); return this._w(this.api.setDoc(this._d('groups', gid, 'messages', id), clean(Object.assign({ uid: this.uid, ts: Date.now() }, msg))), 'message').then(() => id); }
+  deleteMessage(gid, id) { return this._w(this.api.deleteDoc(this._d('groups', gid, 'messages', id)), 'message'); }
   watchTreasures(gid, cb) { return this._on(this.api.query(this._c('groups', gid, 'challenges'), this.api.orderBy('ts', 'desc'), this.api.limit(30)), s => cb(this._list(s)), 'trésors'); }
   claimTreasure(gid, cid, name) {
     const ref = this._d('groups', gid, 'challenges', cid);

@@ -137,6 +137,7 @@ async function startSync() {
     sync.onError = (what, e) => {
       log('Synchro ' + what + ' : ' + (e.code || '') + ' ' + e.message);
       if (/does not exist|not-found.*database|database.*not.*exist/i.test((e.code || '') + ' ' + (e.message || ''))) { toast('La base de données Firestore n\'existe pas encore : Firebase → Firestore Database → Créer une base de données.', 9000); return; }
+      if (what === 'discussion' && /permission/i.test(e.code || e.message)) { S.chatErr = 'rules'; renderChat(); return; }
       if (!/permission/i.test(e.code || e.message)) return;
       if (S.gid && GROUP_WATCHES.includes(what)) { if (!lostGroup) { lostGroup = true; toast('Vous ne faites plus partie de ce groupe.', 5000); watchGroup(null); setTimeout(() => { lostGroup = false; }, 3000); } return; }
       toast('Accès refusé (' + what + '). Vérifiez les règles Firestore.', 6000);
@@ -204,7 +205,7 @@ function watchGroup(gid) {
   S.unsubGroup = [];
   S.gid = gid; store.set('cc.gid', gid);
   if (S.me && hasAccounts() && (S.me.gid || null) !== (gid || null)) { S.me.gid = gid || null; S.sync.saveMe({ gid: gid || null }).catch(() => {}); }
-  S.group = null; S.members = []; S.presence = []; S.groupFinds = []; S.carnets = []; S.events = []; S.treasures = [];
+  S.group = null; S.members = []; S.presence = []; S.groupFinds = []; S.carnets = []; S.events = []; S.treasures = []; S.messages = []; S.chatErr = null; chatSeen = null; updateChatBadge();
   if (!gid) { renderAllGroup(); return; }
   const u = S.unsubGroup;
   u.push(S.sync.watchGroup(gid, (g, meta) => { S.group = g; if (!g && !(meta && meta.fromCache)) { toast('Ce groupe n\'existe plus.'); watchGroup(null); return; } renderPanelIfOpen('groupe'); }));
@@ -214,8 +215,118 @@ function watchGroup(gid) {
   u.push(S.sync.watchCarnets(gid, list => { S.carnets = list; renderTracksAndFog(); renderPanelIfOpen('groupe'); }));
   u.push(S.sync.watchEvents(gid, Date.now() - 2 * 3600e3, list => { onEvents(list); }));
   u.push(S.sync.watchTreasures(gid, list => { S.treasures = list; renderTreasures(); renderPanelIfOpen('groupe'); }));
+  u.push(S.sync.watchMessages(gid, list => onMessages(list)));
   memberSync(true);
 }
+// ---------------------------------------------------------------- discussion du groupe
+let chatSeen = null, chatDelArm = null;
+const chatKey = () => 'cc.chatRead.' + S.gid;
+function onMessages(list) {
+  const prev = S.messages || [];
+  S.messages = list.slice().sort((a, b) => a.ts - b.ts); S.chatErr = null;
+  if (chatSeen === null) chatSeen = store.get(chatKey(), 0);
+  // nouveaux messages des autres : toast (ou notification de l'appli Android écran éteint), pastille sur l'onglet
+  const known = new Set(prev.map(m => m.id));
+  const fresh = prev.length || S.messages.length ? S.messages.filter(m => !known.has(m.id) && m.uid !== S.uid && Date.now() - m.ts < 5 * 60e3 && prev.length) : [];
+  const viewing = S.tab === 'groupe' && !$('#panel').hidden && !document.hidden;
+  for (const m of fresh.slice(-2)) {
+    if (viewing) continue;
+    if (NativeApp && document.hidden) NativeApp.notify((m.name || 'Un ami') + ' : discussion', m.text.slice(0, 120));
+    else toast('💬 ' + (m.name || 'Un ami') + ' : ' + m.text.slice(0, 80), 5000);
+    vibrate(40);
+  }
+  if (viewing) markChatRead();
+  updateChatBadge(); renderChat();
+}
+function markChatRead() {
+  const last = S.messages.length ? S.messages[S.messages.length - 1].ts : 0;
+  if (last > (chatSeen || 0)) { chatSeen = last; store.set(chatKey(), last); }
+  updateChatBadge();
+}
+function updateChatBadge() {
+  const btn = document.querySelector('.tabs [data-tab="groupe"]'); if (!btn) return;
+  const n = (S.messages || []).filter(m => m.uid !== S.uid && m.ts > (chatSeen || 0)).length;
+  let b = btn.querySelector('.tab-badge');
+  if (!n) { if (b) b.remove(); return; }
+  if (!b) { b = document.createElement('span'); b.className = 'tab-badge'; btn.appendChild(b); }
+  b.textContent = n > 9 ? '9+' : String(n); b.setAttribute('aria-label', n + ' nouveau' + (n > 1 ? 'x' : '') + ' message' + (n > 1 ? 's' : ''));
+}
+function chatListHtml() {
+  if (S.chatErr === 'rules') return '<p class="note">La discussion n\'est pas encore ouverte sur le serveur du jeu : le créateur du jeu doit publier les nouvelles règles Firestore (Firebase → Firestore Database → Règles).</p>';
+  const list = (S.messages || []).slice(-40);
+  if (!list.length) return '<p class="note">Aucun message pour l\'instant. Lancez la discussion : rendez-vous, coins du jour, photos du panier…</p>';
+  const byId = Object.fromEntries(S.members.map(m => [m.id, m]));
+  let lastDay = '';
+  return list.map(m => {
+    const mine = m.uid === S.uid, mem = byId[m.uid] || {}, d = new Date(m.ts), day0 = d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }), day = day0.charAt(0).toUpperCase() + day0.slice(1);
+    const sep = day !== lastDay ? '<div class="chat-day">' + esc(day) + '</div>' : ''; lastDay = day;
+    return sep + '<div class="msg' + (mine ? ' mine' : '') + '">' + (mine ? '' : '<button class="msg-av" data-act="member-open" data-id="' + esc(m.uid) + '" aria-label="Profil de ' + esc(m.name || 'ce membre') + '"><img alt="" src="' + avatarImg(mem.avatar || m.avatar, 64) + '"></button>') +
+      '<div class="msg-b">' + (mine ? '' : '<b>' + esc(mem.name || m.name || 'Un ami') + '</b>') + '<p>' + esc(m.text) + '</p><small>' + d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) +
+      (mine || (S.group && S.group.owner === S.uid) ? ' · <button class="linkish msg-del" data-act="chat-del" data-id="' + esc(m.id) + '">' + (chatDelArm === m.id ? 'Effacer ?' : 'Effacer') + '</button>' : '') + '</small></div></div>';
+  }).join('');
+}
+function chatCard() {
+  return '<div class="card chat"><h3>Discussion</h3><div class="chat-list" id="chat-list">' + chatListHtml() + '</div>' +
+    '<form class="chat-form" id="chat-form" autocomplete="off"><textarea class="input" id="chat-in" rows="1" maxlength="600" placeholder="Écrire au groupe…" aria-label="Message au groupe"></textarea><button class="btn primary" data-act="chat-send" type="submit" aria-label="Envoyer">Envoyer</button></form></div>';
+}
+let chatDraft = '';
+function renderChat() {
+  const el = document.getElementById('chat-list'); if (!el) return;
+  const atBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 60;
+  el.innerHTML = chatListHtml();
+  if (atBottom || !el.dataset.init) { el.scrollTop = el.scrollHeight; el.dataset.init = '1'; }
+}
+function wireChat() {
+  const inp = document.getElementById('chat-in'), form = document.getElementById('chat-form'); if (!inp || !form) return;
+  inp.value = chatDraft;
+  const grow = () => { inp.style.height = 'auto'; inp.style.height = Math.min(120, inp.scrollHeight) + 'px'; };
+  inp.addEventListener('input', () => { chatDraft = inp.value; grow(); });
+  inp.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); sendChat(); } });
+  form.addEventListener('submit', e => { e.preventDefault(); sendChat(); });
+  grow(); renderChat(); markChatRead();
+}
+async function sendChat() {
+  const inp = document.getElementById('chat-in'), text = (inp ? inp.value : chatDraft).trim();
+  if (!text || !S.gid || !S.sync) return;
+  chatDraft = ''; if (inp) { inp.value = ''; inp.style.height = 'auto'; inp.focus(); }
+  try { await S.sync.sendMessage(S.gid, { name: ((S.me && S.me.name) || 'Cueilleur').slice(0, 40), avatar: (S.me && S.me.avatar) || {}, text: text.slice(0, 600) }); }
+  catch (e) { chatDraft = text; if (inp) inp.value = text; toast(/permission/i.test(e.code || e.message) ? 'Message refusé : la discussion n\'est pas encore ouverte sur le serveur du jeu.' : 'Message non envoyé : ' + fbWhy(e), 6000); }
+}
+
+// ---------------------------------------------------------------- fiche d'un joueur du groupe
+function ptsBreakdownHtml(pts, total) {
+  const rows = Game.PTS_LABELS.map(([k, n, d]) => ({ k, n, d, v: (pts && pts[k]) || 0 })).filter(r => r.v > 0).sort((a, b) => b.v - a.v);
+  if (!rows.length) return '<p class="note">Pas encore de points.</p>';
+  const max = Math.max(...rows.map(r => r.v));
+  return '<div class="bars pts-bars">' + rows.map(r => '<div class="bar"><span class="t">' + esc(r.n) + '<small>' + esc(r.d) + '</small></span><i><b style="width:' + Math.round(100 * r.v / max) + '%"></b></i><span class="v">' + r.v + '</span></div>').join('') + '</div>' +
+    (total != null ? '<p class="note" style="margin-top:6px">Total : ' + total + ' points.</p>' : '');
+}
+function histHtml(hist) {
+  if (!hist || !hist.length) return '<p class="note">Rien pour l\'instant.</p>';
+  const ic = { find: '🍄', sortie: '🥾', tresor: '★', cache: '☆', defi: '🏁', quiz: '📖' };
+  return '<div class="list">' + hist.slice(0, 15).map(h => '<div class="li"><span class="hist-ic" aria-hidden="true">' + (ic[h.k] || '•') + '</span><div class="grow">' + esc(h.n) + (h.ts ? '<small>' + esc(ago(h.ts)) + '</small>' : '') + '</div><span class="xp">+' + h.p + '</span></div>').join('') + '</div>';
+}
+function openMember(id) {
+  const m = id === S.uid && profReady() ? Object.assign({}, S.members.find(x => x.id === id) || {}, memberPayload(), { id }) : S.members.find(x => x.id === id);
+  if (!m) return;
+  const lv = Game.levelOf(m.xp || 0), st = m.stats, mine = id === S.uid;
+  const finds = S.groupFinds.filter(f => f.uid === id).slice(0, 6);
+  const pres = S.presence.find(p => p.id === id), live = pres && pres.sharing && Date.now() - pres.ts < 180e3;
+  const badges = (m.badges || []).map(bid => Game.BADGES.find(b => b.id === bid)).filter(Boolean);
+  const card = openModal(modalHead(mine ? 'Mon profil' : (m.name || 'Un ami')) +
+    '<div class="mp-head"><canvas id="mp-stage" class="mp-stage"></canvas><div><div class="mp-name">' + esc(m.name || 'Un ami') + '</div><div class="note">Niveau ' + lv.level + ' · ' + esc(lv.name) + ' · ' + (m.xp || 0) + ' points</div>' +
+    (live ? '<span class="tag ok" style="margin-top:6px">En sortie en ce moment</span>' : m.lastSeen ? '<div class="note">Vu ' + esc(ago(m.lastSeen)) + '</div>' : '') + '</div></div>' +
+    '<div class="progress" style="margin:10px 0 2px"><b style="width:' + Math.round(100 * lv.progress) + '%"></b></div><p class="note" style="margin:0 0 6px">' + (lv.next ? (lv.next - lv.xp) + ' points avant le niveau ' + (lv.level + 1) : 'Niveau maximum') + '</p>' +
+    (st ? '<div class="mp-stats"><div><b>' + st.finds + '</b>trouvailles</div><div><b>' + st.species + '</b>espèces</div><div><b>' + (st.km || 0).toLocaleString('fr-FR') + '</b>km en sortie</div><div><b>' + st.sorties + '</b>sorties</div></div>' : '') +
+    (m.pts ? '<h3>D\'où viennent ' + (mine ? 'mes' : 'ses') + ' points</h3>' + ptsBreakdownHtml(m.pts, m.xp) + '<h3 style="margin-top:14px">Derniers points gagnés</h3>' + histHtml(m.hist)
+      : '<p class="warnbox" style="margin-top:10px">Le détail des points apparaîtra quand ' + esc(m.name || 'ce joueur') + ' aura ouvert la dernière version du jeu.</p>') +
+    (badges.length ? '<h3 style="margin-top:14px">Badges · ' + badges.length + '/' + Game.BADGES.length + '</h3><div class="badges">' + badges.map(b => '<div class="badge"><span class="medal">' + medalSvg(b.icon) + '</span>' + esc(b.n) + '<small>' + esc(b.d) + '</small></div>').join('') + '</div>' : '') +
+    (finds.length ? '<h3 style="margin-top:14px">Trouvailles partagées</h3><div class="list">' + finds.map(f => '<div class="li"><img alt="" src="' + (f.thumb || speciesImg(f.species, 64)) + '"><div class="grow">' + esc((Game.SPECIES_BY_ID[f.species] || {}).n || '') + '<small>' + esc(ago(f.ts)) + (f.commune ? ' · ' + esc(f.commune) : '') + '</small></div></div>').join('') + '</div>' : '') +
+    (m.since ? '<p class="note" style="margin-top:12px">Joue depuis le ' + esc(new Date(m.since).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })) + '.</p>' : ''));
+  const stg = stage(card.querySelector('#mp-stage'), m.avatar, { base: false, turn: true }, 'modal');
+  if (stg) setTimeout(() => stg.play && stg.play('cheer'), 300);
+}
+
 function renderAllGroup() { renderFriends(); renderFinds(); renderTreasures(); renderTracksAndFog(); M && M.layers.events.clearLayers(); renderPanelIfOpen('groupe'); }
 
 // ---------------------------------------------------------------- profil, points, badges
@@ -225,7 +336,7 @@ function memberSync(force) {
   clearTimeout(memberT);
   memberT = setTimeout(() => {
     const p = memberPayload();
-    const key = JSON.stringify([p.name, p.avatar, p.xp, p.level]);
+    const key = JSON.stringify(Object.assign({}, p, { lastSeen: 0 }));
     if (!force && key === lastMember) return;
     lastMember = key;
     S.sync.updateMember(S.gid, p).catch(() => {});
@@ -522,7 +633,16 @@ function fbWhy(e) {
   if (/unavailable|offline|network/i.test(c)) return 'pas de réseau pour joindre le serveur du jeu.';
   return (e && (e.message || e.code)) || String(e);
 }
-const memberPayload = () => ({ name: (S.me && S.me.name) || 'Cueilleur', avatar: (S.me && S.me.avatar) || {}, xp: profReady() ? S.prof.xp : (S.me && S.me.xp) || 0, level: profReady() ? S.prof.level : (S.me && S.me.level) || 1, lastSeen: Date.now() });
+const memberPayload = () => {
+  const p = { name: (S.me && S.me.name) || 'Cueilleur', avatar: (S.me && S.me.avatar) || {}, xp: profReady() ? S.prof.xp : (S.me && S.me.xp) || 0, level: profReady() ? S.prof.level : (S.me && S.me.level) || 1, lastSeen: Date.now() };
+  // fiche visible par le groupe : badges, détail des points, derniers gains (les trouvailles secrètes restent anonymes)
+  if (profReady()) {
+    const st = S.prof.stats;
+    Object.assign(p, { badges: S.prof.badges, pts: S.prof.pts, stats: { finds: st.finds, species: st.species.length, km: Math.round(st.km * 10) / 10, sorties: st.sorties, photos: st.photos, quiz: st.quiz || 0 },
+      hist: S.prof.hist.slice(0, 15).map(h => ({ ts: h.ts, k: h.k, n: String(h.n).slice(0, 60), p: h.p })), since: (S.me && S.me.createdAt) || null });
+  }
+  return p;
+};
 function openInfoSolo() {
   openModal(modalHead('Mode solo') + '<p>L\'appli n\'est pas encore reliée à un serveur Firebase. Tout fonctionne (avatar, trouvailles, Mycodex, sorties), mais les données restent sur ce téléphone et le groupe ne se partage pas.</p><p class="note">Une fois la configuration Firebase ajoutée à l\'appli, chaque joueur garde son profil et le jeu devient collectif en direct.</p>');
 }
@@ -1562,7 +1682,7 @@ function renderPanel(name) {
   panelT = setTimeout(() => {
     const top = $('#panel').scrollTop;
     destroyStages('panel');
-    if (name === 'groupe') renderGroupPanel();
+    if (name === 'groupe') { renderGroupPanel(); wireChat(); }
     else if (name === 'mycodex') learn.render($('#panel-inner'));
     else if (name === 'profil') renderProfil();
     $('#panel').scrollTop = top;
@@ -1588,7 +1708,8 @@ function renderGroupPanel() {
   ].sort((a, b) => b.ts - a.ts).slice(0, 14);
   el.innerHTML = '<h2>' + esc(g.name) + '</h2>' +
     '<div class="card"><h3>Code d\'invitation</h3><div class="row"><span class="code grow">' + esc(S.gid) + '</span><button class="btn small" data-act="group-share">Inviter</button></div><p class="note" style="margin:8px 0 0">Vos amis ouvrent l\'appli, créent leur champignon et entrent ce code.</p></div>' +
-    '<div class="card"><h3>Classement</h3><div class="members">' + (members.length ? members.map((m, i) => { const p = pres[m.id]; const live = p && p.sharing && Date.now() - p.ts < 180e3; const lv = Game.levelOf(m.xp || 0); return '<div class="member"><span class="rank">' + (i + 1) + '</span><img alt="" src="' + avatarImg(m.avatar, 92) + '"><div class="grow"><b>' + esc(m.name || 'Ami') + (m.id === S.uid ? ' (vous)' : '') + '</b><small>Niv. ' + lv.level + ' · ' + esc(lv.name) + (live ? ' · <span style="color:var(--good);font-weight:700">en direct</span>' : '') + '</small></div><span class="xp">' + (m.xp || 0) + ' pts</span>' + (isOwner && m.id !== S.uid ? '<button class="btn small" data-act="member-remove" data-id="' + esc(m.id) + '" aria-label="Retirer ' + esc(m.name || 'ce membre') + ' du groupe">Retirer</button>' : '') + '</div>'; }).join('') : '<p class="note">Aucun membre pour l\'instant.</p>') + '</div>' + (isOwner ? '<p class="note" style="margin:8px 0 0">Tu as créé ce groupe : tu peux en retirer un membre (par exemple un champignon en double).</p>' : '') + '</div>' +
+    chatCard() +
+    '<div class="card"><h3>Classement</h3><div class="members">' + (members.length ? members.map((m, i) => { const p = pres[m.id]; const live = p && p.sharing && Date.now() - p.ts < 180e3; const lv = Game.levelOf(m.xp || 0); return '<div class="member" data-act="member-open" data-id="' + esc(m.id) + '" role="button" tabindex="0" aria-label="Voir le profil de ' + esc(m.name || 'ce membre') + '"><span class="rank">' + (i + 1) + '</span><img alt="" src="' + avatarImg(m.avatar, 92) + '"><div class="grow"><b>' + esc(m.name || 'Ami') + (m.id === S.uid ? ' (vous)' : '') + '</b><small>Niv. ' + lv.level + ' · ' + esc(lv.name) + (live ? ' · <span style="color:var(--good);font-weight:700">en direct</span>' : '') + '</small></div><span class="xp">' + (m.xp || 0) + ' pts</span>' + (isOwner && m.id !== S.uid ? '<button class="btn small" data-act="member-remove" data-id="' + esc(m.id) + '" aria-label="Retirer ' + esc(m.name || 'ce membre') + ' du groupe">Retirer</button>' : '') + '</div>'; }).join('') : '<p class="note">Aucun membre pour l\'instant.</p>') + '</div>' + (isOwner ? '<p class="note" style="margin:8px 0 0">Tu as créé ce groupe : tu peux en retirer un membre (par exemple un champignon en double).</p>' : '<p class="note" style="margin:8px 0 0">Touche un joueur pour voir son profil et d\'où viennent ses points.</p>') + '</div>' +
     '<div class="card"><h3>Défis de la semaine</h3>' + chal.map(c => { const got = claimed.includes(c.key); return '<div class="chal"><div class="chal-head"><b>' + esc(c.n) + '</b>' + (c.done ? (got ? '<span class="tag ok">Récupéré</span>' : '<button class="btn small primary" data-act="claim" data-key="' + esc(c.key) + '">+' + Game.CHALLENGE_PTS + ' points</button>') : '<span class="tag">' + (Math.round(c.value * 10) / 10).toLocaleString('fr-FR') + ' / ' + c.target + ' ' + esc(c.unit) + '</span>') + '</div><span class="note">' + esc(c.d) + '</span><div class="progress"><b style="width:' + Math.min(100, Math.round(100 * c.value / c.target)) + '%"></b></div></div>'; }).join('') + '<p class="note" style="margin:8px 0 0">Seules les trouvailles partagées comptent. Nouveaux défis chaque lundi.</p></div>' +
     '<div class="card"><h3>Cèpes d\'or</h3>' + (treasures.length ? treasures.map(t => '<div class="li" data-act="treasure-open" data-id="' + esc(t.id) + '" style="cursor:pointer"><div class="tz' + (t.foundBy ? ' found' : '') + '" style="flex:none">' + (t.foundBy ? '★' : '?') + '</div><div class="grow"><b>' + (t.foundBy ? 'Trouvé par ' + esc(t.foundByName || 'un ami') : 'Caché par ' + esc(t.createdBy === S.uid ? 'vous' : t.name || 'un ami')) + '</b><small>' + (t.hint ? esc(t.hint) : 'Sans indice') + '</small>' + (!t.foundBy && t.createdBy !== S.uid ? hotCold(t) : '') + '</div></div>').join('') : '<p class="note">Aucun trésor en cours.</p>') + '<div class="actions"><button class="btn gold" data-act="treasure-hide">Cacher un cèpe d\'or</button></div></div>' +
     '<div class="card"><h3>Activité</h3><div class="feed">' + (feed.length ? feed.map(f => '<div class="feed-item" data-act="' + f.act + '" data-id="' + esc(f.id) + '" style="cursor:pointer">' + f.html + '</div>').join('') : '<p class="note">Rien pour l\'instant : partez en sortie !</p>') + '</div></div>' +
@@ -1624,6 +1745,7 @@ function renderProfil() {
   const st = p.stats, next = p.next;
   el.innerHTML = '<div class="avatar-hero"><canvas id="pf-stage" aria-label="Votre champignon en 3D"></canvas><div><h2>' + esc(S.me.name) + '</h2><div class="level-name">Niveau\u00a0' + p.level + ' · ' + esc(p.name) + '</div><div class="progress" style="margin:8px 0 4px"><b style="width:' + Math.round(100 * p.progress) + '%"></b></div><small class="note">' + p.xp + ' points' + (next ? ' · encore ' + (next - p.xp) + ' pour le niveau\u00a0' + (p.level + 1) : ' · niveau maximal') + '</small><div class="actions"><button class="btn small" data-act="edit-avatar">Modifier mon champignon</button></div></div></div>' +
     '<div class="stats"><div class="stat"><b>' + st.finds + '</b><small>trouvailles</small></div><div class="stat"><b>' + st.species.length + '</b><small>espèces</small></div><div class="stat"><b>' + (Math.round(st.km * 10) / 10).toLocaleString('fr-FR') + '</b><small>km</small></div><div class="stat"><b>' + st.sorties + '</b><small>sorties</small></div></div>' +
+    '<div class="card"><h3>D\'où viennent mes points</h3>' + ptsBreakdownHtml(p.pts, p.xp) + '<h3 style="margin-top:14px">Derniers points gagnés</h3>' + histHtml(p.hist) + '</div>' +
     '<div class="card"><h3>Badges · ' + p.badges.length + '/' + Game.BADGES.length + '</h3><div class="badges">' + Game.BADGES.map(b => '<div class="badge' + (p.badges.includes(b.id) ? '' : ' locked') + '"><span class="medal">' + medalSvg(b.icon) + '</span>' + esc(b.n) + '<small>' + esc(b.d) + '</small></div>').join('') + '</div></div>' +
     '<div class="card"><h3>Mes sorties</h3><div class="list">' + (S.mySorties.length ? S.mySorties.slice(0, 15).map(s => '<div class="li" data-act="sortie-show" data-id="' + esc(s.id) + '" style="cursor:pointer"><div class="grow"><b>' + esc(dateFr(s.start)) + '</b><small>' + fmtKm(s.dist || 0) + ' · ' + fmtDur((s.end || s.start) - s.start) + (s.commune ? ' · ' + esc(s.commune) : '') + ' · ' + ((s.finds || []).length) + ' trouvaille(s)</small></div></div>').join('') : '<p class="note">Démarrez une sortie depuis le bouton « Sortie » de la carte.</p>') + '</div></div>' +
     '<div class="card"><h3>Mes trouvailles</h3><div class="list">' + (S.myFinds.length ? S.myFinds.slice(0, 30).map(f => '<div class="li" data-act="myfind" data-id="' + esc(f.id) + '" style="cursor:pointer"><img alt="" src="' + (f.thumb || speciesImg(f.species, 64)) + '"><div class="grow"><b>' + esc((Game.SPECIES_BY_ID[f.species] || {}).n || '') + '</b><small>' + esc(dateFr(f.ts)) + (f.commune ? ' · ' + esc(f.commune) : '') + ' · ' + esc(f.vis === 'prive' ? 'secret' : f.vis === 'flou' ? 'partagé flouté' : 'partagé') + '</small></div></div>').join('') : '<p class="note">Touchez « Trouvaille » pour enregistrer votre premier coin.</p>') + '</div></div>' +
@@ -1723,6 +1845,9 @@ function wireUi() {
       case 'place-cancel': endPlacing(false); break;
       case 'closepoint': S.point = null; $('#sec-point').hidden = true; if (pointMarker) { M.map.removeLayer(pointMarker); pointMarker = null; } setSheet('peek'); break;
       case 'zoomhere': if (S.point) M.map.setView([S.point.lat, S.point.lng], 15); break;
+      case 'member-open': if (e.target.closest('[data-act="member-remove"]')) break; openMember(id); break;
+      case 'chat-send': e.preventDefault(); sendChat(); break;
+      case 'chat-del': if (chatDelArm !== id) { chatDelArm = id; renderChat(); setTimeout(() => { if (chatDelArm === id) { chatDelArm = null; renderChat(); } }, 4000); } else { chatDelArm = null; S.sync.deleteMessage(S.gid, id).catch(e2 => toast('Effacement impossible : ' + fbWhy(e2))); } break;
       case 'far-go': setSheet('peek'); M.map.setView([+t.dataset.lat, +t.dataset.lon], 11); break;
       case 'far-wx': S.farWx = !!t.checked; store.set('cc.farwx', S.farWx); M.far.setWx(S.farWx); break;
       case 'find-here': if (S.point) openNewFind({ lat: S.point.lat, lng: S.point.lng }); break;

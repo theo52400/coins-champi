@@ -189,6 +189,24 @@ await step('Vue de loin', async () => {
   check('Vue d\'ensemble en cases de 250 m (Vosges du Nord : forêt)', ok2 && !!g, { peuplement: g });
 });
 
+// discussion du groupe (règle Firestore « messages » publiée ?) : groupe de test, un message, relu puis effacé
+await step('Discussion', async () => {
+  const r = await page.evaluate(async () => {
+    const S = CC.S.sync, out = {};
+    let gid = null;
+    try {
+      gid = await S.createGroup('Vérification', { name: 'Vérification' });
+      const id = await S.sendMessage(gid, { name: 'Vérification', text: 'Message de test' });
+      const d = await S.api.getDoc(S._d('groups', gid, 'messages', id));
+      out.relu = d.exists() && d.data().text === 'Message de test';
+      await S.deleteMessage(gid, id); out.efface = true;
+    } catch (e) { out.err = e.code || e.message; }
+    try { if (gid) { await S.api.deleteDoc(S._d('groups', gid, 'members', S.uid)); await S.api.deleteDoc(S._d('groups', gid)); } } catch (e) { out.nettoyage = e.code; }
+    return out;
+  });
+  check('Discussion du groupe : envoi, lecture, effacement' + (r.err && /permission/.test(r.err) ? ' (règles Firestore à publier)' : ''), r.relu && r.efface, r);
+});
+
 // encyclopédie : fiches et photos libres
 await step('Encyclopédie', async () => {
   await page.evaluate(() => { CC.learn.openFiche('girolle'); document.querySelector('.tabs [data-tab="mycodex"]').click(); });
