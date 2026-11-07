@@ -59,8 +59,10 @@ for (const s of CATALOG) {
 export const SPECIES_BY_ID = Object.fromEntries(CATALOG.map(s => [s.id, s]));
 export const isEdibleSp = id => { const s = SPECIES_BY_ID[id]; return !!s && s.cat === 'c'; };
 export const CAT_LABEL = { c: 'Comestible', e: 'Non comestible', t: 'Toxique', m: 'Mortel' };
-// quantité (et points de panier) seulement pour ce qui se mange : on ne remplit pas un panier d'amanites
-const qtyPts = f => isEdibleSp(f.species) ? (QTY[f.qty] || QTY[1]).pts : 0;
+// quantité (et points de panier) seulement pour ce qui se mange : on ne remplit pas un panier d'amanites.
+// Les anciennes trouvailles « Autre, à identifier » gardent leurs points de panier (les nouvelles n'en ont plus).
+const withQty = id => { const s = SPECIES_BY_ID[id]; return !s || s.cat === 'c' || s.cat == null; };
+const qtyPts = f => withQty(f.species) ? (QTY[f.qty] || QTY[1]).pts : 0;
 export const QTY = [null, { n: 'Quelques-uns', pts: 0 }, { n: 'Une poignée', pts: 5 }, { n: 'Un panier', pts: 15 }];
 export const VISIBILITY = { prive: 'Privée', groupe: 'Groupe', flou: 'Groupe, position floutée' };
 
@@ -106,7 +108,7 @@ export function computeProfile(finds, sorties, me) {
     perSpecies[f.species] = (perSpecies[f.species] || 0) + 1;
     if (f.hasPhoto) photos++;
     if (f.vis === 'prive') privees++; else partagees++;
-    if (f.qty === 3 && isEdibleSp(f.species)) paniers++;
+    if (f.qty === 3 && withQty(f.species)) paniers++;
     if (f.commune) communes.add(f.commune);
     if (new Date(f.ts).getHours() < 8) matinal = true;
   }
@@ -188,7 +190,7 @@ export const CHALLENGES = [
   { id: 'dixkm', n: 'Dix kilomètres', d: 'Marchez 10 km en sortie, tous ensemble', target: 10, unit: 'km', metric: (f, c) => Math.round(c.reduce((a, s) => a + (s.dist || 0), 0) / 100) / 10 },
   { id: 'levetot', n: 'Lève-tôt', d: 'Une trouvaille avant 9 h', target: 1, unit: 'trouvaille', metric: (f) => f.filter(x => new Date(x.ts).getHours() < 9).length },
   { id: 'reporters', n: 'Reporters', d: 'Cinq trouvailles en photo', target: 5, unit: 'photos', metric: (f) => f.filter(x => x.hasPhoto).length },
-  { id: 'paniers', n: 'Paniers pleins', d: 'Trois paniers pleins', target: 3, unit: 'paniers', metric: (f) => f.filter(x => x.qty === 3 && isEdibleSp(x.species)).length },
+  { id: 'paniers', n: 'Paniers pleins', d: 'Trois paniers pleins', target: 3, unit: 'paniers', metric: (f) => f.filter(x => x.qty === 3 && withQty(x.species)).length },
   { id: 'tousdehors', n: 'Tous dehors', d: 'Trois membres différents font une sortie', target: 3, unit: 'membres', metric: (f, c) => new Set(c.map(s => s.uid)).size },
   { id: 'communes', n: 'Nouveaux horizons', d: 'Des trouvailles dans trois communes', target: 3, unit: 'communes', metric: (f) => new Set(f.map(x => x.commune).filter(Boolean)).size }
 ];
