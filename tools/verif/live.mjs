@@ -215,7 +215,8 @@ await step('Encyclopédie', async () => {
   await sleep(800); await shot('10-encyclopedie');
   check('Encyclopédie : fiche girolle avec photos libres et crédits', ok && f.titre === 'Girolle' && f.photos >= 2 && /Wikimedia/.test(f.credit || ''), f);
   // espèces ajoutées : fiche de la russule verdoyante avec ses photos, icône fixe de la phalloïde
-  await page.evaluate(() => CC.learn.openFiche('russule_verte'));
+  await page.evaluate(() => { document.querySelector('.tabs [data-tab="carte"]').click(); CC.learn.openFiche('russule_verte'); document.querySelector('.tabs [data-tab="mycodex"]').click(); });
+  await wait(() => document.querySelector('.panel h2') && document.querySelector('.panel h2').textContent === 'Russule verdoyante', null, 10000);
   const ok2 = await wait(() => { const i = document.querySelector('.en-carousel img'); return i && i.complete && i.naturalWidth > 100; }, null, 20000);
   const g = await page.evaluate(async () => {
     const r = await fetch('icons/especes/phalloide.webp'), l = CC.Game.CATALOG.filter(s => s.id !== 'autre');
