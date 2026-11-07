@@ -1,12 +1,12 @@
-https://theo52400.github.io/coins-champi/ — 2026-10-29T21:19:27.036Z
-21/21 vérifications réussies
+https://theo52400.github.io/coins-champi/ — 2026-11-07T14:47:31.595Z
+21/22 vérifications réussies
 
 OK     L'appli démarre
-         {"version":"v2026-10-29-643f71d4"}
+         {"version":"v2026-11-07-9b489735"}
 OK     Connexion au serveur du jeu (Firebase, compte anonyme)
-         {"kind":"firebase","uid":"im6Wtf","banner":null}
+         {"kind":"firebase","uid":"b1EPqD","banner":null}
 OK     Écriture et relecture dans Firestore (puis effacement)
-         {"ecriture":true,"relu":"Vérification","ms":2160}
+         {"ecriture":true,"relu":"Vérification","ms":2048}
 OK     Ma position s'affiche sur la carte
          "point (pas encore de profil)"
 OK     Sous-sol chargé et cohérent (grès, calcaire, craie, sables, granite)
@@ -29,23 +29,49 @@ OK     Recherche d'une commune : Fontainebleau
 OK     Météo Open-Meteo
          {"status":200,"jours":15}
 OK     Vue de loin : carte de France des coins et météo de pousse
-         {"etat":{"idx":true,"coarse":"ok","wxDate":"2026-10-29","tiles":10,"wait":0},"bandeau":"Ça pousse en ce moment (météo du 29 octobre) · zoomez sur une région","today":"2026-10-29"}
+         {"etat":{"idx":true,"coarse":"ok","wxDate":"2026-11-07","tiles":10,"wait":0},"bandeau":"Ça pousse en ce moment (météo du 7 novembre) · zoomez sur une région","today":"2026-11-07"}
 OK     Météo de pousse à jour (moins de 2 jours)
-         {"meteo":"2026-10-29","aujourdhui":"2026-10-29"}
+         {"meteo":"2026-11-07","aujourdhui":"2026-11-07"}
 OK     Vue d'ensemble en cases de 250 m (Vosges du Nord : forêt)
          {"peuplement":"PSY"}
 OK     Discussion du groupe : envoi, lecture, effacement
          {"relu":true,"efface":true}
 OK     Encyclopédie : fiche girolle avec photos libres et crédits
          {"titre":"Girolle","photos":3,"credit":"Photo : Dr. Hans-Günter Wagner · CC BY-SA 2.0 · Wikimedia Commons"}
+ÉCHEC  Trouvailles élargies : 58 espèces dont 29 à connaître, fiche de la russule verdoyante en photos, icônes servies
+         {"titre":"Girolle","photos":3,"icone":true,"especes":58,"aConnaitre":29}
 OK     Comptes e-mail : création, déconnexion, reconnexion au même joueur
          {"protect":"ok","sansCompteAvant":true,"apresCreation":"compte e-mail","memeJoueur":true,"motDePasseOublie":"ok","suppression":"ok"}
 OK     Aucune erreur JavaScript
          []
 
-Requêtes réussies : {"sous-sol":11,"Firebase":36,"météo":10,"communes":17,"BD Forêt (WFS)":17,"tuiles IGN":95,"altitude IGN":1,"itinéraire IGN":4}
+Requêtes réussies : {"sous-sol":11,"Firebase":46,"météo":10,"BD Forêt (WFS)":17,"tuiles IGN":81,"communes":17,"altitude IGN":1,"itinéraire IGN":4}
 
 Itinéraire, capacités : [
+ {
+  "id": "bdtopo-osrm",
+  "ops": [
+   {
+    "id": "route",
+    "params": [
+     "resource=[\"bdtopo-osrm\"]",
+     "start={\"bbox\":\"-179.49999463,-74.99999974,179.49999463,74.99999974\"}",
+     "end={\"bbox\":\"-179.49999463,-74.99999974,179.49999463,74.99999974\"}",
+     "intermediates={\"bbox\":\"-179.49999463,-74.99999974,179.49999463,74.99999974\"}",
+     "profile=[\"car\",\"pedestrian\",\"exceptionnal\"]",
+     "optimization=[\"fastest\",\"shortest\"]",
+     "getSteps=[true,false]",
+     "waysAttributes=[\"name\"]",
+     "geometryFormat=[\"geojson\",\"polyline\",\"wkt\"]",
+     "getBbox=[true,false]",
+     "crs=[\"EPSG:4326\",\"EPSG:2154\",\"EPSG:4559\",\"EPSG:2972\",\"EPSG:2975\",\"EPSG:4471\",\"EPSG:3857\",\"EPSG:32620\",\"EPSG:4467\"]",
+     "timeUnit=[\"hour\",\"minute\",\"second\",\"standard\"]",
+     "distanceUnit=[\"meter\",\"kilometer\"]",
+     "constraints={\"keys\":[{\"key\":\"waytype\",\"availableConstraintType\":[\"banned\"],\"availableOperators\":[\"=\"],\"values\":[\"autoroute\",\"tunnel\""
+    ]
+   }
+  ]
+ },
  {
   "id": "bdtopo-pgr",
   "ops": [
@@ -547,17 +573,17 @@ Erreurs HTTP :
 
 Console :
 warning Info: The current domain is not authorized for OAuth operations. This will prevent signInWithPopup, signInWithRedirect, linkWithPopup and linkWithRedirect from working. Add your domain (theo52400.github.io) to the OAuth redirect domains list in the Firebase console -> Authentication -> Settings -> A
-warning [GroupMarkerNotSet(crbug.com/242999)!:A0601C00E40D0000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.
-warning [GroupMarkerNotSet(crbug.com/242999)!:A0901C00E40D0000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.
-warning [.WebGL-0x7cc00a31b00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
-warning [.WebGL-0x7cc00a31b00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
-warning [.WebGL-0x7cc00a31b00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
-warning [.WebGL-0x7cc00a31b00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)
-warning [GroupMarkerNotSet(crbug.com/242999)!:A0A04903E40D0000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.
-warning [GroupMarkerNotSet(crbug.com/242999)!:A0704903E40D0000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.
+warning [GroupMarkerNotSet(crbug.com/242999)!:A0601C0054390000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.
+warning [GroupMarkerNotSet(crbug.com/242999)!:A0901C0054390000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.
+warning [.WebGL-0x3eac01bd6300]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
+warning [.WebGL-0x3eac01bd6300]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
+warning [.WebGL-0x3eac01bd6300]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
+warning [.WebGL-0x3eac01bd6300]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)
+warning [GroupMarkerNotSet(crbug.com/242999)!:A0A00F0354390000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.
+warning [GroupMarkerNotSet(crbug.com/242999)!:A0700F0354390000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.
 
 Journal de l'appli :
-21:19:28 Source forêts : LANDCOVER.FORESTINVENTORY.V2:formation_vegetale
-21:19:28 Connecté (firebase), joueur im6WtfqE
-21:19:40 GPS : 
-21:19:44 Écran allumé : Wake Lock permission request denied
+14:47:33 Source forêts : LANDCOVER.FORESTINVENTORY.V2:formation_vegetale
+14:47:33 Connecté (firebase), joueur b1EPqD09
+14:47:45 GPS : 
+14:47:49 Écran allumé : Wake Lock permission request denied
