@@ -1,0 +1,11 @@
++ mkdir -p /tmp/ph
++ cd /tmp/ph
++ npm init -y
++ npm i -s sharp@0.33.5
++ cd -
+/home/runner/work/coins-champi/coins-champi
++ cat
++ cat
++ mkdir -p /tmp/sonde-extra
++ node /tmp/ph/c.mjs /tmp/ph/l.json /tmp/sonde-extra
+langue_boeuf       51 fichiers,  48 libres et nets, planche de 15
