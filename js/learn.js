@@ -1,4 +1,4 @@
-// Onglet « Apprendre » : encyclopédie (45 fiches, photos libres), quiz, cartes mémoire, défi de la semaine, Mycodex.
+// Onglet « Apprendre » : encyclopédie (61 fiches, photos libres), quiz, cartes mémoire, défi de la semaine, Mycodex.
 import { ENCYCLO, BY_ID, CAT, NOTE, isEdible, MASTER_N, QUIZ_WEEK_PTS } from './encyclo.js';
 import { isoWeek } from './game.js';
 
@@ -64,9 +64,9 @@ export function createLearn(x) {
   }
   function listHtml() {
     const nb = ENCYCLO.filter(isEdible).length;
-    return '<h2>Encyclopédie</h2><p class="lead">' + ENCYCLO.length + ' champignons à connaître : ' + nb + ' bons comestibles et ' + (ENCYCLO.length - nb) + ' espèces dangereuses ou sans intérêt.</p>' +
+    return '<h2>Encyclopédie</h2><p class="lead">' + ENCYCLO.length + ' champignons à connaître : ' + nb + ' bons comestibles et ' + (ENCYCLO.length - nb) + ' espèces toxiques, mortelles ou sans intérêt.</p>' +
       '<input class="input" id="en-q" type="search" placeholder="Cèpe, girolle, Amanita…" autocomplete="off" aria-label="Chercher un champignon">' +
-      '<div class="chips" role="group" aria-label="Filtrer">' + [['tous', 'Tous'], ['bons', 'Comestibles'], ['danger', 'Dangereux'], ['saison', 'De saison']].map(([v, n]) =>
+      '<div class="chips" role="group" aria-label="Filtrer">' + [['tous', 'Tous'], ['bons', 'Comestibles'], ['danger', 'À connaître'], ['saison', 'De saison']].map(([v, n]) =>
         '<button class="chip" data-act="en-filter" data-v="' + v + '" aria-pressed="' + (L.filter === v) + '">' + n + '</button>').join('') + '</div>' +
       '<div class="en-grid" id="en-grid">' + cards() + '</div>' +
       '<div class="warnbox"><b>Ne mangez jamais un champignon sur la foi d\'une photo ou d\'une fiche.</b> Faites vérifier votre panier par un pharmacien ou une société mycologique. Les champignons sauvages se mangent toujours cuits (20 à 30 minutes à la poêle), jamais crus. En cas de malaise après un repas de champignons : 15 ou 112.</div>' +

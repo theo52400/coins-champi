@@ -221,5 +221,85 @@
   1,
   14,
   10
+ ],
+ "pied_rouge": [
+  3,
+  1,
+  4
+ ],
+ "armillaire": [
+  1,
+  13,
+  9
+ ],
+ "polypore_soufre": [
+  0,
+  12,
+  4
+ ],
+ "langue_boeuf": [
+  10,
+  8,
+  6
+ ],
+ "oreille_judas": [
+  0,
+  9,
+  3
+ ],
+ "truffe": [
+  6,
+  12,
+  3
+ ],
+ "bolet_jaune": [
+  0,
+  7,
+  6
+ ],
+ "russule_verte": [
+  11,
+  2,
+  7
+ ],
+ "laccaire": [
+  5,
+  0,
+  10
+ ],
+ "amanite_citrine": [
+  4,
+  5,
+  10
+ ],
+ "scleroderme": [
+  10,
+  2,
+  7
+ ],
+ "mycene_pure": [
+  2,
+  6,
+  4
+ ],
+ "amadouvier": [
+  1,
+  13,
+  8
+ ],
+ "satyre": [
+  4,
+  0,
+  1
+ ],
+ "anthurus": [
+  0,
+  2,
+  5
+ ],
+ "clitocybe_nebuleux": [
+  0,
+  6,
+  4
  ]
 }

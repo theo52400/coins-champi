@@ -1,5 +1,5 @@
 // Service worker de Coins à champi : appli disponible sans réseau, fond de carte et peuplements gardés en cache.
-const VERSION = 'v2026-10-29-643f71d4';
+const VERSION = 'v2026-11-07-9b489735';
 const SHELL = 'cc-shell-' + VERSION;
 const TILES = 'cc-tiles';
 const DATA = 'cc-data';
@@ -17,7 +17,24 @@ const ASSETS = [
   'vendor/leaflet.js', 'vendor/leaflet.css', 'vendor/three.module.min.js', 'vendor/firebase.js',
   'fonts/alegreya-latin-700-normal.woff2', 'fonts/alegreya-latin-500-italic.woff2',
   'fonts/atkinson-hyperlegible-latin-400-normal.woff2', 'fonts/atkinson-hyperlegible-latin-700-normal.woff2', 'fonts/atkinson-hyperlegible-latin-400-italic.woff2',
-  'icons/favicon-48.png', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-maskable-512.png'
+  'icons/favicon-48.png', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-maskable-512.png',
+  // icônes des espèces : début
+  'icons/especes/amadouvier.webp', 'icons/especes/amanite_blanche.webp', 'icons/especes/amanite_citrine.webp', 'icons/especes/amer.webp',
+  'icons/especes/anthurus.webp', 'icons/especes/armillaire.webp', 'icons/especes/bai.webp', 'icons/especes/bolet_jaune.webp',
+  'icons/especes/cepe.webp', 'icons/especes/cesar.webp', 'icons/especes/clitoblanc.webp', 'icons/especes/clitocybe_nebuleux.webp',
+  'icons/especes/coprin.webp', 'icons/especes/cortinaire.webp', 'icons/especes/coulemelle.webp', 'icons/especes/emetique.webp',
+  'icons/especes/entolome.webp', 'icons/especes/equestre.webp', 'icons/especes/faussegirolle.webp', 'icons/especes/galere.webp',
+  'icons/especes/girolle.webp', 'icons/especes/gyromitre.webp', 'icons/especes/hydne.webp', 'icons/especes/hygrophore.webp',
+  'icons/especes/hypholome.webp', 'icons/especes/inconnu.webp', 'icons/especes/inocybe.webp', 'icons/especes/jaunissant.webp',
+  'icons/especes/laccaire.webp', 'icons/especes/lactaire.webp', 'icons/especes/langue_boeuf.webp', 'icons/especes/leccinum.webp',
+  'icons/especes/lepiote.webp', 'icons/especes/marasme.webp', 'icons/especes/morille.webp', 'icons/especes/mousseron.webp',
+  'icons/especes/mycene_pure.webp', 'icons/especes/olivier.webp', 'icons/especes/oreille_judas.webp', 'icons/especes/panthere.webp',
+  'icons/especes/paxille.webp', 'icons/especes/phalloide.webp', 'icons/especes/pied_rouge.webp', 'icons/especes/piedbleu.webp',
+  'icons/especes/pleurote.webp', 'icons/especes/polypore_soufre.webp', 'icons/especes/rose.webp', 'icons/especes/russule.webp',
+  'icons/especes/russule_verte.webp', 'icons/especes/satan.webp', 'icons/especes/satyre.webp', 'icons/especes/scleroderme.webp',
+  'icons/especes/sparassis.webp', 'icons/especes/toison.webp', 'icons/especes/trompette.webp', 'icons/especes/truffe.webp',
+  'icons/especes/tube.webp', 'icons/especes/tuemouche.webp', 'icons/especes/vesse.webp',
+  // icônes des espèces : fin
 ];
 
 self.addEventListener('install', event => {

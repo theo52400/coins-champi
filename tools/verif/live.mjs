@@ -214,6 +214,14 @@ await step('Encyclopédie', async () => {
   const f = await page.evaluate(() => ({ titre: document.querySelector('.panel h2') && document.querySelector('.panel h2').textContent, photos: document.querySelectorAll('.en-carousel img').length, credit: document.querySelector('.en-carousel figcaption') && document.querySelector('.en-carousel figcaption').textContent }));
   await sleep(800); await shot('10-encyclopedie');
   check('Encyclopédie : fiche girolle avec photos libres et crédits', ok && f.titre === 'Girolle' && f.photos >= 2 && /Wikimedia/.test(f.credit || ''), f);
+  // espèces ajoutées : fiche de la russule verdoyante avec ses photos, icône fixe de la phalloïde
+  await page.evaluate(() => CC.learn.openFiche('russule_verte'));
+  const ok2 = await wait(() => { const i = document.querySelector('.en-carousel img'); return i && i.complete && i.naturalWidth > 100; }, null, 20000);
+  const g = await page.evaluate(async () => {
+    const r = await fetch('icons/especes/phalloide.webp'), l = CC.Game.CATALOG.filter(s => s.id !== 'autre');
+    return { titre: document.querySelector('.panel h2') && document.querySelector('.panel h2').textContent, photos: document.querySelectorAll('.en-carousel img').length, icone: r.ok, especes: l.length, aConnaitre: l.filter(s => s.cat !== 'c').length };
+  });
+  check('Trouvailles élargies : 58 espèces dont 29 à connaître, fiche de la russule verdoyante en photos, icônes servies', ok2 && g.titre === 'Russule verdoyante' && g.photos >= 2 && g.icone && g.especes === 58 && g.aConnaitre === 29, g);
   await page.evaluate(() => document.querySelector('.tabs [data-tab="carte"]').click());
 });
 

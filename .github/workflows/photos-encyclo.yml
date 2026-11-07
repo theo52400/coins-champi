@@ -1,5 +1,5 @@
 name: Photos de l'encyclopédie
-# Télécharge les photos libres choisies sur Wikimedia Commons (tools/photos/choix.json), les recadre et écrit leurs
+# Télécharge les photos libres choisies sur Wikimedia Commons (tools/photos/choix.json), les réduit sans les recadrer (les photos déjà construites sont gardées) et écrit leurs
 # crédits dans data/encyclo/photos.json, sur main (le site publié se met à jour).
 on:
   workflow_dispatch:

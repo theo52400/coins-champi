@@ -79,7 +79,10 @@ if (S.sp !== 'all' && !C.SPECIES.some(s => s.id === S.sp)) S.sp = 'all';
 let Av = null;
 const avP = import('./avatar3d.js').then(m => { Av = m; onAvatarsReady(); return m; }).catch(e => { log('Avatars 3D indisponibles : ' + e.message); return null; });
 const avatarImg = (cfg, size) => Av ? Av.snapshot(cfg || {}, { size: size || 128 }) : 'data:image/gif;base64,R0lGODlhAQABAAAAACw=';
-const speciesImg = (id, size) => { const sp = Game.SPECIES_BY_ID[id] || Game.SPECIES_BY_ID.autre; return Av ? Av.speciesIcon(sp.cap, size || 96) : 'data:image/gif;base64,R0lGODlhAQABAAAAACw='; };
+// icônes des espèces : images fixes (tools/icones/especes.cjs), pour afficher les 60 espèces sans calcul 3D
+const speciesImg = id => 'icons/especes/' + (Game.SPECIES_BY_ID[id] || Game.SPECIES_BY_ID.autre).cap + '.webp';
+const catBadge = sp => sp && sp.cat && sp.cat !== 'c' ? '<span class="en-badge ' + ({ e: 'meh', t: 'tox', m: 'dead' })[sp.cat] + '">' + Game.CAT_LABEL[sp.cat] + '</span>' : '';
+const normTxt = t => String(t || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 const spColor = id => { const sp = Game.SPECIES_BY_ID[id]; return Av && sp && Av.CAPS[sp.cap] ? Av.CAPS[sp.cap].tints[0] : '#4A2C8F'; };
 
 // ---------------------------------------------------------------- carte
@@ -424,7 +427,7 @@ function openAvatarEditor(initial, onboarding) {
   let cfg = Av.normalizeAvatar(initial || (S.me && S.me.avatar) || Av.randomAvatar());
   let name = (S.me && S.me.name) || '';
   const chips = (key, dict) => Object.entries(dict).map(([k, v]) => '<button class="opt-chip" data-k="' + key + '" data-v="' + esc(k) + '" aria-pressed="' + (cfg[key] === k) + '">' + esc(v) + '</button>').join('');
-  const capChips = Object.entries(Av.CAPS).filter(([k]) => k !== 'inconnu').map(([k, c]) => '<button class="opt-chip" data-k="cap" data-v="' + k + '" aria-pressed="' + (cfg.cap === k) + '"><img alt="" src="' + Av.speciesIcon(k, 64) + '">' + esc(c.n) + '</button>').join('');
+  const capChips = Av.AVATAR_CAPS.map(k => [k, Av.CAPS[k]]).map(([k, c]) => '<button class="opt-chip" data-k="cap" data-v="' + k + '" aria-pressed="' + (cfg.cap === k) + '"><img alt="" src="' + Av.speciesIcon(k, 64) + '">' + esc(c.n) + '</button>').join('');
   const html = modalHead(onboarding ? 'Votre champignon' : 'Modifier mon champignon', !onboarding) +
     '<canvas class="editor-stage" id="ed-stage" aria-label="Aperçu 3D, touchez-le pour le faire sauter"></canvas>' +
     '<div class="field"><label for="ed-name">Pseudo</label><input class="input" id="ed-name" maxlength="24" placeholder="Théo des bois" value="' + esc(name) + '"></div>' +
@@ -1016,9 +1019,23 @@ function endPlacing(ok) {
 }
 
 // ---------------------------------------------------------------- nouvelle trouvaille
-function inSeasonCatalog() {
-  const w = s => s.core ? C.seasonOf(C.SPECIES.find(x => x.id === s.core), MONTH) : (s.m && s.m[MONTH]) || 0;
-  return Game.CATALOG.filter(s => s.id !== 'autre').map(s => ({ s, w: w(s) })).sort((a, b) => b.w - a.w).map(x => x.s).concat([Game.SPECIES_BY_ID.autre]);
+// espèces pour le choix d'une trouvaille, de saison d'abord : comestibles, ou « À connaître » (toxiques et non comestibles)
+const seasonW = s => s.core ? C.seasonOf(C.SPECIES.find(x => x.id === s.core), MONTH) : (s.m && s.m[MONTH]) || 0;
+function pickerSpecies(tab, q) {
+  const all = Game.CATALOG.filter(s => s.id !== 'autre'), bySeason = l => l.map(s => ({ s, w: seasonW(s) })).sort((a, b) => b.w - a.w || a.s.n.localeCompare(b.s.n, 'fr')).map(x => x.s);
+  let list;
+  if (q) { const n = normTxt(q); list = all.filter(s => normTxt(s.n + ' ' + s.lat + ' ' + (s.alias || '')).includes(n)); }
+  else list = bySeason(all.filter(s => tab === 'x' ? s.cat !== 'c' : s.cat === 'c'));
+  return list.concat([Game.SPECIES_BY_ID.autre]);
+}
+const spButton = (s, sel) => '<button data-sp-id="' + s.id + '" aria-pressed="' + (sel === s.id) + '"' + (s.cat && s.cat !== 'c' ? ' class="sp-x sp-' + s.cat + '"' : '') + '><img alt="" loading="lazy" src="' + speciesImg(s.id) + '">' + esc(s.n) + (s.cat && s.cat !== 'c' ? '<span class="sp-cat">' + esc(Game.CAT_LABEL[s.cat]) + '</span>' : '') + '</button>';
+function findWarning(id) {
+  const s = Game.SPECIES_BY_ID[id]; if (!s) return '';
+  if (s.id === 'autre') return '<b>À faire identifier :</b> ne consommez jamais un champignon sans identification certaine. Une photo aidera le pharmacien ou la société mycologique.';
+  if (s.cat === 'm') return '<b>Mortel :</b> ne le cueillez pas, une photo suffit. Lavez-vous les mains si vous l\'avez touché.';
+  if (s.cat === 't') return '<b>Toxique :</b> pas dans le panier, une photo suffit. Signalé au groupe, il évitera une confusion.';
+  if (s.cat === 'e') return '<b>Non comestible :</b> une photo suffit, laissez-le sur place.';
+  return '';
 }
 function openNewFind(preset) {
   if (!S.sync) { toast('Connexion au jeu en cours, réessayez dans un instant.'); return; }
@@ -1027,13 +1044,29 @@ function openNewFind(preset) {
   const card = openModal(modalHead('Nouvelle trouvaille') +
     '<button class="photo-drop" data-act="nf-cam" id="nf-photo" aria-label="Prendre une photo"><span>Prendre la photo du coin</span></button>' +
     '<div class="photo-row"><button class="btn small" data-act="nf-cam">Appareil photo</button><button class="btn small" data-act="nf-gal">Galerie</button></div>' +
-    '<div class="editor-sec" style="margin-top:12px"><h3>Espèce</h3><div class="sp-grid" id="nf-sp">' + inSeasonCatalog().map(s => '<button data-sp-id="' + s.id + '" aria-pressed="' + (d.species === s.id) + '"><img alt="" src="' + speciesImg(s.id, 72) + '">' + esc(s.n) + '</button>').join('') + '</div></div>' +
-    '<div class="editor-sec"><h3>Quantité</h3><div class="opts" id="nf-qty">' + [1, 2, 3].map(q => '<button class="opt-chip" data-q="' + q + '" aria-pressed="' + (d.qty === q) + '">' + Game.QTY[q].n + '</button>').join('') + '</div></div>' +
+    '<div class="editor-sec" style="margin-top:12px"><h3>Espèce</h3>' +
+    '<input class="input" id="nf-q" type="search" enterkeyhint="search" autocomplete="off" placeholder="Chercher : coprin, amanite, bolet…" aria-label="Chercher une espèce">' +
+    '<div class="seg sp-tabs" role="tablist" aria-label="Espèces">' + [['c', 'Comestibles'], ['x', 'À connaître']].map(([k, n]) => '<button role="tab" data-sp-tab="' + k + '" aria-selected="' + (k === 'c') + '">' + n + ' · ' + Game.CATALOG.filter(s => s.id !== 'autre' && (k === 'x' ? s.cat !== 'c' : s.cat === 'c')).length + '</button>').join('') + '</div>' +
+    '<div class="sp-grid" id="nf-sp"></div><div class="warnbox danger" id="nf-warn" hidden style="margin-top:8px"></div></div>' +
+    '<div class="editor-sec" id="nf-qty-sec"><h3>Quantité</h3><div class="opts" id="nf-qty">' + [1, 2, 3].map(q => '<button class="opt-chip" data-q="' + q + '" aria-pressed="' + (d.qty === q) + '">' + Game.QTY[q].n + '</button>').join('') + '</div></div>' +
     '<div class="editor-sec"><h3>Note</h3><textarea class="input" id="nf-note" maxlength="300" placeholder="Sous les hêtres, au bord du chemin forestier…"></textarea></div>' +
     '<div class="editor-sec"><h3>Qui peut voir ce coin ?</h3><div class="opts" id="nf-vis">' + Object.entries(Game.VISIBILITY).map(([k, v]) => '<button class="opt-chip" data-v="' + k + '" aria-pressed="' + (d.vis === k) + '"' + (!S.gid && k !== 'prive' ? ' disabled title="Rejoignez un groupe pour partager"' : '') + '>' + v + '</button>').join('') + '</div>' + (!S.gid ? '<p class="note" style="margin:6px 0 0">Rejoignez un groupe pour partager vos coins.</p>' : '<p class="note" style="margin:6px 0 0">Floutée : vos amis voient une zone d\'environ 300 m, pas le point exact.</p>') + '</div>' +
     '<div class="editor-sec"><h3>Position</h3><div class="row"><span class="grow" id="nf-pos">Recherche de votre position…</span><button class="btn small" data-act="nf-map">Sur la carte</button></div></div>' +
     '<p class="note" id="nf-err" style="color:var(--danger)" hidden></p>' +
     '<div class="actions"><button class="btn primary block" data-act="nf-save">Enregistrer la trouvaille</button></div>');
+  let spTab = 'c';
+  const drawSpecies = () => {
+    const q = card.querySelector('#nf-q').value.trim(), list = pickerSpecies(spTab, q);
+    card.querySelector('#nf-sp').innerHTML = list.map(s => spButton(s, d.species)).join('') + (q && list.length === 1 ? '<p class="note" style="grid-column:1/-1;margin:4px 0 0">Aucune espèce ne correspond : choisissez « Autre, à identifier ».</p>' : '');
+    card.querySelectorAll('[data-sp-tab]').forEach(b => b.setAttribute('aria-selected', String(!q && b.dataset.spTab === spTab)));
+  };
+  const showSpecies = () => {
+    const w = findWarning(d.species), s = Game.SPECIES_BY_ID[d.species];
+    const wb = card.querySelector('#nf-warn'); wb.innerHTML = w; wb.hidden = !w;
+    card.querySelector('#nf-qty-sec').hidden = !!s && !Game.isEdibleSp(s.id);
+  };
+  drawSpecies(); showSpecies();
+  card.querySelector('#nf-q').addEventListener('input', drawSpecies);
   const posEl = card.querySelector('#nf-pos');
   const showPos = () => {
     posEl.textContent = d.pos ? (d.pos.src === 'gps' ? 'Ici, à ± ' + Math.round(d.pos.acc) + ' m' : d.pos.src === 'photo' ? 'Position enregistrée dans la photo' : 'Point choisi sur la carte') + (M.communeCached(d.pos.lat, d.pos.lng) ? ' · ' + M.communeCached(d.pos.lat, d.pos.lng) : '') : 'Position inconnue : placez le point sur la carte.';
@@ -1054,7 +1087,8 @@ function openNewFind(preset) {
     } catch (e) { box.innerHTML = '<span>Photo illisible, réessayez</span>'; log('Photo : ' + e.message); }
   };
   card.addEventListener('click', async e => {
-    const sp = e.target.closest('[data-sp-id]'); if (sp) { d.species = sp.dataset.spId; card.querySelectorAll('[data-sp-id]').forEach(b => b.setAttribute('aria-pressed', String(b === sp))); err(''); return; }
+    const sp = e.target.closest('[data-sp-id]'); if (sp) { d.species = sp.dataset.spId; card.querySelectorAll('[data-sp-id]').forEach(b => b.setAttribute('aria-pressed', String(b === sp))); err(''); showSpecies(); return; }
+    const tb = e.target.closest('[data-sp-tab]'); if (tb) { spTab = tb.dataset.spTab; card.querySelector('#nf-q').value = ''; drawSpecies(); return; }
     const q = e.target.closest('[data-q]'); if (q) { d.qty = +q.dataset.q; card.querySelectorAll('[data-q]').forEach(b => b.setAttribute('aria-pressed', String(b === q))); return; }
     const v = e.target.closest('#nf-vis [data-v]'); if (v && !v.disabled) { d.vis = v.dataset.v; card.querySelectorAll('#nf-vis [data-v]').forEach(b => b.setAttribute('aria-pressed', String(b === v))); return; }
     const a = e.target.closest('[data-act]'); if (!a) return;
@@ -1073,7 +1107,7 @@ function openNewFind(preset) {
 async function saveFind(d) {
   const id = Game.newId('f'), ts = Date.now();
   const commune = M.communeCached(d.pos.lat, d.pos.lng) || await M.communeAt(d.pos.lat, d.pos.lng, 1500);
-  const find = { id, species: d.species, qty: d.qty, note: d.note, ts, lat: +d.pos.lat.toFixed(6), lng: +d.pos.lng.toFixed(6), acc: Math.round(d.pos.acc || 0), vis: S.gid ? d.vis : 'prive', commune, thumb: d.photo ? d.photo.thumb : null, hasPhoto: !!d.photo, sortieId: S.sortie ? S.sortie.id : null };
+  const find = { id, species: d.species, qty: Game.isEdibleSp(d.species) ? d.qty : 1, note: d.note, ts, lat: +d.pos.lat.toFixed(6), lng: +d.pos.lng.toFixed(6), acc: Math.round(d.pos.acc || 0), vis: S.gid ? d.vis : 'prive', commune, thumb: d.photo ? d.photo.thumb : null, hasPhoto: !!d.photo, sortieId: S.sortie ? S.sortie.id : null };
   let pub = null;
   if (S.gid && find.vis !== 'prive') {
     const [bl, bg] = find.vis === 'flou' ? Game.blur(find.lat, find.lng, 300) : [find.lat, find.lng];
@@ -1084,7 +1118,8 @@ async function saveFind(d) {
   S.sync.saveFind(find, d.photo ? d.photo.full : null, S.gid, pub).catch(e => toast('Trouvaille gardée sur le téléphone, synchronisation impossible : ' + (e.message || e), 6000));
   if (S.sortie) { S.sortie.finds.push({ id, species: find.species, qty: find.qty, vis: find.vis }); saveSortieState(); updateSortieBar(); }
   if (S.gid && pub && find.vis === 'groupe') S.sync.sendEvent(S.gid, { type: 'find', name: S.me.name, species: find.species, lat: pub.lat, lng: pub.lng, fid: id }).catch(() => {});
-  celebrate(pts, first ? 'Nouvelle espèce au Mycodex : ' + (Game.SPECIES_BY_ID[find.species] || {}).n : (Game.SPECIES_BY_ID[find.species] || {}).n + ' enregistré' + (find.vis === 'prive' ? ' (coin secret)' : ''));
+  const spf = Game.SPECIES_BY_ID[find.species] || {}, leave = spf.cat && spf.cat !== 'c' ? ' · à laisser sur place' : '';
+  celebrate(pts, (first ? 'Nouvelle espèce au Mycodex : ' + spf.n : spf.n + ' enregistré' + (find.vis === 'prive' ? ' (coin secret)' : '')) + leave);
 }
 function celebrate(pts, line) {
   const card = openModal('<div class="celebrate"><canvas id="cel-stage"></canvas><div class="pts">+' + pts + ' points</div><p style="font-size:16px;margin:10px 0 0">' + esc(line || '') + '</p></div><div class="actions"><button class="btn primary block" data-act="modal-close">Continuer</button></div>');
@@ -1106,8 +1141,9 @@ function renderFinds() {
   const mine = new Set(S.myFinds.map(f => f.id));
   const add = (f, own) => {
     const col = own ? '#4A2C8F' : '#1F5C3A';
-    const img = f.thumb ? '<img alt="" src="' + f.thumb + '">' : '<img alt="" src="' + speciesImg(f.species, 64) + '">';
-    const html = '<div class="fm' + (f.thumb ? '' : ' noimg') + (f.blurR ? ' blur' : '') + '" style="--c:' + col + '">' + img + (own && f.vis === 'prive' ? '<span class="lock">' + ICON.lock + '</span>' : '') + '</div>';
+    const img = f.thumb ? '<img alt="" src="' + f.thumb + '">' : '<img alt="" src="' + speciesImg(f.species) + '">';
+    const sp = Game.SPECIES_BY_ID[f.species], bad = sp && sp.cat && sp.cat !== 'c';
+    const html = '<div class="fm' + (f.thumb ? '' : ' noimg') + (f.blurR ? ' blur' : '') + (bad ? ' fm-' + sp.cat : '') + '" style="--c:' + col + '">' + img + (own && f.vis === 'prive' ? '<span class="lock">' + ICON.lock + '</span>' : '') + (bad ? '<span class="fm-warn" aria-label="' + Game.CAT_LABEL[sp.cat] + '">!</span>' : '') + '</div>';
     if (f.blurR && !own) L.circle([f.lat, f.lng], { radius: f.blurR, color: col, weight: 2, dashArray: '5 6', fillOpacity: 0.06, interactive: false }).addTo(lay);
     const m = L.marker([f.lat, f.lng], { icon: L.divIcon({ className: '', html, iconSize: [46, 46], iconAnchor: [23, 23] }), title: (Game.SPECIES_BY_ID[f.species] || {}).n || '' });
     m.on('click', () => openFind(f, own)); m.addTo(lay);
@@ -1121,13 +1157,15 @@ async function openFind(f, own) {
   const likes = gf && gf.likedBy ? gf.likedBy.length : 0, liked = gf && gf.likedBy && gf.likedBy.includes(S.uid);
   const who = own ? 'vous' : (f.name || 'un ami');
   const card = openModal(modalHead(sp.n) +
-    (f.hasPhoto || f.thumb ? '<img class="big-photo" id="fd-photo" alt="Photo de la trouvaille" src="' + (f.thumb || '') + '">' : '<img alt="" src="' + speciesImg(f.species, 160) + '" style="width:140px;display:block;margin:0 auto">') +
-    '<div class="latin" style="margin-top:10px">' + esc(sp.lat) + '</div>' +
-    '<dl class="kv"><dt>Trouvé par</dt><dd>' + esc(who) + '</dd><dt>Quand</dt><dd>' + esc(dateFr(f.ts)) + '</dd><dt>Quantité</dt><dd>' + esc((Game.QTY[f.qty] || Game.QTY[1]).n) + '</dd>' + (f.commune ? '<dt>Commune</dt><dd>' + esc(f.commune) + '</dd>' : '') + '<dt>Visible par</dt><dd>' + esc(own ? Game.VISIBILITY[f.vis] || 'Privée' : f.blurR ? 'le groupe (position floutée ≈ 300 m)' : 'le groupe') + '</dd>' + (S.gid && gf ? '<dt>Bravos</dt><dd>' + likes + '</dd>' : '') + '</dl>' +
+    (f.hasPhoto || f.thumb ? '<img class="big-photo" id="fd-photo" alt="Photo de la trouvaille" src="' + (f.thumb || '') + '">' : '<img alt="" src="' + speciesImg(f.species) + '" style="width:140px;display:block;margin:0 auto">') +
+    '<div class="latin" style="margin-top:10px">' + esc(sp.lat) + ' ' + catBadge(sp) + '</div>' +
+    (findWarning(f.species) && sp.cat !== 'c' ? '<div class="warnbox danger" style="margin-top:8px">' + findWarning(f.species) + '</div>' : '') +
+    '<dl class="kv"><dt>Trouvé par</dt><dd>' + esc(who) + '</dd><dt>Quand</dt><dd>' + esc(dateFr(f.ts)) + '</dd>' + (Game.isEdibleSp(f.species) ? '<dt>Quantité</dt><dd>' + esc((Game.QTY[f.qty] || Game.QTY[1]).n) + '</dd>' : '') + (f.commune ? '<dt>Commune</dt><dd>' + esc(f.commune) + '</dd>' : '') + '<dt>Visible par</dt><dd>' + esc(own ? Game.VISIBILITY[f.vis] || 'Privée' : f.blurR ? 'le groupe (position floutée ≈ 300 m)' : 'le groupe') + '</dd>' + (S.gid && gf ? '<dt>Bravos</dt><dd>' + likes + '</dd>' : '') + '</dl>' +
     (f.note ? '<p style="margin:10px 0 0">« ' + esc(f.note) + ' »</p>' : '') +
     '<div class="actions">' + (!f.blurR || own ? '<button class="btn primary" data-act="route-find" data-id="' + esc(f.id) + '" data-own="' + (own ? 1 : 0) + '">Itinéraire</button>' : '') +
     (!own && S.gid ? '<button class="btn" data-act="fd-like"' + (liked ? ' disabled' : '') + '>' + (liked ? 'Bravo envoyé' : 'Bravo !') + '</button>' : '') +
     '<button class="btn" data-act="fd-center">Voir sur la carte</button>' +
+    (learn.ficheForGame(f.species) ? '<button class="btn" data-act="en-open" data-id="' + esc(learn.ficheForGame(f.species)) + '">Fiche</button>' : '') +
     (own ? '<button class="btn danger" data-act="fd-del">Supprimer</button>' : '') + '</div>');
   card.addEventListener('click', e => {
     const a = e.target.closest('[data-act]'); if (!a) return;
@@ -1189,7 +1227,8 @@ function onEvents(list) {
   }
   renderPanelIfOpen('groupe');
 }
-const evText = ev => ev.type === 'sos' ? 'SOS de ' + ev.name : ev.type === 'rally' ? ev.name + ' propose de se regrouper' : ev.type === 'look' ? ev.name + ' : « ' + (ev.msg || 'Venez voir !') + ' »' : ev.type === 'find' ? ev.name + ' a trouvé : ' + ((Game.SPECIES_BY_ID[ev.species] || {}).n || 'un champignon') : ev.type === 'treasure' ? ev.name + ' a trouvé le cèpe d\'or !' : ev.type === 'hidden' ? ev.name + ' a caché un cèpe d\'or' : ev.name + ' : ' + (ev.msg || '');
+const findEvText = ev => { const sp = Game.SPECIES_BY_ID[ev.species] || {}; return sp.cat && sp.cat !== 'c' ? ev.name + ' signale : ' + sp.n + ' (' + Game.CAT_LABEL[sp.cat].toLowerCase() + ')' : ev.name + ' a trouvé : ' + (sp.n || 'un champignon'); };
+const evText = ev => ev.type === 'sos' ? 'SOS de ' + ev.name : ev.type === 'rally' ? ev.name + ' propose de se regrouper' : ev.type === 'look' ? ev.name + ' : « ' + (ev.msg || 'Venez voir !') + ' »' : ev.type === 'find' ? findEvText(ev) : ev.type === 'treasure' ? ev.name + ' a trouvé le cèpe d\'or !' : ev.type === 'hidden' ? ev.name + ' a caché un cèpe d\'or' : ev.name + ' : ' + (ev.msg || '');
 function notifyEvent(ev) {
   if (NativeApp && document.hidden) nativeNotify(ev);
   if (ev.type === 'sos') { vibrate([300, 120, 300, 120, 600]); openEvent(ev); return; }
@@ -1718,9 +1757,12 @@ function renderGroupPanel() {
 function mycodexHtml() {
   const per = (S.prof && S.prof.stats.perSpecies) || {};
   const list = Game.CATALOG.filter(s => s.id !== 'autre'), found = list.filter(s => per[s.id]).length;
+  const cell = s => '<button class="' + (per[s.id] ? '' : 'locked') + '" data-act="species" data-id="' + s.id + '"><img alt="" loading="lazy" src="' + speciesImg(s.id) + '">' + esc(per[s.id] ? s.n : '???') + '<small>' + (per[s.id] ? per[s.id] + ' trouvaille' + (per[s.id] > 1 ? 's' : '') : s.pts + ' pts') + '</small></button>';
+  const sec = (title, note, l) => { const f = l.filter(s => per[s.id]).length; return '<h3 class="dex-h">' + title + ' <span class="tag">' + f + ' / ' + l.length + '</span></h3>' + (note ? '<p class="note" style="margin:0 0 8px">' + note + '</p>' : '') + '<div class="dex">' + l.map(cell).join('') + '</div>'; };
   return '<h2>Mycodex</h2><p class="lead">' + found + ' espèce' + (found > 1 ? 's' : '') + ' trouvée' + (found > 1 ? 's' : '') + ' sur ' + list.length + '. Chaque nouvelle espèce rapporte double.</p>' +
     '<div class="progress"><b style="width:' + Math.round(100 * found / list.length) + '%"></b></div>' +
-    '<div class="dex">' + list.map(s => '<button class="' + (per[s.id] ? '' : 'locked') + '" data-act="species" data-id="' + s.id + '"><img alt="" src="' + speciesImg(s.id, 128) + '">' + esc(per[s.id] ? s.n : '???') + '<small>' + (per[s.id] ? per[s.id] + ' trouvaille' + (per[s.id] > 1 ? 's' : '') : s.pts + ' pts') + '</small></button>').join('') + '</div>';
+    sec('Comestibles', '', list.filter(s => s.cat === 'c')) +
+    sec('À connaître', 'Toxiques, mortels ou sans intérêt : on les photographie, on ne les cueille pas.', list.filter(s => s.cat !== 'c'));
 }
 function renderMycodex() { renderPanelIfOpen('mycodex'); }
 function openSpecies(id) {
@@ -1728,10 +1770,10 @@ function openSpecies(id) {
   const core = s.core ? C.SPECIES.find(x => x.id === s.core) : null;
   const mine = S.myFinds.filter(f => f.species === id);
   const found = mine.length > 0;
-  const card = openModal(modalHead(found ? s.n : 'Espèce à découvrir') + '<img alt="" src="' + speciesImg(id, 200) + '" style="width:150px;display:block;margin:0 auto;' + (found ? '' : 'filter:brightness(0) opacity(.25)') + '">' +
-    (found ? '<div class="latin" style="text-align:center;margin-top:6px">' + esc(s.lat) + '</div>' : '<p style="text-align:center" class="note">Trouvez-la pour la débloquer : ' + s.pts * 2 + ' points la première fois.</p>') +
-    (found ? '<p>' + esc(core ? core.hab : s.hab) + '</p><div class="warnbox"><b>Confusions :</b> ' + esc(core ? core.conf : s.conf) + '</div>' : '<p class="note">Indice : ' + esc((core ? core.hab : s.hab).split(/[,.;]/)[0]) + '.</p>') +
-    (mine.length ? '<h3 style="margin-top:14px">Vos trouvailles</h3><div class="list">' + mine.slice(0, 20).map(f => '<div class="li" data-act="myfind" data-id="' + esc(f.id) + '" style="cursor:pointer"><img alt="" src="' + (f.thumb || speciesImg(f.species, 64)) + '"><div class="grow">' + esc(dateFr(f.ts)) + '<small>' + esc((Game.QTY[f.qty] || Game.QTY[1]).n) + (f.commune ? ' · ' + esc(f.commune) : '') + (f.vis === 'prive' ? ' · secret' : '') + '</small></div></div>').join('') + '</div>' : '') +
+  const card = openModal(modalHead(found ? s.n : 'Espèce à découvrir') + '<img alt="" src="' + speciesImg(id) + '" style="width:150px;display:block;margin:0 auto;' + (found ? '' : 'filter:brightness(0) opacity(.25)') + '">' +
+    (found ? '<div class="latin" style="text-align:center;margin-top:6px">' + esc(s.lat) + ' ' + catBadge(s) + '</div>' : '<p style="text-align:center" class="note">Trouvez-la pour la débloquer : ' + s.pts * 2 + ' points la première fois.' + (s.cat && s.cat !== 'c' ? ' ' + catBadge(s) : '') + '</p>') +
+    (found ? '<p>' + esc(core ? core.hab : s.hab) + '</p>' + (s.cat && s.cat !== 'c' ? '<div class="warnbox danger"><b>' + esc(Game.CAT_LABEL[s.cat]) + ' :</b> ' + esc(s.conf) + '</div>' : '<div class="warnbox"><b>Confusions :</b> ' + esc(core ? core.conf : s.conf) + '</div>') : '<p class="note">Indice : ' + esc((core ? core.hab : s.hab).split(/[,.;]/)[0]) + '.</p>') +
+    (mine.length ? '<h3 style="margin-top:14px">Vos trouvailles</h3><div class="list">' + mine.slice(0, 20).map(f => '<div class="li" data-act="myfind" data-id="' + esc(f.id) + '" style="cursor:pointer"><img alt="" src="' + (f.thumb || speciesImg(f.species, 64)) + '"><div class="grow">' + esc(dateFr(f.ts)) + '<small>' + esc(Game.isEdibleSp(f.species) ? (Game.QTY[f.qty] || Game.QTY[1]).n : Game.CAT_LABEL[(Game.SPECIES_BY_ID[f.species] || {}).cat] || 'À identifier') + (f.commune ? ' · ' + esc(f.commune) : '') + (f.vis === 'prive' ? ' · secret' : '') + '</small></div></div>').join('') + '</div>' : '') +
     '<div class="actions">' + (learn.ficheForGame(id) ? '<button class="btn" data-act="en-open" data-id="' + esc(learn.ficheForGame(id)) + '">Fiche complète</button>' : '') + (core ? '<button class="btn primary" data-act="species-map" data-id="' + esc(core.id) + '">Voir ses coins sur la carte</button>' : '') + '</div>');
   card.addEventListener('click', e => {
     const a = e.target.closest('[data-act]'); if (!a) return;

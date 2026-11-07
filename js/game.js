@@ -1,5 +1,5 @@
 // Règles du jeu : espèces du Mycodex, points, niveaux, badges, défis de la semaine, zones explorées.
-import { quizStats, QUIZ_WEEK_PTS } from './encyclo.js';
+import { quizStats, QUIZ_WEEK_PTS, BY_ID as FICHES, ENCYCLO } from './encyclo.js';
 
 export const CATALOG = [
   { id: 'cepe', n: 'Cèpe', lat: 'Boletus edulis', cap: 'cepe', pts: 30, core: 'cepe' },
@@ -24,10 +24,43 @@ export const CATALOG = [
     hab: 'Au pied des pins, en grosse boule crépue rappelant un chou-fleur, fin d\'été et automne.', conf: 'Forme unique ; bien nettoyer, les aiguilles et la terre se logent partout.', m: { 8: .6, 9: 1, 10: .9, 11: .4 } },
   { id: 'cesar', n: 'Amanite des Césars', lat: 'Amanita caesarea', cap: 'cesar', pts: 50, core: null,
     hab: 'Chênaies et châtaigneraies chaudes du Sud-Ouest et du Midi, plus rare au nord de la Loire, après les étés chauds.', conf: 'Amanite tue-mouches (rouge à flocons blancs, lames blanches) : toxique. L\'oronge a des lames et un pied jaunes.', m: { 7: .6, 8: 1, 9: .9, 10: .3 } },
-  { id: 'autre', n: 'Autre, à identifier', lat: '—', cap: 'inconnu', pts: 5, core: null,
+  // autres comestibles (habitat, sosies et saison viennent de leur fiche dans l'encyclopédie)
+  { id: 'coprin', pts: 10 }, { id: 'vesse', pts: 15 }, { id: 'hygrophore', pts: 30 }, { id: 'marasme', pts: 10 },
+  { id: 'leccinum', pts: 20 }, { id: 'pied_rouge', pts: 15 }, { id: 'russule_verte', pts: 20 }, { id: 'bolet_jaune', pts: 10 },
+  { id: 'polypore_soufre', pts: 15 }, { id: 'langue_boeuf', n: 'Langue de bœuf', pts: 15 }, { id: 'oreille_judas', pts: 10 },
+  { id: 'laccaire', pts: 5 }, { id: 'truffe', pts: 60 },
+  // à connaître : toxiques et non comestibles (une photo suffit, on ne les cueille pas)
+  { id: 'phalloide', pts: 15 }, { id: 'amanite_blanche', n: 'Amanite blanche mortelle', pts: 15 }, { id: 'cortinaire', n: 'Cortinaire mortel', pts: 15 },
+  { id: 'lepiote', n: 'Petite lépiote mortelle', pts: 10 }, { id: 'galere', pts: 10 }, { id: 'gyromitre', pts: 15 }, { id: 'inocybe', pts: 10 },
+  { id: 'equestre', pts: 10 }, { id: 'paxille', pts: 5 }, { id: 'panthere', pts: 10 }, { id: 'tuemouche', pts: 10 }, { id: 'satan', pts: 15 },
+  { id: 'entolome', pts: 10 }, { id: 'olivier', pts: 15 }, { id: 'clitoblanc', n: 'Clitocybe blanc', pts: 5 }, { id: 'hypholome', pts: 5 },
+  { id: 'jaunissant', pts: 5 }, { id: 'toison', pts: 5 }, { id: 'emetique', pts: 5 }, { id: 'clitocybe_nebuleux', pts: 5 },
+  { id: 'scleroderme', pts: 5 }, { id: 'mycene_pure', pts: 5 }, { id: 'faussegirolle', pts: 5 }, { id: 'amer', pts: 5 },
+  { id: 'amanite_citrine', pts: 5 }, { id: 'amadouvier', pts: 5 }, { id: 'satyre', pts: 10 }, { id: 'anthurus', pts: 15 }, { id: 'armillaire', pts: 5 },
+  { id: 'autre', n: 'Autre, à identifier', lat: '—', cap: 'inconnu', pts: 5, core: null, cat: null,
     hab: 'Une trouvaille à faire identifier par un pharmacien ou une société mycologique.', conf: 'Ne consommez jamais un champignon sans identification certaine.', m: {} }
 ];
+// cat : c comestible, e non comestible, t toxique, m mortel (comme l'encyclopédie) ; fiche : fiche de l'encyclopédie
+for (const s of CATALOG) {
+  if (s.id === 'autre') continue;
+  const f = FICHES[s.id] || null;
+  s.fiche = f ? f.id : null;
+  if (!('cat' in s)) s.cat = f ? f.cat : 'c';
+  if (!s.n) s.n = f.n;
+  if (!s.lat) s.lat = f.lat;
+  if (!s.cap) s.cap = s.id;
+  if (!('core' in s)) s.core = null;
+  if (!s.hab && f) s.hab = f.hab;
+  if (!s.m && f) s.m = f.m;
+  // noms et alias des fiches rattachées (les quatre cèpes pour « Cèpe »), pour la recherche
+  s.alias = ENCYCLO.filter(e => e.game === s.id).map(e => e.n + ', ' + (e.alias || '')).join(', ');
+  if (!s.conf && f) s.conf = s.cat === 'c' ? f.sosies.map(x => x[1]).slice(0, 2).join(' ') : f.tox + (f.sosies.length ? ' Ne la confondez pas : ' + f.sosies[0][1] : '');
+}
 export const SPECIES_BY_ID = Object.fromEntries(CATALOG.map(s => [s.id, s]));
+export const isEdibleSp = id => { const s = SPECIES_BY_ID[id]; return !!s && s.cat === 'c'; };
+export const CAT_LABEL = { c: 'Comestible', e: 'Non comestible', t: 'Toxique', m: 'Mortel' };
+// quantité (et points de panier) seulement pour ce qui se mange : on ne remplit pas un panier d'amanites
+const qtyPts = f => isEdibleSp(f.species) ? (QTY[f.qty] || QTY[1]).pts : 0;
 export const QTY = [null, { n: 'Quelques-uns', pts: 0 }, { n: 'Une poignée', pts: 5 }, { n: 'Un panier', pts: 15 }];
 export const VISIBILITY = { prive: 'Privée', groupe: 'Groupe', flou: 'Groupe, position floutée' };
 
@@ -46,7 +79,7 @@ export function findPoints(f, firstOfSpecies) {
   const sp = SPECIES_BY_ID[f.species] || SPECIES_BY_ID.autre;
   let p = sp.pts * (firstOfSpecies ? 2 : 1);
   if (f.hasPhoto) p += 5;
-  p += (QTY[f.qty] || QTY[1]).pts;
+  p += qtyPts(f);
   if (f.vis === 'groupe' || f.vis === 'flou') p += 3;
   return p;
 }
@@ -65,7 +98,7 @@ export function computeProfile(finds, sorties, me) {
     const first = !seen.has(f.species);
     if (f.species && f.species !== 'autre') seen.add(f.species);
     const sp = SPECIES_BY_ID[f.species] || SPECIES_BY_ID.autre, isNew = first && f.species !== 'autre';
-    const q = (QTY[f.qty] || QTY[1]).pts, sh = f.vis === 'groupe' || f.vis === 'flou' ? 3 : 0, ph = f.hasPhoto ? 5 : 0;
+    const q = qtyPts(f), sh = f.vis === 'groupe' || f.vis === 'flou' ? 3 : 0, ph = f.hasPhoto ? 5 : 0;
     pts.trouvailles += sp.pts; if (isNew) pts.nouvelles += sp.pts; pts.photos += ph; pts.paniers += q; pts.partage += sh;
     // une trouvaille secrète reste secrète : ni l'espèce ni le lieu ne sont montrés
     hist.push({ ts: f.ts || 0, k: 'find', n: f.vis === 'prive' ? 'Trouvaille gardée secrète' : sp.n + (isNew ? ' (nouvelle espèce)' : ''), p: findPoints(f, isNew) });
@@ -73,7 +106,7 @@ export function computeProfile(finds, sorties, me) {
     perSpecies[f.species] = (perSpecies[f.species] || 0) + 1;
     if (f.hasPhoto) photos++;
     if (f.vis === 'prive') privees++; else partagees++;
-    if (f.qty === 3) paniers++;
+    if (f.qty === 3 && isEdibleSp(f.species)) paniers++;
     if (f.commune) communes.add(f.commune);
     if (new Date(f.ts).getHours() < 8) matinal = true;
   }
@@ -155,7 +188,7 @@ export const CHALLENGES = [
   { id: 'dixkm', n: 'Dix kilomètres', d: 'Marchez 10 km en sortie, tous ensemble', target: 10, unit: 'km', metric: (f, c) => Math.round(c.reduce((a, s) => a + (s.dist || 0), 0) / 100) / 10 },
   { id: 'levetot', n: 'Lève-tôt', d: 'Une trouvaille avant 9 h', target: 1, unit: 'trouvaille', metric: (f) => f.filter(x => new Date(x.ts).getHours() < 9).length },
   { id: 'reporters', n: 'Reporters', d: 'Cinq trouvailles en photo', target: 5, unit: 'photos', metric: (f) => f.filter(x => x.hasPhoto).length },
-  { id: 'paniers', n: 'Paniers pleins', d: 'Trois paniers pleins', target: 3, unit: 'paniers', metric: (f) => f.filter(x => x.qty === 3).length },
+  { id: 'paniers', n: 'Paniers pleins', d: 'Trois paniers pleins', target: 3, unit: 'paniers', metric: (f) => f.filter(x => x.qty === 3 && isEdibleSp(x.species)).length },
   { id: 'tousdehors', n: 'Tous dehors', d: 'Trois membres différents font une sortie', target: 3, unit: 'membres', metric: (f, c) => new Set(c.map(s => s.uid)).size },
   { id: 'communes', n: 'Nouveaux horizons', d: 'Des trouvailles dans trois communes', target: 3, unit: 'communes', metric: (f) => new Set(f.map(x => x.commune).filter(Boolean)).size }
 ];

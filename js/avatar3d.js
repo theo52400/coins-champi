@@ -10,7 +10,7 @@ export const CAPS = {
   morille: { n: 'Morille', tints: ['#B48A57', '#99703F', '#CDA66E'], under: '#B48A57', stem: '#F0E7D3', shape: 'cone' },
   piedbleu: { n: 'Pied bleu', tints: ['#8D6FB7', '#A68BCB', '#6E5497'], under: '#C8B5E2', stem: '#B9A1DA', shape: 'convex' },
   coulemelle: { n: 'Coulemelle', tints: ['#D7C29F', '#E4D4B6', '#C6AE86'], under: '#F2ECDF', stem: '#E7DDC9', shape: 'parasol' },
-  cesar: { n: 'Amanite des Césars', tints: ['#EC7A1E', '#F28E36', '#D8640F'], under: '#F5D25A', stem: '#F5D25A', shape: 'hemi' },
+  cesar: { n: 'Amanite des Césars', tints: ['#EC7A1E', '#F28E36', '#D8640F'], under: '#F5D25A', stem: '#F5D25A', shape: 'hemi', volva: true },
   hydne: { n: 'Pied de mouton', tints: ['#E7C89A', '#EDD5AE', '#D9B27C'], under: '#F1DDBB', stem: '#F3E6CF', shape: 'wavy' },
   tube: { n: 'Chanterelle en tube', tints: ['#6B5641', '#7F6850', '#54412F'], under: '#C9A15A', stem: '#E2AE48', shape: 'funnel' },
   lactaire: { n: 'Lactaire délicieux', tints: ['#E2793A', '#EA8D52', '#C96526'], under: '#EE9A5C', stem: '#EBA26A', shape: 'convex' },
@@ -19,8 +19,54 @@ export const CAPS = {
   rose: { n: 'Rosé des prés', tints: ['#F3EFE7', '#E9E1D3', '#FBF8F2'], under: '#E39A98', stem: '#F6F2EA', shape: 'hemi' },
   russule: { n: 'Russule charbonnière', tints: ['#6C6893', '#7B8A6A', '#5A4F78'], under: '#F2EFE6', stem: '#F4F2EC', shape: 'convex' },
   sparassis: { n: 'Sparassis crépu', tints: ['#E6D49C', '#EEDFB2', '#D8C17C'], under: '#E6D49C', stem: '#E9DBAA', shape: 'wavy' },
-  inconnu: { n: 'Mystère', tints: ['#9AA39C', '#B5BCB6', '#7E8781'], under: '#D9DDD9', stem: '#E7EAE7', shape: 'dome' }
+  // espèces ajoutées au Mycodex (av: false = pas proposé comme avatar). ring : anneau · volva : volve · dots : ponctuations du pied
+  // tex : 'spots' (taches, verrues, plaques : couleur spot) ou 'scales' (mèches : couleur scale) · stemH : pied plus long
+  coprin: { n: 'Coprin chevelu', tints: ['#F4F0E6', '#EEE8DA', '#F8F5EE'], under: '#E8E2D6', stem: '#F6F3EC', shape: 'bell', tex: 'scales', scale: '#B49A7B', ring: '#F3EFE6' },
+  tuemouche: { n: 'Amanite tue-mouches', tints: ['#D42A1F', '#E2402E', '#BF1F15'], under: '#F8F5EE', stem: '#F6F3EC', shape: 'hemi', tex: 'spots', spot: '#FFFFFF', ring: '#F8F5EE', volva: true },
+  pied_rouge: { n: 'Bolet à pied rouge', tints: ['#5E3B26', '#6E4830', '#4D2F1E'], under: '#C9361F', stem: '#E2B23A', dots: '#B8281A', shape: 'dome' },
+  laccaire: { n: 'Laccaire améthyste', tints: ['#7C4A9C', '#8D5DAE', '#6B3D8A'], under: '#946AB8', stem: '#8A63A6', shape: 'wavy' },
+  vesse: { n: 'Vesse-de-loup géante', tints: ['#F3F1EA', '#ECE8DD', '#F8F7F2'], under: '#F3F1EA', stem: '#F3F1EA', shape: 'ball', av: false },
+  hygrophore: { n: 'Hygrophore de mars', tints: ['#55575C', '#6B6D72', '#45474C'], under: '#DCDAD4', stem: '#ECEAE5', shape: 'convex', av: false },
+  marasme: { n: 'Marasme des Oréades', tints: ['#D8B98C', '#E2C79F', '#C9A676'], under: '#EEE2CC', stem: '#E6D6BA', shape: 'conic', av: false },
+  leccinum: { n: 'Bolet orangé', tints: ['#D4632A', '#DE7638', '#C1531F'], under: '#E9E2D4', stem: '#EEE8DC', dots: '#3A2A22', shape: 'dome', av: false },
+  russule_verte: { n: 'Russule verdoyante', tints: ['#8DA676', '#9CB485', '#7E9767'], under: '#F4F1E7', stem: '#F6F4EE', shape: 'convex', tex: 'spots', spot: '#BFCDAA', av: false },
+  bolet_jaune: { n: 'Bolet jaune', tints: ['#6E4322', '#7E5130', '#5E381C'], under: '#E3C445', stem: '#EADFA6', ring: '#9C86B0', shape: 'cushion', av: false },
+  polypore_soufre: { n: 'Polypore soufré', tints: ['#F0A23A', '#F5B54E', '#E48C25'], under: '#F6DF55', stem: '#6E5A46', shape: 'shelf', shelves: 3, av: false },
+  langue_boeuf: { n: 'Langue de bœuf', tints: ['#A3342A', '#B64437', '#8E2920'], under: '#EBCDAF', stem: '#6A5643', shape: 'shelf', shelves: 1, thick: 1.4, av: false },
+  oreille_judas: { n: 'Oreille de Judas', tints: ['#74402A', '#865036', '#62341F'], under: '#9A6650', stem: '#7A6B5C', shape: 'shelf', shelves: 2, thick: 0.7, av: false },
+  armillaire: { n: 'Armillaire', tints: ['#C99846', '#D6AA5A', '#B98838'], under: '#F0E4CB', stem: '#D7BF95', ring: '#F1E8D3', shape: 'convex', tex: 'spots', spot: '#8A6438', av: false },
+  truffe: { n: 'Truffe', tints: ['#2B2522', '#36302C', '#221D1A'], under: '#2B2522', stem: '#2B2522', shape: 'ball', tex: 'spots', spot: '#5A4F48', av: false },
+  phalloide: { n: 'Amanite phalloïde', tints: ['#B9B57A', '#C8C48F', '#A8A56B'], under: '#F7F5EE', stem: '#F3F1E6', ring: '#F7F5EE', volva: true, shape: 'hemi', av: false },
+  amanite_blanche: { n: 'Amanite blanche', tints: ['#F5F3EE', '#EEEBE4', '#FAF9F6'], under: '#FAF9F6', stem: '#F7F5F0', ring: '#FAF9F6', volva: true, shape: 'hemi', av: false },
+  panthere: { n: 'Amanite panthère', tints: ['#7B5C3E', '#8C6C4C', '#6A4D32'], under: '#F6F3EC', stem: '#F4F1EA', ring: '#F6F3EC', volva: true, shape: 'convex', tex: 'spots', spot: '#F7F4EC', av: false },
+  cortinaire: { n: 'Cortinaire', tints: ['#B66A33', '#C47B42', '#A35B2A'], under: '#9A5A30', stem: '#C88E55', shape: 'conic', av: false },
+  lepiote: { n: 'Petite lépiote', tints: ['#EADDD3', '#F0E6DE', '#E0D0C4'], under: '#F5F0EA', stem: '#E8D8CC', shape: 'parasol', scale: '#8E4B3C', stemH: 0.75, av: false },
+  galere: { n: 'Galère marginée', tints: ['#B97A3C', '#C78B4C', '#A86C30'], under: '#B88A50', stem: '#A98560', ring: '#7E5D3C', shape: 'convex', av: false },
+  gyromitre: { n: 'Gyromitre', tints: ['#7C3D27', '#8E4C31', '#6A321F'], under: '#7C3D27', stem: '#F0EAE0', shape: 'brain', av: false },
+  entolome: { n: 'Entolome livide', tints: ['#D3CCBF', '#DDD7CC', '#C7BFB1'], under: '#E8C8B6', stem: '#F1EDE6', shape: 'convex', av: false },
+  olivier: { n: 'Clitocybe de l\'olivier', tints: ['#E87A2A', '#F08C3C', '#D96A1E'], under: '#F29236', stem: '#E98A3A', shape: 'funnel', av: false },
+  faussegirolle: { n: 'Fausse girolle', tints: ['#E6852C', '#EE973E', '#D7741F'], under: '#F19A3A', stem: '#E08A36', shape: 'funnel', av: false },
+  satan: { n: 'Bolet de Satan', tints: ['#DCD8CB', '#E6E2D7', '#CFCABB'], under: '#C9321F', stem: '#D65A3A', dots: '#9E2214', shape: 'dome', av: false },
+  amer: { n: 'Bolet amer', tints: ['#A97C52', '#B88C62', '#987044'], under: '#E8C6BE', stem: '#CDAF86', dots: '#7A5A3A', shape: 'dome', av: false },
+  clitoblanc: { n: 'Clitocybe blanc', tints: ['#EEEDE8', '#E6E4DE', '#F5F4F0'], under: '#F2F0EA', stem: '#EEEDE8', shape: 'wavy', av: false },
+  inocybe: { n: 'Inocybe', tints: ['#E8D8C6', '#EFE3D4', '#DCC8B2'], under: '#C9A98C', stem: '#EFE3D6', shape: 'conic', av: false },
+  equestre: { n: 'Tricholome équestre', tints: ['#D7BE45', '#E2CC5E', '#C7AC35'], under: '#F0DD55', stem: '#E9D873', shape: 'convex', av: false },
+  paxille: { n: 'Paxille enroulé', tints: ['#8E6B47', '#A07B55', '#7C5C3B'], under: '#B88E5B', stem: '#9E7C58', shape: 'funnel', av: false },
+  hypholome: { n: 'Hypholome en touffe', tints: ['#E2C13A', '#EBCF55', '#D2AE2C'], under: '#A8A64A', stem: '#E0C755', shape: 'convex', av: false },
+  jaunissant: { n: 'Agaric jaunissant', tints: ['#F2EEE6', '#E9E4DA', '#F8F6F1'], under: '#D9A6A0', stem: '#F4F1EA', ring: '#F7F4EE', shape: 'hemi', av: false },
+  toison: { n: 'Lactaire à toison', tints: ['#E7A595', '#EFB6A8', '#DC9280'], under: '#F3E3D8', stem: '#EED8CC', shape: 'funnel', av: false },
+  emetique: { n: 'Russule émétique', tints: ['#D7262D', '#E33A40', '#C41D24'], under: '#F7F5EF', stem: '#F8F7F3', shape: 'convex', av: false },
+  clitocybe_nebuleux: { n: 'Clitocybe nébuleux', tints: ['#A9A59D', '#B9B5AD', '#98948C'], under: '#EDE5D0', stem: '#E3DFD4', shape: 'convex', av: false },
+  scleroderme: { n: 'Scléroderme', tints: ['#D2AD5A', '#DCBB6C', '#C59D4A'], under: '#D2AD5A', stem: '#D2AD5A', shape: 'ball', tex: 'spots', spot: '#86602F', av: false },
+  mycene_pure: { n: 'Mycène pure', tints: ['#C9A1C6', '#D4B0D2', '#BD92BA'], under: '#E8D6E6', stem: '#CFB0CC', shape: 'conic', av: false },
+  amanite_citrine: { n: 'Amanite citrine', tints: ['#E6DF9E', '#EDE7B2', '#DDD58A'], under: '#FAF8EE', stem: '#F6F3E6', ring: '#F7F4E8', volva: true, shape: 'hemi', tex: 'spots', spot: '#EFE9D2', av: false },
+  amadouvier: { n: 'Amadouvier', tints: ['#8E8C87', '#A3A19B', '#7A7873'], under: '#C9B597', stem: '#8B7B66', shape: 'shelf', shelves: 2, thick: 1.8, av: false },
+  satyre: { n: 'Satyre puant', tints: ['#4D4E2C', '#5C5D36', '#3F4023'], under: '#4D4E2C', stem: '#F4F1E8', shape: 'cone', stemH: 1.7, volva: true, av: false },
+  anthurus: { n: 'Anthurus d\'Archer', tints: ['#D9302A', '#E5463C', '#C4231E'], under: '#D9302A', stem: '#EEE8DE', shape: 'star', av: false },
+  inconnu: { n: 'Mystère', tints: ['#9AA39C', '#B5BCB6', '#7E8781'], under: '#D9DDD9', stem: '#E7EAE7', shape: 'dome', av: false }
 };
+// chapeaux proposés pour les avatars
+export const AVATAR_CAPS = Object.keys(CAPS).filter(k => CAPS[k].av !== false);
 export const EYES = { rond: 'Ronds', joyeux: 'Joyeux', clin: 'Clin d\'œil' };
 export const MOUTHS = { sourire: 'Sourire', rire: 'Rire', o: 'Étonné', moustache: 'Moustache' };
 export const ACCS = { aucun: 'Rien', panier: 'Panier', loupe: 'Loupe', baton: 'Bâton', couteau: 'Couteau' };
@@ -29,7 +75,7 @@ export const SCARVES = [null, '#C0392B', '#2E6FD1', '#2C8C4B', '#E0A21B', '#7D3C
 
 export function randomAvatar() {
   const pick = o => { const k = Array.isArray(o) ? o : Object.keys(o); return k[Math.floor(Math.random() * k.length)]; };
-  return { v: 1, cap: pick(Object.keys(CAPS).filter(k => k !== 'inconnu')), tint: Math.floor(Math.random() * 3), eyes: pick(['rond', 'rond', 'joyeux', 'clin']), mouth: pick(['sourire', 'sourire', 'rire', 'o', 'moustache']),
+  return { v: 1, cap: pick(AVATAR_CAPS), tint: Math.floor(Math.random() * 3), eyes: pick(['rond', 'rond', 'joyeux', 'clin']), mouth: pick(['sourire', 'sourire', 'rire', 'o', 'moustache']),
     cheeks: Math.random() < 0.7, acc: pick(ACCS), head: pick(['aucun', 'aucun', 'feuille', 'escargot', 'lampe']), scarf: pick(SCARVES), glasses: Math.random() < 0.25 };
 }
 export function normalizeAvatar(a) {
@@ -83,17 +129,53 @@ function morelTexture(base) {
     }
   });
 }
-function scalesTexture(base) {
+function scalesTexture(base, scale) {
   return canvasTexture(256, 256, (g, w, h) => {
     g.fillStyle = base; g.fillRect(0, 0, w, h);
     const r = seeded(11);
-    g.fillStyle = '#8A6A45';
+    g.fillStyle = scale || '#8A6A45';
     g.fillRect(0, 0, w, 26);
     for (let ring = 0; ring < 6; ring++) {
       const y = 40 + ring * 34, n = 6 + ring * 3;
       for (let k = 0; k < n; k++) { const x = (k + r()) * (w / n); g.globalAlpha = 0.75 - ring * 0.08; g.beginPath(); g.ellipse(x, y + r() * 8, 7 - ring * 0.6, 4, r(), 0, Math.PI * 2); g.fill(); }
     }
     g.globalAlpha = 1;
+  });
+}
+// taches, verrues ou plaques sur le chapeau (plus serrées vers le sommet, où la texture se resserre)
+function spotsTexture(base, spot, seed) {
+  return canvasTexture(256, 256, (g, w, h) => {
+    g.fillStyle = base; g.fillRect(0, 0, w, h);
+    const r = seeded(seed || 5); g.fillStyle = spot;
+    for (let row = 0; row < 7; row++) {
+      const y = 22 + row * 34, n = 4 + row * 2, rad = 9 - row * 0.55;
+      for (let k = 0; k < n; k++) {
+        const x = (k + 0.5 + (r() - 0.5) * 0.6) * (w / n), yy = y + (r() - 0.5) * 12, rx = rad * (0.7 + r() * 0.6) * Math.max(1, 6 / n * 1.6);
+        g.beginPath(); g.ellipse(x, yy, rx, rad * (0.6 + r() * 0.5), r() * 3, 0, Math.PI * 2); g.fill();
+        if (x - rx < 0) { g.beginPath(); g.ellipse(x + w, yy, rx, rad * 0.8, 0, 0, Math.PI * 2); g.fill(); }
+      }
+    }
+  });
+}
+// replis tortueux (gyromitre)
+function foldsTexture(base) {
+  return canvasTexture(256, 256, (g, w, h) => {
+    const c = new THREE.Color(base);
+    g.fillStyle = '#' + c.clone().offsetHSL(0, 0, 0.08).getHexString(); g.fillRect(0, 0, w, h);
+    const r = seeded(13); g.strokeStyle = '#' + c.clone().offsetHSL(0, 0, -0.14).getHexString(); g.lineCap = 'round';
+    for (let i = 0; i < 46; i++) {
+      let x = r() * w, y = r() * h, a = r() * 6.3; g.lineWidth = 3 + r() * 3; g.beginPath(); g.moveTo(x, y);
+      for (let k = 0; k < 7; k++) { a += (r() - 0.5) * 1.8; x += Math.cos(a) * 12; y += Math.sin(a) * 12; g.lineTo(x, y); }
+      g.stroke();
+    }
+  });
+}
+// ponctuations ou écailles sur le pied
+function dotsTexture(base, dot) {
+  return canvasTexture(128, 128, (g, w, h) => {
+    g.fillStyle = base; g.fillRect(0, 0, w, h);
+    const r = seeded(9); g.fillStyle = dot;
+    for (let i = 0; i < 260; i++) { const x = r() * w, y = 10 + r() * (h - 26); g.beginPath(); g.ellipse(x, y, 1.6 + r() * 1.6, 1.2 + r(), 0, 0, Math.PI * 2); g.fill(); }
   });
 }
 function wickerTexture() {
@@ -131,6 +213,10 @@ function capProfile(shape) {
     case 'horn': P.push(V(0.06, 0.18), V(0.22, 0.32), V(0.38, 0.55), V(0.48, 0.72), V(0.52, 0.74), V(0.5, 0.66), V(0.34, 0.42), V(0.2, 0.16), V(0.16, -0.02)); break;
     case 'cone': P.push(V(0, 0.98)); for (let i = 1; i <= 16; i++) { const t = i / 16; P.push(V(0.36 * Math.sin(t * Math.PI * 0.62) * (1 - 0.15 * t), 0.98 - t * 0.86)); } P.push(V(0.3, 0.1), V(0.24, 0.06)); break;
     case 'wavy': quarter(0.62, 0.24, 0.12, 18, 0.65); P.push(V(0.6, 0.08), V(0.5, 0.05), V(0.25, 0.04), V(0.19, 0.06)); break;
+    case 'bell': quarter(0.33, 0.24, 0.66, 12, 0.9); P.push(V(0.34, 0.5), V(0.34, 0.3), V(0.33, 0.12), V(0.3, 0.02), V(0.24, 0.0), V(0.17, 0.03)); break;
+    case 'conic': P.push(V(0, 0.5), V(0.06, 0.5), V(0.12, 0.45), V(0.24, 0.33), V(0.4, 0.2), V(0.52, 0.11), V(0.56, 0.06), V(0.52, 0.04), V(0.24, 0.03), V(0.17, 0.05)); break;
+    case 'brain': quarter(0.58, 0.48, 0.1, 18, 0.75); P.push(V(0.55, 0.05), V(0.4, 0.02), V(0.2, 0.03)); break;
+    case 'ball': for (let i = 0; i <= 22; i++) { const a = i / 22 * Math.PI; P.push(V(0.5 * Math.sin(a) * (1 + 0.05 * Math.sin(a * 2)), 0.37 + 0.44 * Math.cos(a))); } break;
   }
   return P.reverse();
 }
@@ -146,6 +232,9 @@ function waveRim(geo, rMin, amp, k) {
 }
 // Pied : rayon en fonction de la hauteur (0 = sol, h = raccord)
 function stemSpec(shape) {
+  if (shape === 'ball' || shape === 'star') return { h: 0.08, r0: 0.12, r1: 0.12, bulb: 0 };
+  if (shape === 'bell') return { h: 0.5, r0: 0.17, r1: 0.14, bulb: 0.03 };
+  if (shape === 'conic') return { h: 0.6, r0: 0.13, r1: 0.11, bulb: 0.02 };
   if (shape === 'parasol') return { h: 0.86, r0: 0.16, r1: 0.1, bulb: 0.05 };
   if (shape === 'funnel') return { h: 0.46, r0: 0.17, r1: 0.19, bulb: 0 };
   if (shape === 'horn') return { h: 0.34, r0: 0.17, r1: 0.16, bulb: 0 };
@@ -177,15 +266,31 @@ export function buildMushroom(cfg, opts) {
   const C = CAPS[a.cap];
   const root = new THREE.Group();
   const body = new THREE.Group(); root.add(body);
-  const s = stemSpec(C.shape);
+  const s = Object.assign({}, stemSpec(C.shape)); if (C.stemH) s.h *= C.stemH;
   const parts = { root, body, eyes: [], arms: [], blink: 0 };
+  const shadow = () => {
+    const blob = new THREE.Mesh(new THREE.PlaneGeometry(1.3, 1.3), new THREE.MeshBasicMaterial({ map: blobTexture(), transparent: true, depthWrite: false }));
+    blob.rotation.x = -Math.PI / 2; blob.position.y = 0.002; root.add(blob);
+  };
+  // consoles sur un tronc (polypores, langue de bœuf, oreille de Judas) et anthurus en étoile : pas de pied ni de visage
+  if (C.shape === 'shelf' || C.shape === 'star') {
+    (C.shape === 'shelf' ? buildShelf : buildStar)(C, C.tints[a.tint] || C.tints[0], body);
+    parts.cap = body; shadow();
+    parts.height = C.shape === 'shelf' ? 1.1 : 0.36;
+    return parts;
+  }
 
   // pied
-  const stem = withOutline(new THREE.Mesh(stemGeometry(s), toon(C.stem)), 0.04);
+  const stem = withOutline(new THREE.Mesh(stemGeometry(s), C.dots ? toon('#FFFFFF', { map: dotsTexture(C.stem, C.dots) }) : toon(C.stem)), 0.04);
   body.add(stem);
-  if (C.shape === 'hemi') { // volve blanche
+  if (C.volva) { // volve blanche
     const volva = withOutline(new THREE.Mesh(lathe([V(0.2, 0), V(0.25, 0.02), V(0.27, 0.12), V(0.24, 0.17), V(0.21, 0.13), V(0.2, 0.05)], 28), toon('#F4F1EA')), 0.03);
-    body.add(volva);
+    volva.scale.setScalar(Math.max(0.75, (s.r0 + 0.05) / 0.23)); body.add(volva);
+  }
+  if (C.ring) { // anneau en jupe
+    const y = s.h * (C.shape === 'bell' ? 0.55 : 0.8), r1 = stemR(s, y) + 0.008, r2 = stemR(s, y - 0.07) + 0.055;
+    const ring = new THREE.Mesh(new THREE.CylinderGeometry(r1, r2, 0.075, 28, 1, true), toon(C.ring, { side: THREE.DoubleSide }));
+    ring.position.y = y - 0.035; body.add(ring);
   }
   if (C.shape === 'parasol') { // anneau double coulissant
     const ring = new THREE.Mesh(new THREE.TorusGeometry(0.13, 0.025, 10, 28), toon('#F3ECDD'));
@@ -200,15 +305,18 @@ export function buildMushroom(cfg, opts) {
   if (C.shape === 'funnel') waveRim(capGeo, 0.42, 0.045, 7);
   if (C.shape === 'wavy') waveRim(capGeo, 0.4, 0.035, 5);
   if (C.shape === 'horn') waveRim(capGeo, 0.42, 0.05, 6);
+  if (C.shape === 'brain') waveRim(capGeo, 0.05, 0.07, 5);
   let capMat;
   const tint = C.tints[a.tint] || C.tints[0];
   if (C.shape === 'cone') capMat = toon('#FFFFFF', { map: morelTexture(tint) });
-  else if (C.shape === 'parasol') capMat = toon('#FFFFFF', { map: scalesTexture(tint) });
+  else if (C.shape === 'brain') capMat = toon('#FFFFFF', { map: foldsTexture(tint) });
+  else if (C.shape === 'parasol' || C.tex === 'scales') capMat = toon('#FFFFFF', { map: scalesTexture(tint, C.scale) });
+  else if (C.tex === 'spots') capMat = toon('#FFFFFF', { map: spotsTexture(tint, C.spot, a.cap.length) });
   else capMat = toon(tint);
   if (C.shape === 'horn') capMat.side = THREE.DoubleSide;
   const cap = withOutline(new THREE.Mesh(capGeo, capMat), 0.03);
   capGroup.add(cap);
-  if (C.shape !== 'horn' && C.shape !== 'cone' && C.shape !== 'funnel') { // dessous : pores / lames
+  if (!['horn', 'cone', 'funnel', 'bell', 'ball', 'brain'].includes(C.shape)) { // dessous : pores / lames
     const under = new THREE.Mesh(new THREE.CircleGeometry(0.5 * (C.shape === 'parasol' ? 1.3 : 1.05), 40), toon(C.under, { side: THREE.DoubleSide }));
     under.rotation.x = Math.PI / 2; under.position.y = C.shape === 'parasol' ? 0.075 : 0.045; capGroup.add(under);
   }
@@ -288,10 +396,44 @@ export function buildMushroom(cfg, opts) {
   if (o.extras && a.head !== 'aucun') addHead(a.head, capGroup, C.shape);
 
   // ombre au sol
-  const blob = new THREE.Mesh(new THREE.PlaneGeometry(1.3, 1.3), new THREE.MeshBasicMaterial({ map: blobTexture(), transparent: true, depthWrite: false }));
-  blob.rotation.x = -Math.PI / 2; blob.position.y = 0.002; root.add(blob);
-  parts.height = s.h + (C.shape === 'cone' ? 1.0 : C.shape === 'horn' ? 0.78 : 0.5);
+  shadow();
+  parts.height = s.h + (({ cone: 1.0, horn: 0.78, bell: 0.92, ball: 0.82, brain: 0.6 })[C.shape] || 0.5);
   return parts;
+}
+function barkTexture(base) {
+  return canvasTexture(128, 128, (g, w, h) => {
+    g.fillStyle = base; g.fillRect(0, 0, w, h);
+    const r = seeded(3), dark = '#' + new THREE.Color(base).offsetHSL(0, 0, -0.07).getHexString();
+    g.strokeStyle = dark; g.lineWidth = 2;
+    for (let x = 4; x < w; x += 11) { g.beginPath(); for (let y = 0; y <= h; y += 8) g.lineTo(x + Math.sin(y / 9 + x) * 2.5 + (r() - 0.5) * 2, y); g.stroke(); }
+  });
+}
+// consoles en demi-dôme accrochées à un tronc
+function buildShelf(C, tint, body) {
+  const tz = -0.34, tr = 0.3;
+  const trunk = withOutline(new THREE.Mesh(new THREE.CylinderGeometry(tr, tr + 0.05, 1.12, 28), toon('#FFFFFF', { map: barkTexture(C.stem) })), 0.02);
+  trunk.position.set(0, 0.56, tz); body.add(trunk);
+  const th = C.thick || 1, n = C.shelves || 2;
+  const list = n === 1 ? [[0.44, 0.5]] : n === 2 ? [[0.44, 0.36], [0.32, 0.72]] : [[0.46, 0.28], [0.38, 0.54], [0.28, 0.78]];
+  for (const [r, y] of list) {
+    const g = new THREE.Group(); g.position.set(0, y, tz + tr * 0.85); g.rotation.x = 0.32; body.add(g);
+    const P = []; for (let i = 0; i <= 14; i++) { const t = i / 14 * Math.PI / 2; P.push(V(r * Math.sin(t), 0.2 * th * (r / 0.44) * Math.cos(t))); }
+    const top = withOutline(new THREE.Mesh(new THREE.LatheGeometry(P.reverse(), 24, -Math.PI / 2, Math.PI), toon(tint, { side: THREE.DoubleSide })), 0.03);
+    top.geometry.computeVertexNormals(); g.add(top);
+    const under = new THREE.Mesh(new THREE.CircleGeometry(r, 24, 0, Math.PI), toon(C.under, { side: THREE.DoubleSide }));
+    under.rotation.x = Math.PI / 2; under.position.y = 0.004; g.add(under);
+  }
+}
+// anthurus : bras rouges en étoile sortant d'un œuf
+function buildStar(C, tint, body) {
+  const egg = withOutline(new THREE.Mesh(new THREE.SphereGeometry(0.2, 20, 14), toon(C.stem)), 0.03);
+  egg.scale.set(1, 0.62, 1); egg.position.y = 0.1; body.add(egg);
+  const mat = toon('#FFFFFF', { map: spotsTexture(tint, '#2A1A16', 3) }), up = new THREE.Vector3(0, 1, 0);
+  for (let k = 0; k < 5; k++) {
+    const ang = k / 5 * Math.PI * 2 + 0.35;
+    const pts = [[0, 0.12], [0.12, 0.3], [0.3, 0.37], [0.5, 0.28], [0.62, 0.12]].map(([x, y]) => new THREE.Vector3(x, y, 0).applyAxisAngle(up, ang));
+    body.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 24, 0.055, 10, false), mat));
+  }
 }
 
 function addAccessory(kind, hand) {
