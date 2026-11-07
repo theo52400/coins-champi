@@ -1,0 +1,47 @@
++ mkdir -p /tmp/ph
++ cd /tmp/ph
++ npm init -y
++ npm i -s sharp@0.33.5
++ cd -
+/home/runner/work/coins-champi/coins-champi
++ cp tools/photos/candidats.mjs /tmp/ph/
++ cat
++ mkdir -p /tmp/sonde-extra
++ node /tmp/ph/candidats.mjs /tmp/ph/especes-nouvelles.json /tmp/sonde-extra
+pied_rouge         50 fichiers,  46 libres et nets, planche de 15
+armillaire         51 fichiers,  43 libres et nets, planche de 15
+polypore_soufre    73 fichiers,  70 libres et nets, planche de 15
+langue_boeuf       51 fichiers,  45 libres et nets, planche de 15
+oreille_judas      52 fichiers,  49 libres et nets, planche de 15
+truffe             41 fichiers,  32 libres et nets, planche de 15
+bolet_jaune        52 fichiers,  46 libres et nets, planche de 15
+russule_verte      51 fichiers,  46 libres et nets, planche de 15
+laccaire           51 fichiers,  45 libres et nets, planche de 15
+amanite_citrine    53 fichiers,  53 libres et nets, planche de 15
+scleroderme        52 fichiers,  45 libres et nets, planche de 15
+mycene_pure        51 fichiers,  40 libres et nets, planche de 15
+amadouvier         61 fichiers,  57 libres et nets, planche de 15
+satyre             61 fichiers,  43 libres et nets, planche de 15
+anthurus           51 fichiers,  48 libres et nets, planche de 15
+clitocybe_nebuleux   51 fichiers,  51 libres et nets, planche de 15
++ ls -la /tmp/sonde-extra
+total 4228
+drwxr-xr-x  2 runner runner   4096 Nov  7 14:23 .
+drwxrwxrwt 15 root   root     4096 Nov  7 14:20 ..
+-rw-r--r--  1 runner runner 313797 Nov  7 14:23 amadouvier.jpg
+-rw-r--r--  1 runner runner 144394 Nov  7 14:22 amanite_citrine.jpg
+-rw-r--r--  1 runner runner 341336 Nov  7 14:23 anthurus.jpg
+-rw-r--r--  1 runner runner 309071 Nov  7 14:20 armillaire.jpg
+-rw-r--r--  1 runner runner 268108 Nov  7 14:22 bolet_jaune.jpg
+-rw-r--r--  1 runner runner 152278 Nov  7 14:23 candidats.json
+-rw-r--r--  1 runner runner 248689 Nov  7 14:23 clitocybe_nebuleux.jpg
+-rw-r--r--  1 runner runner 244794 Nov  7 14:22 laccaire.jpg
+-rw-r--r--  1 runner runner 159299 Nov  7 14:21 langue_boeuf.jpg
+-rw-r--r--  1 runner runner 220723 Nov  7 14:23 mycene_pure.jpg
+-rw-r--r--  1 runner runner 192530 Nov  7 14:21 oreille_judas.jpg
+-rw-r--r--  1 runner runner 301838 Nov  7 14:20 pied_rouge.jpg
+-rw-r--r--  1 runner runner 288194 Nov  7 14:21 polypore_soufre.jpg
+-rw-r--r--  1 runner runner 255251 Nov  7 14:22 russule_verte.jpg
+-rw-r--r--  1 runner runner 265126 Nov  7 14:23 satyre.jpg
+-rw-r--r--  1 runner runner 319918 Nov  7 14:22 scleroderme.jpg
+-rw-r--r--  1 runner runner 258670 Nov  7 14:21 truffe.jpg
