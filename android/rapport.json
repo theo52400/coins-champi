@@ -1,5 +1,5 @@
 {
- "date": "2026-11-07T14:51:26.759Z",
+ "date": "2026-11-07T15:04:10.510Z",
  "checks": [
   {
    "name": "L'appli démarre et se connecte au jeu (Firebase)",
@@ -40,7 +40,7 @@
    "name": "Profil créé, groupe de test créé",
    "ok": true,
    "detail": {
-    "gid": "FWCS7W96"
+    "gid": "JHEG46DF"
    }
   },
   {
@@ -56,8 +56,8 @@
    "detail": {
     "trace": 6,
     "fix": [
-     49.0407504,
-     7.5207426
+     49.0407216,
+     7.5207153
     ]
    }
   },
@@ -75,9 +75,9 @@
    "ok": true,
    "detail": {
     "presence": {
-     "lat": 49.045266,
-     "lng": 7.522944,
-     "ts": 1794063504296
+     "lat": 49.04528,
+     "lng": 7.522951,
+     "ts": 1794064260141
     },
     "dernierePosition": [
      49.0453,
@@ -99,9 +99,9 @@
    "ok": true,
    "detail": {
     "presence": {
-     "lat": 49.045309,
+     "lat": 49.045308,
      "lng": 7.522965,
-     "ts": 1794063559302
+     "ts": 1794064316348
     },
     "derniere": [
      49.0453,
@@ -130,13 +130,13 @@
   }
  ],
  "notes": [
-  "14:52:41 écran éteint, application en arrière-plan",
-  "14:57:43 alerte du robot envoyée"
+  "15:05:18 écran éteint, application en arrière-plan",
+  "15:10:20 alerte du robot envoyée"
  ],
  "logsAppli": [
-  "14:52:11 Connecté (firebase), joueur 12yJmzpg",
-  "14:52:17 Source forêts : LANDCOVER.FORESTINVENTORY.V2:formation_vegetale",
-  "14:52:23 Suivi natif démarré (écran éteint possible)"
+  "15:04:48 Connecté (firebase), joueur 3BW33GfO",
+  "15:04:54 Source forêts : LANDCOVER.FORESTINVENTORY.V2:formation_vegetale",
+  "15:05:00 Suivi natif démarré (écran éteint possible)"
  ],
  "resume": "13/13 vérifications réussies, 8 min"
 }
