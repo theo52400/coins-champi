@@ -7,8 +7,8 @@ import { fileURLToPath } from 'url';
 const here = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(here, '..', '..'), APP = path.resolve(here, '..'), WWW = path.join(APP, 'www');
 const ITEMS = ['index.html', 'manifest.webmanifest', 'config.js', 'sw.js', 'css', 'js', 'vendor', 'fonts', 'icons', 'data'];
-// Pris sur le site publié par l'appli (ils changent souvent ou pèsent lourd) : météo du jour, photos de l'encyclopédie
-const SKIP = [/^data\/meteo(\/|$)/, /^data\/encyclo\/photos(\/|$)/, /^data\/encyclo\/photos\.json$/];
+// Pris sur le site publié par l'appli (ils changent souvent ou pèsent lourd) : météo du jour, photos de l'encyclopédie, catalogue
+const SKIP = [/^data\/meteo(\/|$)/, /^data\/catalogue(\/|$)/, /^data\/encyclo\/photos(\/|$)/, /^data\/encyclo\/photos\.json$/];
 
 fs.rmSync(WWW, { recursive: true, force: true });
 fs.mkdirSync(WWW, { recursive: true });

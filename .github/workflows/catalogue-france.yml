@@ -1,0 +1,46 @@
+name: Catalogue des champignons de France
+# Construit data/catalogue : toutes les espèces de champignons de TAXREF qui ont un nom français, avec observations
+# en France (GBIF), résumé Wikipédia, photos libres et signalements de toxicité (tools/catalogue/build.mjs).
+# Recalculé chaque mois pour suivre les nouvelles observations ; rapport dans data/catalogue/rapport.txt.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '23 2 3 * *'
+  push:
+    branches: [main]
+    paths: ['tools/catalogue/**', '.github/workflows/catalogue-france.yml']
+permissions:
+  contents: write
+concurrency:
+  group: catalogue-france
+  cancel-in-progress: true
+jobs:
+  construire:
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Construire
+        run: node tools/catalogue/build.mjs /tmp/catalogue
+      - name: Contrôler
+        shell: bash
+        run: |
+          set -e
+          n=$(node -e "const j=require('/tmp/catalogue/index.json');console.log(j.sp.length)")
+          echo "espèces : $n"
+          test "$n" -gt 1000
+      - name: Enregistrer
+        shell: bash
+        run: |
+          set -e
+          rm -rf data/catalogue && mkdir -p data && cp -r /tmp/catalogue data/catalogue
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A data/catalogue
+          git diff --cached --quiet && exit 0
+          git commit -qm "Catalogue des champignons de France (TAXREF, GBIF, Wikipédia, Wikimedia Commons, iNaturalist)"
+          for i in 1 2 3 4; do git pull -q --rebase origin main && git push -q origin main && exit 0; sleep 7; done
+          exit 1
