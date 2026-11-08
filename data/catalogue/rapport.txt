@@ -1,0 +1,14 @@
+TAXREF (GBIF) : 30683 espèces de champignons acceptées
+Avec un nom français, par classe ou ordre (gardées / écartées) : Agaricomycetes 306/0, Russulales 270/0, Boletales 114/0, Polyporales 100/0, Tricholomatales 83/0, Amanitales 51/0, Pezizomycetes 40/0, Hymenochaetales 33/0, Gomphales 31/0, Sordariomycetes 20/0, Entolomatales 20/0, Leotiomycetes 13/6, Clavariales 19/0, Pluteales 15/0, Dothideomycetes 0/9, Hericiales 8/0, Lycoperdales 7/0, Phallales 7/0, Basidiomycetes 6/0, Hydnangiales 5/0, Uredinales 4/0, Gloeophyllales 4/0, Nidulariales 4/0, Thelephorales 4/0, Tremellales 4/0, Geastrales 3/0, Taphrinomycetes 0/2, Lecanoromycetes 0/2, Dacrymycetales 2/0, Eurotiomycetes 1/1, Ustilaginales 0/1, Saccharomycetes 0/1, Lichinomycetes 0/1, Schizophyllales 1/0, Geoglossomycetes 1/0, ? 1/0, Chytridiomycetes 0/1
+Espèces gardées : 1177
+Anciens noms latins rattachés : 4311
+Rattachées à GBIF : 1177
+Avec au moins une observation en France : 1109 ; observations au total : 565771
+Wikidata : 1165 espèces, dont 443 avec un article sur Wikipédia en français
+Valeurs de comestibilité sur Wikidata : Q19888517 choice mushroom ; Q19888537 caution mushroom ; Q19888591 deadly mushroom ; Q62102033 edible when cooked ; Q359511 poisonous mushroom ; Q654236 edible mushroom ; Q1169875 psychoactive mushroom ; Q1686195 medicinal mushrooms ; Q4317894 inedible mushroom
+Résumés Wikipédia : 441
+Photos Wikimedia Commons : 906 espèces
+Avec au moins une photo : 1060 / 1177
+Signalées mortelles : 11 ; signalées toxiques : 89 ; dans un genre à espèces mortelles : 146
+Index : 1177 espèces, 20 paquets de détails
+Les 40 plus observées : Hypholome en touffes (6491), Tramète versicolore (6062), Amanite rougissante (5906), Polypore marginé (5637), Amanite tue-mouches (5584), Stérée hirsute (5316), Amadouvier (5064), Amanite citrine (4471), Clitocybe laqué (4140), Vesse de loup perlée (3993), Polypore du bouleau (3984), Russule charbonnière (3856), Russule crevassée (3856), Laque améthyste (3656), Calocère visqueuse (3576), Mycène pur (3563), Xylaire du bois (3424), Plutée couleur de cerf (3258), Mycène casquée (3234), Clitocybe nébuleux (3221), Collybie visqueuse (3106), Inocybe à lames couleur de terre (3043), Collybie à lames larges (3012), Schizophylle commun (2927), Coprin chevelu (2865), Cèpe de Bordeaux (2857), Mucicule radicante (2799), Amanite élevée (2712), Satyre puant (2681), Paxille enroulé (2662), Bolet à chair jaune (2657), Armillaire couleur de miel (2645), Pied de mouton (2602), Scléroderme vulgaire (2580), Lépiote élevée (2537), Collybie beurrée (2535), Russule brûlée (2529), Russule noircissante (2529), Oreille de Judas (2524), Bolet bai (2484)
