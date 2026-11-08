@@ -1,0 +1,1261 @@
+{
+ "dataset": {
+  "title": "TAXREF",
+  "modified": "2025-03-14T12:19:14.329+00:00",
+  "pubDate": "2025-03-10T00:00:00.000+00:00",
+  "endpoints": [
+   {
+    "key": 1087531,
+    "type": "DWC_ARCHIVE",
+    "url": "https://ipt.gbif.fr/archive.do?r=taxref",
+    "createdBy": "1928bdf0-f5d2-11dc-8c12-b8a03c50a862",
+    "modifiedBy": "1928bdf0-f5d2-11dc-8c12-b8a03c50a862",
+    "created": "2025-03-10T16:10:43.342+00:00",
+    "modified": "2025-03-10T16:10:43.342+00:00",
+    "machineTags": []
+   },
+   {
+    "key": 1087530,
+    "type": "EML",
+    "url": "https://ipt.gbif.fr/eml.do?r=taxref",
+    "createdBy": "1928bdf0-f5d2-11dc-8c12-b8a03c50a862",
+    "modifiedBy": "1928bdf0-f5d2-11dc-8c12-b8a03c50a862",
+    "created": "2025-03-10T16:10:42.881+00:00",
+    "modified": "2025-03-10T16:10:42.881+00:00",
+    "machineTags": []
+   }
+  ],
+  "description": "<p>TAXREF est le référentiel taxonomique national pour la faune, la flore et la fonge de France \nmétropolitaine et d’outre-mer, élaboré et diffusé par le Muséum national d’Histoire naturelle \n(MNHN) dans le cadre de la mise en œuvre du Système d’Information de l&#39;inventaire National du Patrimoine naturel (SINP). Ce référentiel est unique pour la France ; il a pour but de lister et \nd’organiser "
+ },
+ "kingdom": [
+  {
+   "key": 134521164,
+   "name": "Animalia Linnaeus, 1758",
+   "taxonID": "183716"
+  },
+  {
+   "key": 221812255,
+   "name": "Protozoa Owen, 1858",
+   "taxonID": "187545"
+  },
+  {
+   "key": 221812258,
+   "name": "Plantae Haeckel, 1866",
+   "taxonID": "187079"
+  },
+  {
+   "key": 221822994,
+   "name": "Protoctista",
+   "taxonID": "187538"
+  },
+  {
+   "key": 222002362,
+   "name": "Fungi R.T.Moore, 1980",
+   "taxonID": "187496"
+  },
+  {
+   "key": 222093512,
+   "name": "Chromista Cavalier-Smith, 1981",
+   "taxonID": "436946"
+  },
+  {
+   "key": 222098602,
+   "name": "Bacteria Woese, Kandler & Wheelis, 2024",
+   "taxonID": "187502"
+  },
+  {
+   "key": 222105089,
+   "name": "Monera",
+   "taxonID": "187501"
+  },
+  {
+   "key": 222105091,
+   "name": "Archaea Woese, Kandler & Wheelis, 2024",
+   "taxonID": "913990"
+  },
+  {
+   "key": 252113883,
+   "name": "Orthornavirae",
+   "taxonID": "1056798"
+  }
+ ],
+ "sample": [
+  {
+   "key": 222064578,
+   "nameKey": 3383027,
+   "datasetKey": "0e61f8fe-7d25-4f81-ada7-d970bbb2c6d6",
+   "nubKey": 9152561,
+   "parentKey": 222064576,
+   "parent": "Dendropolyporus",
+   "basionymKey": 222064590,
+   "basionym": "Boletus umbellatus Pers., 1801",
+   "kingdom": "Fungi",
+   "phylum": "Basidiomycota",
+   "order": "Polyporales",
+   "family": "Polyporaceae",
+   "genus": "Dendropolyporus",
+   "species": "Dendropolyporus umbellatus",
+   "kingdomKey": 222002362,
+   "phylumKey": 222002800,
+   "orderKey": 222058466,
+   "familyKey": 222063502,
+   "genusKey": 222064576,
+   "speciesKey": 222064578,
+   "scientificName": "Dendropolyporus umbellatus (Pers.) Jülich, 1982",
+   "canonicalName": "Dendropolyporus umbellatus",
+   "authorship": "(Pers.) Jülich, 1982",
+   "nameType": "SCIENTIFIC",
+   "taxonomicStatus": "ACCEPTED",
+   "rank": "SPECIES",
+   "origin": "SOURCE",
+   "numDescendants": 0,
+   "numOccurrences": 0,
+   "taxonID": "42216",
+   "habitats": [],
+   "nomenclaturalStatus": [],
+   "threatStatuses": [],
+   "descriptions": [],
+   "vernacularNames": [
+    {
+     "vernacularName": "Umbrella Polypore",
+     "language": "eng"
+    },
+    {
+     "vernacularName": "Polypore en ombelle",
+     "language": "fra"
+    }
+   ],
+   "synonym": false,
+   "higherClassificationMap": {
+    "222002362": "Fungi",
+    "222002800": "Basidiomycota",
+    "222058466": "Polyporales",
+    "222063502": "Polyporaceae",
+    "222064576": "Dendropolyporus"
+   }
+  }
+ ],
+ "countSpeciesQ": 1,
+ "countSpecies": 30683,
+ "page0": {
+  "n": 1000,
+  "endOfRecords": false,
+  "withFr": 14,
+  "langs": [
+   "eng",
+   "fra"
+  ],
+  "ex": [
+   {
+    "key": 222003165,
+    "nameKey": 11015477,
+    "datasetKey": "0e61f8fe-7d25-4f81-ada7-d970bbb2c6d6",
+    "nubKey": 2593060,
+    "parentKey": 222003103,
+    "parent": "Taphrina",
+    "basionymKey": 222003172,
+    "basionym": "Exoascus pruni Fuckel, 1860",
+    "kingdom": "Fungi",
+    "phylum": "Ascomycota",
+    "order": "Taphrinales",
+    "family": "Taphrinaceae",
+    "genus": "Taphrina",
+    "species": "Taphrina pruni",
+    "kingdomKey": 222002362,
+    "phylumKey": 222002816,
+    "classKey": 222003098,
+    "orderKey": 222003099,
+    "familyKey": 222003101,
+    "genusKey": 222003103,
+    "speciesKey": 222003165,
+    "scientificName": "Taphrina pruni (Fuckel) Tul., 1866",
+    "canonicalName": "Taphrina pruni",
+    "authorship": "(Fuckel) Tul., 1866",
+    "nameType": "SCIENTIFIC",
+    "taxonomicStatus": "ACCEPTED",
+    "rank": "SPECIES",
+    "origin": "SOURCE",
+    "numDescendants": 0,
+    "numOccurrences": 0,
+    "taxonID": "49997",
+    "habitats": [],
+    "nomenclaturalStatus": [],
+    "threatStatuses": [],
+    "descriptions": [],
+    "vernacularNames": [
+     {
+      "vernacularName": "Pocket Plum",
+      "language": "eng"
+     },
+     {
+      "vernacularName": "Cloque du prunier",
+      "language": "fra"
+     }
+    ],
+    "synonym": false,
+    "higherClassificationMap": {
+     "222002362": "Fungi",
+     "222002816": "Ascomycota",
+     "222003098": "Taphrinomycetes",
+     "222003099": "Taphrinales",
+     "222003101": "Taphrinaceae",
+     "222003103": "Taphrina"
+    },
+    "class": "Taphrinomycetes"
+   },
+   {
+    "key": 222003197,
+    "nameKey": 32345559,
+    "datasetKey": "0e61f8fe-7d25-4f81-ada7-d970bbb2c6d6",
+    "nubKey": 2557496,
+    "parentKey": 222003171,
+    "parent": "Ustilago",
+    "basionymKey": 222003205,
+    "basionym": "Lycoperdon tritici Bjerk., 1775",
+    "kingdom": "Fungi",
+    "phylum": "Basidiomycota",
+    "order": "Ustilaginales",
+    "family": "Ustilaginaceae",
+    "genus": "Ustilago",
+    "species": "Ustilago tritici",
+    "kingdomKey": 222002362,
+    "phylumKey": 222002800,
+    "orderKey": 222002850,
+    "familyKey": 222002851,
+    "genusKey": 222003171,
+    "speciesKey": 222003197,
+    "scientificName": "Ustilago tritici (Bjerk.) Rostr., 1890",
+    "canonicalName": "Ustilago tritici",
+    "authorship": "(Bjerk.) Rostr., 1890",
+    "nameType": "SCIENTIFIC",
+    "taxonomicStatus": "ACCEPTED",
+    "rank": "SPECIES",
+    "origin": "SOURCE",
+    "numDescendants": 0,
+    "numOccurrences": 0,
+    "taxonID": "463911",
+    "habitats": [],
+    "nomenclaturalStatus": [],
+    "threatStatuses": [],
+    "descriptions": [],
+    "vernacularNames": [
+     {
+      "vernacularName": "Loose Smut of Wheat",
+      "language": "eng"
+     }
+    ],
+    "synonym": false,
+    "higherClassificationMap": {
+     "222002362": "Fungi",
+     "222002800": "Basidiomycota",
+     "222002850": "Ustilaginales",
+     "222002851": "Ustilaginaceae",
+     "222003171": "Ustilago"
+    }
+   },
+   {
+    "key": 222003209,
+    "nameKey": 11015180,
+    "datasetKey": "0e61f8fe-7d25-4f81-ada7-d970bbb2c6d6",
+    "nubKey": 2593100,
+    "parentKey": 222003103,
+    "parent": "Taphrina",
+    "kingdom": "Fungi",
+    "phylum": "Ascomycota",
+    "order": "Taphrinales",
+    "family": "Taphrinaceae",
+    "genus": "Taphrina",
+    "species": "Taphrina johansonii",
+    "kingdomKey": 222002362,
+    "phylumKey": 222002816,
+    "classKey": 222003098,
+    "orderKey": 222003099,
+    "familyKey": 222003101,
+    "genusKey": 222003103,
+    "speciesKey": 222003209,
+    "scientificName": "Taphrina johansonii Sadeb., 1891",
+    "canonicalName": "Taphrina johansonii",
+    "authorship": "Sadeb., 1891",
+    "nameType": "SCIENTIFIC",
+    "taxonomicStatus": "ACCEPTED",
+    "rank": "SPECIES",
+    "origin": "SOURCE",
+    "numDescendants": 0,
+    "numOccurrences": 0,
+    "taxonID": "49996",
+    "habitats": [],
+    "nomenclaturalStatus": [],
+    "threatStatuses": [],
+    "descriptions": [],
+    "vernacularNames": [
+     {
+      "vernacularName": "Aspen Tongue",
+      "language": "eng"
+     }
+    ],
+    "synonym": false,
+    "higherClassificationMap": {
+     "222002362": "Fungi",
+     "222002816": "Ascomycota",
+     "222003098": "Taphrinomycetes",
+     "222003099": "Taphrinales",
+     "222003101": "Taphrinaceae",
+     "222003103": "Taphrina"
+    },
+    "class": "Taphrinomycetes"
+   }
+  ]
+ },
+ "deep": {
+  "n": 1000
+ },
+ "usage": {
+  "key": 222064578,
+  "nubKey": 9152561,
+  "nameKey": 3383027,
+  "taxonID": "42216",
+  "kingdom": "Fungi",
+  "phylum": "Basidiomycota",
+  "order": "Polyporales",
+  "family": "Polyporaceae",
+  "genus": "Dendropolyporus",
+  "species": "Dendropolyporus umbellatus",
+  "kingdomKey": 222002362,
+  "phylumKey": 222002800,
+  "orderKey": 222058466,
+  "familyKey": 222063502,
+  "genusKey": 222064576,
+  "speciesKey": 222064578,
+  "datasetKey": "0e61f8fe-7d25-4f81-ada7-d970bbb2c6d6",
+  "parentKey": 222064576,
+  "parent": "Dendropolyporus",
+  "basionymKey": 222064590,
+  "basionym": "Boletus umbellatus Pers., 1801",
+  "scientificName": "Dendropolyporus umbellatus (Pers.) Jülich, 1982",
+  "canonicalName": "Dendropolyporus umbellatus",
+  "authorship": "(Pers.) Jülich, 1982",
+  "nameType": "SCIENTIFIC",
+  "rank": "SPECIES",
+  "origin": "SOURCE",
+  "taxonomicStatus": "ACCEPTED",
+  "nomenclaturalStatus": [],
+  "numDescendants": 0,
+  "references": "https://taxref.mnhn.fr/taxref-web/taxa/42216",
+  "lastCrawled": "2025-03-14T12:19:09.957+00:00",
+  "lastInterpreted": "2025-03-14T12:42:18.702+00:00",
+  "issues": [
+   "SCIENTIFIC_NAME_ASSEMBLED"
+  ]
+ },
+ "vern": {
+  "offset": 0,
+  "limit": 20,
+  "endOfRecords": true,
+  "results": [
+   {
+    "taxonKey": 222064578,
+    "vernacularName": "Polypore en ombelle",
+    "language": "fra",
+    "country": "FR",
+    "area": "fra",
+    "source": "SMF"
+   },
+   {
+    "taxonKey": 222064578,
+    "vernacularName": "Umbrella Polypore",
+    "language": "eng",
+    "country": "GB",
+    "area": "eng",
+    "source": "NHM"
+   }
+  ]
+ },
+ "distrib": {
+  "offset": 0,
+  "limit": 20,
+  "endOfRecords": true,
+  "results": []
+ },
+ "syn": {
+  "offset": 0,
+  "limit": 20,
+  "endOfRecords": true,
+  "results": [
+   {
+    "key": 222064590,
+    "nubKey": 5954552,
+    "nameKey": 1535739,
+    "taxonID": "511860",
+    "kingdom": "Fungi",
+    "phylum": "Basidiomycota",
+    "order": "Polyporales",
+    "family": "Polyporaceae",
+    "genus": "Dendropolyporus",
+    "species": "Dendropolyporus umbellatus",
+    "kingdomKey": 222002362,
+    "phylumKey": 222002800,
+    "orderKey": 222058466,
+    "familyKey": 222063502,
+    "genusKey": 222064576,
+    "speciesKey": 222064578,
+    "datasetKey": "0e61f8fe-7d25-4f81-ada7-d970bbb2c6d6",
+    "parentKey": 222064576,
+    "parent": "Dendropolyporus",
+    "acceptedKey": 222064578,
+    "accepted": "Dendropolyporus umbellatus (Pers.) Jülich, 1982",
+    "scientificName": "Boletus umbellatus Pers., 1801",
+    "canonicalName": "Boletus umbellatus",
+    "authorship": "Pers., 1801",
+    "nameType": "SCIENTIFIC",
+    "rank": "SPECIES",
+    "origin": "SOURCE",
+    "taxonomicStatus": "SYNONYM",
+    "nomenclaturalStatus": [],
+    "numDescendants": 0,
+    "references": "https://taxref.mnhn.fr/taxref-web/taxa/511860",
+    "lastCrawled": "2025-03-14T12:19:09.957+00:00",
+    "lastInterpreted": "2025-03-14T12:42:18.711+00:00",
+    "issues": [
+     "SCIENTIFIC_NAME_ASSEMBLED"
+    ]
+   },
+   {
+    "key": 222064588,
+    "nubKey": 2546830,
+    "nameKey": 2238864,
+    "taxonID": "511861",
+    "kingdom": "Fungi",
+    "phylum": "Basidiomycota",
+    "order": "Polyporales",
+    "family": "Polyporaceae",
+    "genus": "Dendropolyporus",
+    "species": "Dendropolyporus umbellatus",
+    "kingdomKey": 222002362,
+    "phylumKey": 222002800,
+    "orderKey": 222058466,
+    "familyKey": 222063502,
+    "genusKey": 222064576,
+    "speciesKey": 222064578,
+    "datasetKey": "0e61f8fe-7d25-4f81-ada7-d970bbb2c6d6",
+    "parentKey": 222064576,
+    "parent": "Dendropolyporus",
+    "acceptedKey": 222064578,
+    "accepted": "Dendropolyporus umbellatus (Pers.) Jülich, 1982",
+    "basionymKey": 222064590,
+    "basionym": "Boletus umbellatus Pers., 1801",
+    "scientificName": "Cerioporus umbellatus (Pers.) Quél., 1888",
+    "canonicalName": "Cerioporus umbellatus",
+    "authorship": "(Pers.) Quél., 1888",
+    "nameType": "SCIENTIFIC",
+    "rank": "SPECIES",
+    "origin": "SOURCE",
+    "taxonomicStatus": "SYNONYM",
+    "nomenclaturalStatus": [],
+    "numDescendants": 0,
+    "references": "https://taxref.mnhn.fr/taxref-web/taxa/511861",
+    "lastCrawled": "2025-03-14T12:19:09.957+00:00",
+    "lastInterpreted": "2025-03-14T12:42:18.709+00:00",
+    "issues": [
+     "SCIENTIFIC_NAME_ASSEMBLED"
+    ]
+   },
+   {
+    "key": 222064586,
+    "nubKey": 2546827,
+    "nameKey": 2547478,
+    "taxonID": "511862",
+    "kingdom": "Fungi",
+    "phylum": "Basidiomycota",
+    "order": "Polyporales",
+    "family": "Polyporaceae",
+    "genus": "Dendropolyporus",
+    "species": "Dendropolyporus umbellatus",
+    "kingdomKey": 222002362,
+    "phylumKey": 222002800,
+    "orderKey": 222058466,
+    "familyKey": 222063502,
+    "genusKey": 222064576,
+    "speciesKey": 222064578,
+    "datasetKey": "0e61f8fe-7d25-4f81-ada7-d970bbb2c6d6",
+    "parentKey": 222064576,
+    "parent": "Dendropolyporus",
+    "acceptedKey": 222064578,
+    "accepted": "Dendropolyporus umbellatus (Pers.) Jülich, 1982",
+    "basionymKey": 222064590,
+    "basionym": "Boletus umbellatus Pers., 1801",
+    "scientificName": "Cladomeris umbellata (Pers.) Quél., 1886",
+    "canonicalName": "Cladomeris umbellata",
+    "authorship": "(Pers.) Quél., 1886",
+    "nameType": "SCIENTIFIC",
+    "rank": "SPECIES",
+    "origin": "SOURCE",
+    "taxonomicStatus": "SYNONYM",
+    "nomenclaturalStatus": [],
+    "numDescendants": 0,
+    "references": "https://taxref.mnhn.fr/taxref-web/taxa/511862",
+    "lastCrawled": "2025-03-14T12:19:09.957+00:00",
+    "lastInterpreted": "2025-03-14T12:42:18.707+00:00",
+    "issues": [
+     "SCIENTIFIC_NAME_ASSEMBLED"
+    ]
+   },
+   {
+    "key": 222064584,
+    "nubKey": 8295017,
+    "nameKey": 17258545,
+    "taxonID": "42217",
+    "kingdom": "Fungi",
+    "phylum": "Basidiomycota",
+    "order": "Polyporales",
+    "family": "Polyporaceae",
+    "genus": "Dendropolyporus",
+    "species": "Dendropolyporus umbellatus",
+    "kingdomKey": 222002362,
+    "phylumKey": 222002800,
+    "orderKey": 222058466,
+    "familyKey": 222063502,
+    "genusKey": 222064576,
+    "speciesKey": 222064578,
+    "datasetKey": "0e61f8fe-7d25-4f81-ada7-d970bbb2c6d6",
+    "parentKey": 222064576,
+    "parent": "Dendropolyporus",
+    "acceptedKey": 222064578,
+    "accepted": "Dendropolyporus umbellatus (Pers.) Jülich, 1982",
+    "scientificName": "Grifola umbellata (Pers.) Imazeki",
+    "canonicalName": "Grifola umbellata",
+    "authorship": "(Pers.) Imazeki",
+    "nameType": "SCIENTIFIC",
+    "rank": "SPECIES",
+    "origin": "SOURCE",
+    "taxonomicStatus": "SYNONYM",
+    "nomenclaturalStatus": [],
+    "numDescendants": 0,
+    "references": "https://taxref.mnhn.fr/taxref-web/taxa/42217",
+    "lastCrawled": "2025-03-14T12:19:09.957+00:00",
+    "lastInterpreted": "2025-03-14T12:42:18.715+00:00",
+    "issues": [
+     "SCIENTIFIC_NAME_ASSEMBLED"
+    ]
+   },
+   {
+    "key": 222064582,
+    "nubKey": 5246841,
+    "nameKey": 19857791,
+    "taxonID": "511863",
+    "kingdom": "Fungi",
+    "phylum": "Basidiomycota",
+    "order": "Polyporales",
+    "family": "Polyporaceae",
+    "genus": "Dendropolyporus",
+    "species": "Dendropolyporus umbellatus",
+    "kingdomKey": 222002362,
+    "phylumKey": 222002800,
+    "orderKey": 222058466,
+    "familyKey": 222063502,
+    "genusKey": 222064576,
+    "speciesKey": 222064578,
+    "datasetKey": "0e61f8fe-7d25-4f81-ada7-d970bbb2c6d6",
+    "parentKey": 222064576,
+    "parent": "Dendropolyporus",
+    "acceptedKey": 222064578,
+    "accepted": "Dendropolyporus umbellatus (Pers.) Jülich, 1982",
+    "scientificName": "Merisma umbellata (Pers.) Gillet",
+    "canonicalName": "Merisma umbellata",
+    "authorship": "(Pers.) Gillet",
+    "nameType": "SCIENTIFIC",
+    "rank": "SPECIES",
+    "origin": "SOURCE",
+    "taxonomicStatus": "SYNONYM",
+    "nomenclaturalStatus": [],
+    "numDescendants": 0,
+    "references": "https://taxref.mnhn.fr/taxref-web/taxa/511863",
+    "lastCrawled": "2025-03-14T12:19:09.957+00:00",
+    "lastInterpreted": "2025-03-14T12:42:18.705+00:00",
+    "issues": [
+     "SCIENTIFIC_NAME_ASSEMBLED"
+    ]
+   },
+   {
+    "key": 222064580,
+    "nubKey": 5246840,
+    "nameKey": 9063272,
+    "taxonID": "42219",
+    "kingdom": "Fungi",
+    "phylum": "Basidiomycota",
+    "order": "Polyporales",
+    "family": "Polyporaceae",
+    "genus": "Dendropolyporus",
+    "species": "Dendropolyporus umbellatus",
+    "kingdomKey": 222002362,
+    "phylumKey": 222002800,
+    "orderKey": 222058466,
+    "familyKey": 222063502,
+    "genusKey": 222064576,
+    "speciesKey": 222064578,
+    "datasetKey": "0e61f8fe-7d25-4f81-ada7-d970bbb2c6d6",
+    "parentKey": 222064576,
+    "parent": "Dendropolyporus",
+    "acceptedKey": 222064578,
+    "accepted": "Dendropolyporus umbellatus (Pers.) Jülich, 1982",
+    "basionymKey": 222064590,
+    "basionym": "Boletus umbellatus Pers., 1801",
+    "scientificName": "Polyporus umbellatus (Pers.) Fr., 1821",
+    "canonicalName": "Polyporus umbellatus",
+    "authorship": "(Pers.) Fr., 1821",
+    "nameType": "SCIENTIFIC",
+    "rank": "SPECIES",
+    "origin": "SOURCE",
+    "taxonomicStatus": "SYNONYM",
+    "nomenclaturalStatus": [],
+    "numDescendants": 0,
+    "references": "https://taxref.mnhn.fr/taxref-web/taxa/42219",
+    "lastCrawled": "2025-03-14T12:19:09.957+00:00",
+    "lastInterpreted": "2025-03-14T12:42:18.713+00:00",
+    "issues": [
+     "SCIENTIFIC_NAME_ASSEMBLED"
+    ]
+   }
+  ]
+ },
+ "match": {
+  "usageKey": 5246840,
+  "scientificName": "Polyporus umbellatus (Pers.) Fr.",
+  "canonicalName": "Polyporus umbellatus",
+  "rank": "SPECIES",
+  "status": "ACCEPTED",
+  "confidence": 99,
+  "matchType": "EXACT",
+  "kingdom": "Fungi",
+  "phylum": "Basidiomycota",
+  "order": "Polyporales",
+  "family": "Polyporaceae",
+  "genus": "Polyporus",
+  "species": "Polyporus umbellatus",
+  "kingdomKey": 5,
+  "phylumKey": 34,
+  "classKey": 186,
+  "orderKey": 1145,
+  "familyKey": 3286,
+  "genusKey": 11200098,
+  "speciesKey": 5246840,
+  "class": "Agaricomycetes"
+ },
+ "month": {
+  "offset": 0,
+  "limit": 0,
+  "endOfRecords": false,
+  "count": 211,
+  "results": [],
+  "facets": [
+   {
+    "field": "MONTH",
+    "counts": [
+     {
+      "name": "4",
+      "count": 52
+     },
+     {
+      "name": "6",
+      "count": 34
+     },
+     {
+      "name": "7",
+      "count": 34
+     },
+     {
+      "name": "8",
+      "count": 26
+     },
+     {
+      "name": "10",
+      "count": 14
+     },
+     {
+      "name": "9",
+      "count": 13
+     },
+     {
+      "name": "5",
+      "count": 6
+     },
+     {
+      "name": "1",
+      "count": 3
+     },
+     {
+      "name": "11",
+      "count": 1
+     },
+     {
+      "name": "12",
+      "count": 1
+     }
+    ]
+   },
+   {
+    "field": "GADM_LEVEL_2_GID",
+    "counts": [
+     {
+      "name": "FRA.6.4_1",
+      "count": 37
+     },
+     {
+      "name": "FRA.7.4_1",
+      "count": 22
+     },
+     {
+      "name": "FRA.2.2_1",
+      "count": 17
+     },
+     {
+      "name": "FRA.2.4_1",
+      "count": 11
+     },
+     {
+      "name": "FRA.9.5_1",
+      "count": 5
+     },
+     {
+      "name": "FRA.1.1_1",
+      "count": 4
+     },
+     {
+      "name": "FRA.13.1_1",
+      "count": 4
+     },
+     {
+      "name": "FRA.6.5_1",
+      "count": 4
+     },
+     {
+      "name": "FRA.7.2_1",
+      "count": 4
+     },
+     {
+      "name": "FRA.1.7_1",
+      "count": 3
+     },
+     {
+      "name": "FRA.1.8_1",
+      "count": 3
+     },
+     {
+      "name": "FRA.2.3_1",
+      "count": 3
+     },
+     {
+      "name": "FRA.2.8_1",
+      "count": 3
+     },
+     {
+      "name": "FRA.3.1_1",
+      "count": 3
+     },
+     {
+      "name": "FRA.4.1_1",
+      "count": 3
+     },
+     {
+      "name": "FRA.9.2_1",
+      "count": 3
+     },
+     {
+      "name": "FRA.11.1_1",
+      "count": 2
+     },
+     {
+      "name": "FRA.11.7_1",
+      "count": 2
+     },
+     {
+      "name": "FRA.4.5_1",
+      "count": 2
+     },
+     {
+      "name": "FRA.6.8_1",
+      "count": 2
+     },
+     {
+      "name": "FRA.6.9_1",
+      "count": 2
+     },
+     {
+      "name": "FRA.7.1_1",
+      "count": 2
+     },
+     {
+      "name": "FRA.7.3_1",
+      "count": 2
+     },
+     {
+      "name": "FRA.1.12_1",
+      "count": 1
+     },
+     {
+      "name": "FRA.1.2_1",
+      "count": 1
+     },
+     {
+      "name": "FRA.10.12_1",
+      "count": 1
+     },
+     {
+      "name": "FRA.10.6_1",
+      "count": 1
+     },
+     {
+      "name": "FRA.12.2_1",
+      "count": 1
+     },
+     {
+      "name": "FRA.2.1_1",
+      "count": 1
+     },
+     {
+      "name": "FRA.2.5_1",
+      "count": 1
+     },
+     {
+      "name": "FRA.2.6_1",
+      "count": 1
+     },
+     {
+      "name": "FRA.2.7_1",
+      "count": 1
+     },
+     {
+      "name": "FRA.3.2_1",
+      "count": 1
+     },
+     {
+      "name": "FRA.3.3_1",
+      "count": 1
+     },
+     {
+      "name": "FRA.4.2_1",
+      "count": 1
+     },
+     {
+      "name": "FRA.4.4_1",
+      "count": 1
+     },
+     {
+      "name": "FRA.4.6_1",
+      "count": 1
+     },
+     {
+      "name": "FRA.5.1_1",
+      "count": 1
+     },
+     {
+      "name": "FRA.5.2_1",
+      "count": 1
+     },
+     {
+      "name": "FRA.6.10_1",
+      "count": 1
+     },
+     {
+      "name": "FRA.6.2_1",
+      "count": 1
+     },
+     {
+      "name": "FRA.6.6_1",
+      "count": 1
+     },
+     {
+      "name": "FRA.6.7_1",
+      "count": 1
+     },
+     {
+      "name": "FRA.8.1_1",
+      "count": 1
+     },
+     {
+      "name": "FRA.8.4_1",
+      "count": 1
+     },
+     {
+      "name": "FRA.8.8_1",
+      "count": 1
+     },
+     {
+      "name": "FRA.9.1_1",
+      "count": 1
+     },
+     {
+      "name": "FRA.9.3_1",
+      "count": 1
+     }
+    ]
+   }
+  ]
+ },
+ "media": {
+  "count": 84,
+  "ex": [
+   {
+    "license": "http://creativecommons.org/licenses/by/4.0/legalcode",
+    "media": [
+     {
+      "type": "StillImage",
+      "format": "image/jpeg",
+      "references": "https://www.inaturalist.org/photos/660745074",
+      "created": "2026-05-16T15:45:44.000+00:00",
+      "creator": "Jessica Precht",
+      "publisher": "iNaturalist",
+      "license": "http://creativecommons.org/licenses/by/4.0/",
+      "rightsHolder": "Jessica Precht",
+      "identifier": "https://inaturalist-open-data.s3.amazonaws.com/photos/660745074/original.jpg"
+     },
+     {
+      "type": "StillImage",
+      "format": "image/jpeg",
+      "references": "https://www.inaturalist.org/photos/660745163",
+      "created": "2026-05-16T15:45:44.000+00:00",
+      "creator": "Jessica Precht",
+      "publisher": "iNaturalist",
+      "license": "http://creativecommons.org/licenses/by/4.0/",
+      "rightsHolder": "Jessica Precht",
+      "identifier": "https://inaturalist-open-data.s3.amazonaws.com/photos/660745163/original.jpg"
+     },
+     {
+      "type": "StillImage",
+      "format": "image/jpeg",
+      "references": "https://www.inaturalist.org/photos/660767489",
+      "created": "2026-05-16T15:45:44.000+00:00",
+      "creator": "Jessica Precht",
+      "publisher": "iNaturalist",
+      "license": "http://creativecommons.org/licenses/by/4.0/",
+      "rightsHolder": "Jessica Precht",
+      "identifier": "https://inaturalist-open-data.s3.amazonaws.com/photos/660767489/original.jpg"
+     }
+    ],
+    "rightsHolder": "Jessica Precht",
+    "recordedBy": "Jessica Precht",
+    "country": "US"
+   },
+   {
+    "license": "http://creativecommons.org/licenses/by/4.0/legalcode",
+    "media": [
+     {
+      "type": "StillImage",
+      "format": "image/jpeg",
+      "references": "https://www.inaturalist.org/photos/682874050",
+      "created": "2026-06-20T18:15:33.000+00:00",
+      "creator": "Erica Tava Johnson",
+      "publisher": "iNaturalist",
+      "license": "http://creativecommons.org/licenses/by/4.0/",
+      "rightsHolder": "Erica Tava Johnson",
+      "identifier": "https://inaturalist-open-data.s3.amazonaws.com/photos/682874050/original.jpg"
+     },
+     {
+      "type": "StillImage",
+      "format": "image/jpeg",
+      "references": "https://www.inaturalist.org/photos/682874048",
+      "created": "2026-06-20T18:15:01.000+00:00",
+      "creator": "Erica Tava Johnson",
+      "publisher": "iNaturalist",
+      "license": "http://creativecommons.org/licenses/by/4.0/",
+      "rightsHolder": "Erica Tava Johnson",
+      "identifier": "https://inaturalist-open-data.s3.amazonaws.com/photos/682874048/original.jpg"
+     },
+     {
+      "type": "StillImage",
+      "format": "image/jpeg",
+      "references": "https://www.inaturalist.org/photos/682873991",
+      "created": "2026-06-20T18:15:41.000+00:00",
+      "creator": "Erica Tava Johnson",
+      "publisher": "iNaturalist",
+      "license": "http://creativecommons.org/licenses/by/4.0/",
+      "rightsHolder": "Erica Tava Johnson",
+      "identifier": "https://inaturalist-open-data.s3.amazonaws.com/photos/682873991/original.jpg"
+     },
+     {
+      "type": "StillImage",
+      "format": "image/jpeg",
+      "references": "https://www.inaturalist.org/photos/683669762",
+      "created": "2026-06-21T22:11:00.000+00:00",
+      "creator": "Erica Tava Johnson",
+      "publisher": "iNaturalist",
+      "license": "http://creativecommons.org/licenses/by/4.0/",
+      "rightsHolder": "Erica Tava Johnson",
+      "identifier": "https://inaturalist-open-data.s3.amazonaws.com/photos/683669762/original.jpg"
+     }
+    ],
+    "rightsHolder": "Erica Tava Johnson",
+    "recordedBy": "Erica Tava Johnson",
+    "country": "US"
+   },
+   {
+    "license": "http://creativecommons.org/licenses/by/4.0/legalcode",
+    "media": [
+     {
+      "type": "StillImage",
+      "format": "image/jpeg",
+      "references": "https://www.inaturalist.org/photos/683602133",
+      "created": "2026-06-21T19:54:00.000+00:00",
+      "creator": "Erica Tava Johnson",
+      "publisher": "iNaturalist",
+      "license": "http://creativecommons.org/licenses/by/4.0/",
+      "rightsHolder": "Erica Tava Johnson",
+      "identifier": "https://inaturalist-open-data.s3.amazonaws.com/photos/683602133/original.jpg"
+     },
+     {
+      "type": "StillImage",
+      "format": "image/jpeg",
+      "references": "https://www.inaturalist.org/photos/683602161",
+      "created": "2026-06-21T19:54:18.000+00:00",
+      "creator": "Erica Tava Johnson",
+      "publisher": "iNaturalist",
+      "license": "http://creativecommons.org/licenses/by/4.0/",
+      "rightsHolder": "Erica Tava Johnson",
+      "identifier": "https://inaturalist-open-data.s3.amazonaws.com/photos/683602161/original.jpg"
+     },
+     {
+      "type": "StillImage",
+      "format": "image/jpeg",
+      "references": "https://www.inaturalist.org/photos/683602171",
+      "created": "2026-06-21T19:54:04.000+00:00",
+      "creator": "Erica Tava Johnson",
+      "publisher": "iNaturalist",
+      "license": "http://creativecommons.org/licenses/by/4.0/",
+      "rightsHolder": "Erica Tava Johnson",
+      "identifier": "https://inaturalist-open-data.s3.amazonaws.com/photos/683602171/original.jpg"
+     },
+     {
+      "type": "StillImage",
+      "format": "image/jpeg",
+      "references": "https://www.inaturalist.org/photos/683602146",
+      "created": "2026-06-21T20:24:14.000+00:00",
+      "creator": "Erica Tava Johnson",
+      "publisher": "iNaturalist",
+      "license": "http://creativecommons.org/licenses/by/4.0/",
+      "rightsHolder": "Erica Tava Johnson",
+      "identifier": "https://inaturalist-open-data.s3.amazonaws.com/photos/683602146/original.jpg"
+     },
+     {
+      "type": "StillImage",
+      "format": "image/jpeg",
+      "references": "https://www.inaturalist.org/photos/683602155",
+      "created": "2026-06-21T20:24:26.000+00:00",
+      "creator": "Erica Tava Johnson",
+      "publisher": "iNaturalist",
+      "license": "http://creativecommons.org/licenses/by/4.0/",
+      "rightsHolder": "Erica Tava Johnson",
+      "identifier": "https://inaturalist-open-data.s3.amazonaws.com/photos/683602155/original.jpg"
+     },
+     {
+      "type": "StillImage",
+      "format": "image/jpeg",
+      "references": "https://www.inaturalist.org/photos/683602198",
+      "created": "2026-06-21T20:24:10.000+00:00",
+      "creator": "Erica Tava Johnson",
+      "publisher": "iNaturalist",
+      "license": "http://creativecommons.org/licenses/by/4.0/",
+      "rightsHolder": "Erica Tava Johnson",
+      "identifier": "https://inaturalist-open-data.s3.amazonaws.com/photos/683602198/original.jpg"
+     },
+     {
+      "type": "StillImage",
+      "format": "image/jpeg",
+      "references": "https://www.inaturalist.org/photos/683602147",
+      "created": "2026-06-21T20:24:44.000+00:00",
+      "creator": "Erica Tava Johnson",
+      "publisher": "iNaturalist",
+      "license": "http://creativecommons.org/licenses/by/4.0/",
+      "rightsHolder": "Erica Tava Johnson",
+      "identifier": "https://inaturalist-open-data.s3.amazonaws.com/photos/683602147/original.jpg"
+     }
+    ],
+    "rightsHolder": "Erica Tava Johnson",
+    "recordedBy": "Erica Tava Johnson",
+    "country": "US"
+   }
+  ]
+ },
+ "facetBig": {
+  "n": 20000
+ },
+ "gadm": {
+  "id": "FRA.6.2_1",
+  "name": "Aube",
+  "gadmLevel": 2,
+  "variantName": [],
+  "nonLatinName": [],
+  "type": [
+   "Département"
+  ],
+  "englishType": [
+   "Department"
+  ],
+  "higherRegions": [
+   {
+    "id": "FRA",
+    "name": "France"
+   },
+   {
+    "id": "FRA.6_1",
+    "name": "Grand Est"
+   }
+  ]
+ },
+ "commons": {
+  "batchcomplete": "",
+  "query": {
+   "pages": {
+    "3554819": {
+     "pageid": 3554819,
+     "ns": 6,
+     "title": "File:Russula emetica - Lindsey 4a.jpg",
+     "imagerepository": "local",
+     "imageinfo": [
+      {
+       "size": 101331,
+       "width": 640,
+       "height": 425,
+       "thumburl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/03/Russula_emetica_-_Lindsey_4a.jpg/330px-Russula_emetica_-_Lindsey_4a.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+       "thumbwidth": 330,
+       "thumbheight": 219,
+       "responsiveUrls": {
+        "2": "https://upload.wikimedia.org/wikipedia/commons/0/03/Russula_emetica_-_Lindsey_4a.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled"
+       },
+       "thumbattribs": {
+        "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/03/Russula_emetica_-_Lindsey_4a.jpg/330px-Russula_emetica_-_Lindsey_4a.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "decoding": "async",
+        "loading": "lazy",
+        "width": 330,
+        "height": 219,
+        "srcset": "https://upload.wikimedia.org/wikipedia/commons/0/03/Russula_emetica_-_Lindsey_4a.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled 2x"
+       },
+       "url": "https://upload.wikimedia.org/wikipedia/commons/0/03/Russula_emetica_-_Lindsey_4a.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+       "descriptionurl": "https://commons.wikimedia.org/wiki/File:Russula_emetica_-_Lindsey_4a.jpg",
+       "descriptionshorturl": "https://commons.wikimedia.org/w/index.php?curid=3554819",
+       "extmetadata": {
+        "DateTime": {
+         "value": "2008-02-14 16:04:49",
+         "source": "mediawiki-metadata",
+         "hidden": ""
+        },
+        "ObjectName": {
+         "value": "Russula emetica - Lindsey 4a",
+         "source": "mediawiki-metadata"
+        },
+        "CommonsMetadataExtension": {
+         "value": 1.2,
+         "source": "extension",
+         "hidden": ""
+        },
+        "Categories": {
+         "value": "Russula emetica|Taken with Nikon D70|Self-published work|Items with VRTS permission confirmed|Pictures by James Lindsey|Fungi in September|Verified pictures of mushrooms by James K. Lindsey|Belgium photographs taken on 2004-09-29|Russula emetica in Belgium|Russulales in Commanster",
+         "source": "commons-categories",
+         "hidden": ""
+        },
+        "Assessments": {
+         "value": "",
+         "source": "commons-categories",
+         "hidden": ""
+        },
+        "ImageDescription": {
+         "value": "<p><i><a href=\"//commons.wikimedia.org/wiki/Russula_emetica\" title=\"Russula emetica\">Russula emetica</a></i> from Commanster, Belgium. \n</p>\n<small>The determination of the species shown in this picture has been verified.</small>",
+         "source": "commons-desc-page"
+        },
+        "DateTimeOriginal": {
+         "value": "2004-09-29",
+         "source": "commons-desc-page"
+        },
+        "Credit": {
+         "value": "<a rel=\"nofollow\" class=\"external text\" href=\"http://popgen.unimaas.nl/~jlindsey/commanster.html\">James Lindsey's Ecology of Commanster Site</a>",
+         "source": "commons-desc-page"
+        },
+        "Artist": {
+         "value": "James Lindsey",
+         "source": "commons-desc-page"
+        },
+        "LicenseShortName": {
+         "value": "CC BY-SA 3.0",
+         "source": "commons-desc-page",
+         "hidden": ""
+        },
+        "UsageTerms": {
+         "value": "Creative Commons Attribution-Share Alike 3.0",
+         "source": "commons-desc-page"
+        },
+        "AttributionRequired": {
+         "value": "true",
+         "source": "commons-desc-page",
+         "hidden": ""
+        },
+        "Attribution": {
+         "value": "James Lindsey at <a rel=\"nofollow\" class=\"external text\" href=\"http://popgen.unimaas.nl/~jlindsey/commanster.html\">Ecology of Commanster</a>",
+         "source": "commons-desc-page",
+         "hidden": ""
+        },
+        "LicenseUrl": {
+         "value": "https://creativecommons.org/licenses/by-sa/3.0",
+         "source": "commons-desc-page"
+        },
+        "Copyrighted": {
+         "value": "True",
+         "source": "commons-desc-page",
+         "hidden": ""
+        },
+        "Restrictions": {
+         "value": "",
+         "source": "commons-desc-page",
+         "hidden": ""
+        },
+        "License": {
+         "value": "cc-by-sa-3.0",
+         "source": "commons-templates",
+         "hidden": ""
+        }
+       }
+      }
+     ]
+    }
+   }
+  }
+ },
+ "extract": {
+  "batchcomplete": "",
+  "query": {
+   "normalized": [
+    {
+     "from": "Polypore_en_ombelle",
+     "to": "Polypore en ombelle"
+    },
+    {
+     "from": "Russule_émétique",
+     "to": "Russule émétique"
+    }
+   ],
+   "pages": {
+    "1205120": {
+     "pageid": 1205120,
+     "ns": 0,
+     "title": "Russule émétique",
+     "extract": "Russula emetica, la Russule émétique, est une espèce de champignons basidiomycètes de la famille des Russulacées.",
+     "thumbnail": {
+      "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0f/Russula_emetica_in_Poland.jpg/60px-Russula_emetica_in_Poland.jpg?utm_source=fr.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "width": 50,
+      "height": 53
+     },
+     "pageimage": "Russula_emetica_in_Poland.jpg"
+    },
+    "4024054": {
+     "pageid": 4024054,
+     "ns": 0,
+     "title": "Polypore en ombelle",
+     "extract": "Polyporus umbellatus, le polypore en ombelle, ou Tripe du chêne, ou poule des bois (confusion possible avec le polypore en touffe) est une espèce de champignons basidiomycètes lignicoles de la famille des Polyporacées.",
+     "thumbnail": {
+      "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9c/Polyporus_umbellatus.jpg/60px-Polyporus_umbellatus.jpg?utm_source=fr.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "width": 50,
+      "height": 38
+     },
+     "pageimage": "Polyporus_umbellatus.jpg"
+    }
+   }
+  }
+ }
+}
