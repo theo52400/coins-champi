@@ -1,0 +1,36 @@
+name: Sonde catalogue
+on:
+  push:
+    branches: [sonde-catalogue]
+permissions:
+  contents: write
+jobs:
+  sonde:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Sonder
+        shell: bash
+        run: |
+          mkdir -p out; cd out
+          UA='CoinsAChampi/1.0 (https://github.com/theo52400/coins-champi)'
+          curl -sSL -A "$UA" https://inpn.mnhn.fr/telechargement/referentielEspece/referentielTaxo -o inpn.html; grep -oiE 'href="[^"]*"' inpn.html | grep -iE 'zip|download|taxref' | sort -u | head -60 > inpn_links.txt
+          curl -sSL -A "$UA" "https://inpn.mnhn.fr/telechargement/referentielEspece/taxref/18.0/menu" -o inpn18.html; grep -oiE 'href="[^"]*"' inpn18.html | grep -iE 'zip|download|taxref' | sort -u | head -60 > inpn18_links.txt
+          curl -sSL -A "$UA" "https://taxref.mnhn.fr/api/taxa/search?frenchVernacularNames=polypore%20en%20ombelle&page=1&size=3" -o api_search.json
+          curl -sSL -A "$UA" "https://taxref.mnhn.fr/api/taxrefVersions" -o api_versions.json
+          curl -sSL -A "$UA" "https://api.gbif.org/v1/dataset/search?q=TAXREF&type=CHECKLIST&limit=10" -o gbif_ds.json
+          curl -sSL -A "$UA" "https://api.gbif.org/v1/occurrence/search?country=FR&kingdomKey=5&facet=speciesKey&facetLimit=5&limit=0" -o gbif_facet.json
+          curl -sSL -A "$UA" "https://api.gbif.org/v1/occurrence/search?country=FR&taxonKey=5248876&facet=month&facet=gadmLevel2Gid&facetLimit=120&limit=0" -o gbif_month.json
+          curl -sSL -A "$UA" -G "https://query.wikidata.org/sparql" --data-urlencode 'query=SELECT ?p (COUNT(*) AS ?n) WHERE { ?i wdt:P789 ?p } GROUP BY ?p ORDER BY DESC(?n) LIMIT 20' -H 'Accept: application/sparql-results+json' -o wd_p789.json
+          curl -sSL -A "$UA" -G "https://query.wikidata.org/sparql" --data-urlencode 'query=SELECT ?i ?t ?img ?art WHERE { VALUES ?t {"1218" "40000"} ?i wdt:P3186 ?t . OPTIONAL{?i wdt:P18 ?img} OPTIONAL{?art schema:about ?i; schema:isPartOf <https://fr.wikipedia.org/>} }' -H 'Accept: application/sparql-results+json' -o wd_test.json
+          ls -la
+      - name: Publier
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          cp -r out /tmp/out
+          git fetch -q origin sondes && git switch -q sondes
+          rm -rf catalogue && mkdir catalogue && cp -r /tmp/out/* catalogue/
+          git add -A catalogue && git commit -qm "Sonde catalogue" && git push -q origin sondes
