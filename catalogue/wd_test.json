@@ -1,0 +1,38 @@
+{
+  "head" : {
+    "vars" : [ "i", "t", "img", "art" ]
+  },
+  "results" : {
+    "bindings" : [ {
+      "t" : {
+        "type" : "literal",
+        "value" : "40000"
+      },
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q596333"
+      },
+      "img" : {
+        "type" : "uri",
+        "value" : "http://commons.wikimedia.org/wiki/Special:FilePath/Russula%20emetica%20-%20Lindsey%204a.jpg"
+      }
+    }, {
+      "i" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q1058545"
+      },
+      "art" : {
+        "type" : "uri",
+        "value" : "https://fr.wikipedia.org/wiki/Callilepis_nocturna"
+      },
+      "t" : {
+        "type" : "literal",
+        "value" : "1218"
+      },
+      "img" : {
+        "type" : "uri",
+        "value" : "http://commons.wikimedia.org/wiki/Special:FilePath/Callilepis%20nocturna.jpg"
+      }
+    } ]
+  }
+}
