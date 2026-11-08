@@ -7,20 +7,21 @@ permissions:
 jobs:
   sonde:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Sonder
-        run: mkdir -p out && node sonde.mjs || true
+      - name: Candidats photos
+        run: |
+          mkdir -p /tmp/ph && cd /tmp/ph && npm init -y >/dev/null && npm i -s sharp@0.33.5 >/dev/null && cd - >/dev/null
+          cp candidats.mjs /tmp/ph/ && node /tmp/ph/candidats.mjs especes_nouv.json /tmp/out || true
       - name: Publier
         shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          cp -r out /tmp/out
           git fetch -q origin sondes && git switch -q sondes
-          rm -rf catalogue && mkdir catalogue && cp -r /tmp/out/* catalogue/
-          git add -A catalogue && git commit -qm "Sonde catalogue" && git push -q origin sondes
+          rm -rf photos-nouv && mkdir photos-nouv && cp -r /tmp/out/* photos-nouv/
+          git add -A photos-nouv && git commit -qm "Candidats photos (nouvelles fiches)" && git push -q origin sondes
