@@ -196,5 +196,210 @@
  "clitocybe_nebuleux": [
   "Clitocybe nebularis",
   "Lepista nebularis"
+ ],
+ "polypore_ombelle": [
+  "Polyporus umbellatus"
+ ],
+ "poule_bois": [
+  "Grifola frondosa"
+ ],
+ "hydne_herisson": [
+  "Hericium erinaceus"
+ ],
+ "pholiote_ridee": [
+  "Cortinarius caperatus",
+  "Rozites caperata"
+ ],
+ "tete_moine": [
+  "Infundibulicybe geotropa",
+  "Clitocybe geotropa"
+ ],
+ "pied_violet": [
+  "Lepista saeva",
+  "Lepista personata"
+ ],
+ "tricholome_pretentieux": [
+  "Tricholoma portentosum"
+ ],
+ "lactaire_sanguin": [
+  "Lactarius sanguifluus"
+ ],
+ "vachotte": [
+  "Lactifluus volemus",
+  "Lactarius volemus"
+ ],
+ "russule_vesca": [
+  "Russula vesca"
+ ],
+ "hygrophore_pres": [
+  "Cuphophyllus pratensis",
+  "Hygrocybe pratensis"
+ ],
+ "pleurote_panicaut": [
+  "Pleurotus eryngii"
+ ],
+ "pleurote_corne": [
+  "Pleurotus cornucopiae"
+ ],
+ "collybie_velue": [
+  "Flammulina velutipes"
+ ],
+ "agaric_jacheres": [
+  "Agaricus arvensis"
+ ],
+ "agaric_auguste": [
+  "Agaricus augustus"
+ ],
+ "lepiote_deguenillee": [
+  "Chlorophyllum rhacodes",
+  "Macrolepiota rhacodes"
+ ],
+ "morillon": [
+  "Morchella semilibera",
+  "Mitrophora semilibera"
+ ],
+ "pezize_orangee": [
+  "Aleuria aurantia"
+ ],
+ "bolet_bouviers": [
+  "Suillus bovinus"
+ ],
+ "bolet_elegant": [
+  "Suillus grevillei"
+ ],
+ "bolet_rude": [
+  "Leccinum scabrum"
+ ],
+ "bolet_appendicule": [
+  "Butyriboletus appendiculatus",
+  "Boletus appendiculatus"
+ ],
+ "chanterelle_jaunissante": [
+  "Craterellus lutescens"
+ ],
+ "hydne_roux": [
+  "Hydnum rufescens"
+ ],
+ "vesse_perlee": [
+  "Lycoperdon perlatum"
+ ],
+ "truffe_noire": [
+  "Tuber melanosporum"
+ ],
+ "pholiote_peuplier": [
+  "Cyclocybe cylindracea",
+  "Agrocybe aegerita"
+ ],
+ "meunier": [
+  "Clitopilus prunulus"
+ ],
+ "lactaire_saumon": [
+  "Lactarius salmonicolor"
+ ],
+ "craterelle_sinueuse": [
+  "Pseudocraterellus undulatus",
+  "Pseudocraterellus sinuosus"
+ ],
+ "hydne_imbrique": [
+  "Sarcodon imbricatus"
+ ],
+ "amanite_jonquille": [
+  "Amanita gemmata",
+  "Amanita junquillea"
+ ],
+ "amanite_epaisse": [
+  "Amanita excelsa",
+  "Amanita spissa"
+ ],
+ "amanite_vaginee": [
+  "Amanita vaginata"
+ ],
+ "bolet_legal": [
+  "Rubroboletus legaliae",
+  "Boletus legaliae"
+ ],
+ "bolet_pourpre": [
+  "Rubroboletus rhodoxanthus",
+  "Boletus rhodoxanthus"
+ ],
+ "bolet_beau_pied": [
+  "Caloboletus calopus",
+  "Boletus calopus"
+ ],
+ "bolet_radicant": [
+  "Caloboletus radicans",
+  "Boletus radicans"
+ ],
+ "tricholome_tigre": [
+  "Tricholoma pardinum"
+ ],
+ "tricholome_soufre": [
+  "Tricholoma sulphureum"
+ ],
+ "tricholome_savonneux": [
+  "Tricholoma saponaceum"
+ ],
+ "hebelome": [
+  "Hebeloma crustuliniforme"
+ ],
+ "lepiote_cretee": [
+  "Lepiota cristata"
+ ],
+ "pholiotine": [
+  "Pholiotina rugosa",
+  "Conocybe rugosa"
+ ],
+ "gymnopile": [
+  "Gymnopilus junonius",
+  "Gymnopilus spectabilis"
+ ],
+ "clavaire_elegante": [
+  "Ramaria formosa"
+ ],
+ "russule_fetide": [
+  "Russula foetens"
+ ],
+ "lactaire_poivre": [
+  "Lactifluus piperatus",
+  "Lactarius piperatus"
+ ],
+ "lactaire_plombe": [
+  "Lactarius turpis",
+  "Lactarius necator"
+ ],
+ "coprin_noir": [
+  "Coprinopsis atramentaria",
+  "Coprinus atramentarius"
+ ],
+ "clathre_rouge": [
+  "Clathrus ruber"
+ ],
+ "helvelle_crepue": [
+  "Helvella crispa"
+ ],
+ "verpe_boheme": [
+  "Ptychoverpa bohemica",
+  "Verpa bohemica"
+ ],
+ "ganoderme": [
+  "Ganoderma applanatum"
+ ],
+ "polypore_bouleau": [
+  "Fomitopsis betulina",
+  "Piptoporus betulinus"
+ ],
+ "tremelle": [
+  "Tremella mesenterica"
+ ],
+ "xylaire": [
+  "Xylaria hypoxylon"
+ ],
+ "inocybe_fastigie": [
+  "Pseudosperma rimosum",
+  "Inocybe rimosa",
+  "Inocybe fastigiata"
+ ],
+ "pholiote_ecailleuse": [
+  "Pholiota squarrosa"
  ]
 }

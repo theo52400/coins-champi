@@ -49,7 +49,7 @@ const DROP = new Set(['Lecanoromycetes', 'Arthoniomycetes', 'Lichinomycetes', 'C
   'Zoopagomycota', 'Glomeromycota', 'Blastocladiomycota', 'Microsporidia', 'Cryptomycota', 'Entomophthoromycota',
   'Lecanorales', 'Peltigerales', 'Teloschistales', 'Ostropales', 'Pertusariales', 'Umbilicariales', 'Caliciales', 'Arthoniales', 'Verrucariales', 'Lichinales',
   'Baeomycetales', 'Acarosporales', 'Candelariales', 'Gyalectales', 'Lecideales', 'Rhizocarpales', 'Trapeliales', 'Agyriales', 'Graphidales', 'Pyrenulales',
-  'Sarrameanales', 'Lichenomphaliales', 'Pucciniales', 'Ustilaginales', 'Urocystidales', 'Entylomatales', 'Tilletiales', 'Exobasidiales', 'Microbotryales',
+  'Sarrameanales', 'Lichenomphaliales', 'Pucciniales', 'Uredinales', 'Septobasidiales', 'Ustilaginales', 'Urocystidales', 'Entylomatales', 'Tilletiales', 'Exobasidiales', 'Microbotryales',
   'Taphrinales', 'Erysiphales', 'Rhytismatales', 'Phacidiales', 'Capnodiales', 'Pleosporales', 'Mycosphaerellales', 'Hysteriales', 'Mytilinidiales',
   'Dothideales', 'Botryosphaeriales', 'Venturiales', 'Eurotiales', 'Onygenales', 'Chaetothyriales', 'Saccharomycetales', 'Mucorales', 'Peronosporales']);
 const keepTaxon = r => {

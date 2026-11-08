@@ -1,6 +1,8 @@
-// Onglet « Apprendre » : encyclopédie (61 fiches, photos libres), quiz, cartes mémoire, défi de la semaine, Mycodex.
+// Onglet « Apprendre » : encyclopédie (fiches vérifiées avec photos libres, et catalogue de toutes les espèces de France),
+// quiz, cartes mémoire, défi de la semaine, Mycodex.
 import { ENCYCLO, BY_ID, CAT, NOTE, isEdible, MASTER_N, QUIZ_WEEK_PTS } from './encyclo.js';
-import { isoWeek } from './game.js';
+import { isoWeek, isCatId } from './game.js';
+import { doc, score, fuzzyScore, norm as normCat } from './catalogue.js';
 
 export const WEEK_N = 10, WEEK_PASS = 8;
 const MOIS = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
@@ -13,8 +15,11 @@ const shuffle = (a, r) => { const b = a.slice(); for (let i = b.length - 1; i > 
 
 export function createLearn(x) {
   const { $, esc, store, S, MONTH, onPoints, openSpeciesMap, mycodexHtml, saveQuiz } = x;
-  const dataUrl = x.dataUrl || (p => p);
-  const L = { view: store.get('cc.learn', 'encyclo'), filter: 'tous', q: '', fiche: null, quiz: null, photos: null, photosSt: null, flash: store.get('cc.flash', {}) };
+  const dataUrl = x.dataUrl || (p => p), cat = x.catalogue || null;
+  const L = { view: store.get('cc.learn', 'encyclo'), filter: 'tous', q: '', fiche: null, quiz: null, photos: null, photosSt: null, flash: store.get('cc.flash', {}),
+    det: new Map(), more: 60, near: store.get('cc.cat.near', false), season: store.get('cc.cat.season', false), dep: store.get('cc.dep', null) };
+  // documents de recherche des fiches vérifiées (mêmes règles que le catalogue)
+  const FDOC = ENCYCLO.map(e => doc({ f: e, n: e.n, alt: String(e.alias || '').split(/\s*,\s*/).filter(Boolean), lat: e.lat, syn: [] }));
 
   // ---------- photos (data/encyclo/photos.json : crédits et nombre de photos par espèce) ----------
   function loadPhotos() {
@@ -36,8 +41,17 @@ export function createLearn(x) {
   const mastered = q => Object.keys(q.m).filter(k => q.m[k] >= MASTER_N && BY_ID[k]);
 
   // ---------- rendu ----------
+  // nouveau rendu sans voler le curseur de la recherche si l'on est en train de taper
+  function softRender() {
+    const a = document.activeElement, g = document.getElementById('en-body');
+    if (a && a.id === 'en-q' && g) g.innerHTML = bodyHtml(); else x.rerender();
+  }
+  function loadCat() {
+    if (!cat || cat.C.st === 'ok' || cat.C.st === 'q' || (cat.C.st === 'err' && Date.now() - (L.catErr || 0) < 30000)) return;
+    cat.load().then(() => { if (x.onCatalogue) x.onCatalogue(); softRender(); }).catch(() => { L.catErr = Date.now(); softRender(); });
+  }
   function render(el) {
-    loadPhotos();
+    loadPhotos(); loadCat(); ensureDep();
     const tabs = '<div class="learn-tabs seg" role="tablist">' + [['encyclo', 'Encyclopédie'], ['quiz', 'Quiz'], ['dex', 'Mycodex']].map(([v, n]) =>
       '<button role="tab" data-act="learn-tab" data-v="' + v + '" aria-selected="' + (L.view === v) + '">' + n + '</button>').join('') + '</div>';
     let body;
@@ -48,7 +62,7 @@ export function createLearn(x) {
     const q = el.querySelector('#en-q');
     if (q) {
       q.value = L.q;
-      q.addEventListener('input', () => { L.q = q.value; const g = el.querySelector('#en-grid'); if (g) g.innerHTML = cards(); });
+      q.addEventListener('input', () => { L.q = q.value; L.more = 60; const g = el.querySelector('#en-body'); if (g) g.innerHTML = bodyHtml(); });
     }
   }
   function filtered() {
@@ -63,14 +77,103 @@ export function createLearn(x) {
       '<span class="en-card-t"><b>' + esc(e.n) + '</b>' + badge(e) + (e.note ? stars(e.note) : '') + '</span></button>').join('');
   }
   function listHtml() {
-    const nb = ENCYCLO.filter(isEdible).length;
-    return '<h2>Encyclopédie</h2><p class="lead">' + ENCYCLO.length + ' champignons à connaître : ' + nb + ' bons comestibles et ' + (ENCYCLO.length - nb) + ' espèces toxiques, mortelles ou sans intérêt.</p>' +
-      '<input class="input" id="en-q" type="search" placeholder="Cèpe, girolle, Amanita…" autocomplete="off" aria-label="Chercher un champignon">' +
-      '<div class="chips" role="group" aria-label="Filtrer">' + [['tous', 'Tous'], ['bons', 'Comestibles'], ['danger', 'À connaître'], ['saison', 'De saison']].map(([v, n]) =>
+    const nb = ENCYCLO.filter(isEdible).length, nc = cat && cat.C.st === 'ok' ? cat.C.list.length : 0;
+    return '<h2>Encyclopédie</h2><p class="lead">' + ENCYCLO.length + ' fiches vérifiées (' + nb + ' bons comestibles, ' + (ENCYCLO.length - nb) + ' espèces toxiques, mortelles ou sans intérêt)' +
+      (nc ? ' et le catalogue des ' + nc.toLocaleString('fr-FR') + ' champignons de France qui ont un nom français.' : '.') + '</p>' +
+      '<input class="input" id="en-q" type="search" placeholder="Nom français, latin, ancien nom…" autocomplete="off" aria-label="Chercher un champignon">' +
+      '<div class="chips" role="group" aria-label="Filtrer">' + [['tous', 'Fiches vérifiées'], ['bons', 'Comestibles'], ['danger', 'À connaître'], ['saison', 'De saison'], ['cat', 'Toutes les espèces']].map(([v, n]) =>
         '<button class="chip" data-act="en-filter" data-v="' + v + '" aria-pressed="' + (L.filter === v) + '">' + n + '</button>').join('') + '</div>' +
-      '<div class="en-grid" id="en-grid">' + cards() + '</div>' +
+      '<div id="en-body" class="stack">' + bodyHtml() + '</div>' +
       '<div class="warnbox"><b>Ne mangez jamais un champignon sur la foi d\'une photo ou d\'une fiche.</b> Faites vérifier votre panier par un pharmacien ou une société mycologique. Les champignons sauvages se mangent toujours cuits (20 à 30 minutes à la poêle), jamais crus. En cas de malaise après un repas de champignons : 15 ou 112.</div>' +
       offlineCard();
+  }
+  function bodyHtml() {
+    if (norm(L.q).trim()) return searchHtml();
+    if (L.filter === 'cat') return catBrowseHtml();
+    return '<div class="en-grid" id="en-grid">' + cards() + '</div>' + catTeaser() + nextFiches();
+  }
+  // recherche dans les fiches vérifiées et dans tout le catalogue, sans accents et tolérante aux fautes
+  function unified(q) {
+    const qn = normCat(q), toks = qn.split(' '), out = [], seenF = new Set();
+    for (const d of FDOC) { const sc = score(d, qn, toks) || (qn.length >= 4 ? fuzzyScore(d, toks) : 0); if (sc) { out.push({ s: sc + 60, f: d.f }); seenF.add(d.f.id); } }
+    if (cat && cat.C.st === 'ok') {
+      for (const e of cat.search(q, { limit: 80 })) {
+        if (e.fiche) { if (!seenF.has(e.fiche)) { seenF.add(e.fiche); out.push({ s: e._s + 60, f: BY_ID[e.fiche] }); } continue; }
+        out.push({ s: e._s, e });
+      }
+    }
+    return out.sort((a, b) => b.s - a.s);
+  }
+  function searchHtml() {
+    const res = unified(L.q), shown = res.slice(0, L.more);
+    const wait = cat && cat.C.st === 'q' ? '<p class="note">Chargement du catalogue de France…</p>' : cat && cat.C.st === 'err' ? '<p class="note">Catalogue de France indisponible sans réseau pour l\'instant : seules les fiches vérifiées sont cherchées.</p>' : '';
+    if (!res.length) return wait + '<p class="note">Aucun champignon ne correspond. Essayez le nom latin ou une partie du nom.</p>';
+    return wait + '<p class="note" style="margin:0">' + res.length + (res.length >= 80 ? '+' : '') + ' résultat' + (res.length > 1 ? 's' : '') + '</p><div class="cat-list">' + shown.map(r => (r.f ? ficheRow(r.f) : catRow(r.e))).join('') + '</div>' +
+      (res.length > shown.length ? '<button class="btn block" data-act="en-more">Afficher plus</button>' : '');
+  }
+  const DANGER_TAG = { m: '<span class="en-badge dead">Signalé mortel</span>', t: '<span class="en-badge tox">Signalé toxique</span>' };
+  const catTags = e => (e.tox ? DANGER_TAG[e.tox] : '') + (e.risk === 'g' ? '<span class="en-badge meh">Genre à espèces mortelles</span>' : '') + '<span class="en-badge meh">Non vérifiée</span>';
+  const obsTxt = n => n ? n.toLocaleString('fr-FR') + ' obs.' : 'non observé';
+  function ficheRow(e) {
+    return '<button class="cat-row" data-act="en-open" data-id="' + e.id + '">' + imgOr(thumb(e.id), '') + '<span class="cat-row-t"><b>' + esc(e.n) + '</b><i>' + esc(e.lat) + '</i><span class="cat-tags">' + badge(e) + (e.note ? stars(e.note) : '') + '<span class="en-badge ver">Fiche vérifiée</span></span></span></button>';
+  }
+  function catRow(e) {
+    return '<button class="cat-row" data-act="en-open" data-id="' + e.id + '">' + imgOr(cat.thumb(e), '') + '<span class="cat-row-t"><b>' + esc(e.n) + '</b><i>' + esc(e.lat) + '</i><span class="cat-tags">' + catTags(e) + '</span></span><span class="cat-obs">' + obsTxt(e.obs) + '</span></button>';
+  }
+  function catTeaser() {
+    if (!cat) return '';
+    if (cat.C.st !== 'ok') return '<div class="card en-c"><h3>Toutes les espèces de France</h3><p class="note">' + (cat.C.st === 'err' ? 'Le catalogue se chargera dès que le réseau revient.' : 'Chargement du catalogue…') + '</p></div>';
+    const near = L.dep ? cat.C.list.filter(e => cat.inDep(e, L.dep.code) && cat.inSeason(e, MONTH) && !e.fiche).slice(0, 8) : [];
+    return '<div class="card en-c"><h3>Toutes les espèces de France</h3><p>' + cat.C.list.length.toLocaleString('fr-FR') + ' champignons qui ont un nom français, d\'après le référentiel national TAXREF, avec leurs observations en France. Leur comestibilité n\'est pas vérifiée : seules les fiches vérifiées la donnent.</p>' +
+      '<div class="actions"><button class="btn" data-act="en-filter" data-v="cat">Parcourir le catalogue</button></div>' +
+      (near.length ? '<h3>De saison en ce moment, ' + esc(L.dep.name) + '</h3><div class="cat-list">' + near.map(catRow).join('') + '</div>' : '') + '</div>';
+  }
+  function catBrowseHtml() {
+    if (!cat || cat.C.st !== 'ok') return '<p class="note">' + (cat && cat.C.st === 'err' ? 'Catalogue indisponible sans réseau pour l\'instant.' : 'Chargement du catalogue de France…') + '</p>';
+    const list = cat.C.list.filter(e => (!L.season || cat.inSeason(e, MONTH)) && (!L.near || !L.dep || cat.inDep(e, L.dep.code)));
+    const shown = list.slice(0, L.more);
+    const nearLab = L.dep ? 'Observées dans mon département (' + L.dep.code + ')' : 'Près de moi (position inconnue)';
+    return '<div class="chips" role="group" aria-label="Affiner"><button class="chip" data-act="en-season" aria-pressed="' + L.season + '">De saison</button><button class="chip" data-act="en-near" aria-pressed="' + (L.near && !!L.dep) + '"' + (L.dep ? '' : ' disabled') + '>' + esc(nearLab) + '</button></div>' +
+      '<p class="note" style="margin:0">' + list.length.toLocaleString('fr-FR') + ' espèces, des plus observées aux plus rares (observations en France publiées sur GBIF).</p>' +
+      '<div class="cat-list">' + shown.map(e => (e.fiche ? ficheRow(BY_ID[e.fiche]) : catRow(e))).join('') + '</div>' +
+      (list.length > shown.length ? '<button class="btn block" data-act="en-more">Afficher plus</button>' : '') +
+      '<p class="note">Sources : TAXREF (MNHN, licence ouverte), GBIF, Wikipédia (CC BY-SA), Wikidata, Wikimedia Commons et iNaturalist (photos sous licence libre, auteur sous chaque photo). Mis à jour chaque mois' + (cat.C.gen ? ', dernière fois le ' + new Date(cat.C.gen).toLocaleDateString('fr-FR') : '') + '.</p>';
+  }
+  // espèces trouvées par le groupe qui n'ont pas encore de fiche vérifiée : elles passent en tête des prochaines fiches
+  function nextFiches() {
+    if (!cat || cat.C.st !== 'ok') return '';
+    const n = {};
+    for (const f of allFinds()) if (isCatId(f.species) && cat.get(f.species) && !cat.get(f.species).fiche) n[f.species] = (n[f.species] || 0) + 1;
+    const ids = Object.keys(n).sort((a, b) => n[b] - n[a]).slice(0, 10);
+    if (!ids.length) return '';
+    return '<div class="card en-c"><h3>Prochaines fiches vérifiées</h3><p class="note" style="margin:0 0 8px">Trouvées par le groupe et encore sans fiche complète : elles passent en tête des prochaines fiches.</p><div class="cat-list">' + ids.map(id => catRow(cat.get(id))).join('') + '</div></div>';
+  }
+  const depIn = d => 'dans votre département (' + d.name + (d.name !== d.code ? ', ' + d.code : '') + ')';
+  // département de la position actuelle (ou du centre de la carte), gardé un jour
+  function ensureDep() {
+    if (L.depQ || (L.dep && Date.now() - L.dep.ts < 864e5)) return;
+    const p = x.myPos && x.myPos(); if (!p) return;
+    L.depQ = true;
+    fetch('https://geo.api.gouv.fr/communes?lat=' + p[0].toFixed(4) + '&lon=' + p[1].toFixed(4) + '&fields=codeDepartement,departement&format=json')
+      .then(r => r.json()).then(j => { const c = j && j[0]; if (c && c.codeDepartement) { L.dep = { code: c.codeDepartement, name: (c.departement && c.departement.nom) || c.codeDepartement, ts: Date.now() }; store.set('cc.dep', L.dep); softRender(); } })
+      .catch(() => {}).finally(() => { L.depQ = false; });
+  }
+  // trouvailles visibles par moi : les miennes (même secrètes) et celles partagées par le groupe
+  function allFinds() {
+    const m = new Map(); for (const f of S.myFinds || []) m.set(f.id, Object.assign({ own: true }, f));
+    for (const f of S.groupFinds || []) if (!m.has(f.id)) m.set(f.id, f);
+    return [...m.values()];
+  }
+  function findsHtml(ids) {
+    const set = new Set(ids), list = allFinds().filter(f => set.has(f.species)).sort((a, b) => (b.ts || 0) - (a.ts || 0));
+    const add = '<button class="btn small" data-act="en-find" data-id="' + esc(ids[0]) + '">Enregistrer une trouvaille</button>';
+    if (!list.length) return '<div class="card en-c"><h3>Trouvailles du groupe</h3><p class="note" style="margin:0 0 8px">Personne ne l\'a encore trouvée.</p>' + add + '</div>';
+    const months = [...new Set(list.map(f => new Date(f.ts).getMonth()))].sort((a, b) => a - b).map(m => MOIS_LONG[m]);
+    const who = new Set(list.map(f => f.own ? 'vous' : f.name || 'un ami'));
+    const ph = list.filter(f => f.thumb).slice(0, 8);
+    return '<div class="card en-c"><h3>Trouvailles du groupe</h3><p>' + list.length + ' trouvaille' + (list.length > 1 ? 's' : '') + ' (' + esc([...who].slice(0, 4).join(', ')) + (who.size > 4 ? '…' : '') + '), la dernière le ' + new Date(list[0].ts).toLocaleDateString('fr-FR') + '. Vue en ' + esc(months.join(', ')) + '.</p>' +
+      (ph.length ? '<div class="en-finds">' + ph.map(f => '<button data-act="' + (f.own ? 'myfind' : 'feed-find') + '" data-id="' + esc(f.id) + '"><img alt="" loading="lazy" src="' + f.thumb + '"></button>').join('') + '</div>' : '') +
+      '<div class="actions" style="margin-top:8px">' + add + '</div></div>';
   }
   function offlineCard() {
     const n = Object.values(L.photos || {}).reduce((a, l) => a + l.length, 0);
@@ -81,6 +184,7 @@ export function createLearn(x) {
     return '<div class="frise" aria-label="Saison">' + MOIS.map((m, i) => { const v = e.m[i + 1] || 0; return '<span class="' + (i + 1 === MONTH ? 'now' : '') + '" title="' + MOIS_LONG[i] + '"><i style="opacity:' + (v ? 0.25 + 0.75 * v : 0) + '"></i>' + m + '</span>'; }).join('') + '</div>';
   }
   function ficheHtml(e) {
+    if (!e && isCatId(L.fiche)) return catFicheHtml(L.fiche);
     if (!e) { L.fiche = null; return listHtml(); }
     const ph = photos(e.id);
     const car = ph.length ? '<div class="en-carousel">' + ph.map((p, k) => '<figure>' + imgOr(big(e.id, k), e.n) + '<figcaption>Photo : ' + esc(p.a) + ' · ' + esc(p.l) + ' · <a href="' + esc(p.u) + '" target="_blank" rel="noopener">Wikimedia Commons</a></figcaption></figure>').join('') + '</div>'
@@ -100,8 +204,50 @@ export function createLearn(x) {
       }).join('') + '</div>';
     }
     if (e.fait) h += '<div class="card en-c en-fait"><h3>Le saviez-vous ?</h3><p>' + esc(e.fait) + '</p></div>';
+    h += findsHtml([e.game].concat(cat ? cat.fichesOf(e.id) : []));
     h += '<p class="note">Une fiche ne remplace pas l\'avis d\'un connaisseur : faites toujours vérifier votre cueillette.</p>';
     return h;
+  }
+  // fiche d'une espèce du catalogue : rien sur la comestibilité, dangers connus, résumé, saison, départements
+  function catFicheHtml(id) {
+    if (!cat || cat.C.st !== 'ok') return '<button class="linkish en-back" data-act="en-back">‹ Encyclopédie</button><p class="note">' + (cat && cat.C.st === 'err' ? 'Catalogue indisponible sans réseau pour l\'instant.' : 'Chargement…') + '</p>';
+    const e = cat.get(id); if (!e) { L.fiche = null; return listHtml(); }
+    if (e.fiche) { L.fiche = e.fiche; return ficheHtml(BY_ID[e.fiche]); }
+    let d = L.det.get(id);
+    if (d === undefined) { L.det.set(id, null); cat.detail(id).then(v => { L.det.set(id, v || false); x.rerender(); }); }
+    d = d || null;
+    const ph = d && d.ph && d.ph.length ? d.ph : null;
+    const car = '<div class="en-carousel">' + (ph ? ph.map(p => '<figure>' + imgOr(p.b, e.n) + '<figcaption>Photo : ' + esc(p.a) + ' · ' + esc(p.l) + ' · <a href="' + esc(p.u) + '" target="_blank" rel="noopener">' + (/inaturalist|gbif/.test(p.u) ? 'iNaturalist' : 'Wikimedia Commons') + '</a></figcaption></figure>').join('')
+      : '<figure>' + imgOr(cat.thumb(e), e.n) + '<figcaption>' + (L.det.get(id) === null ? 'Chargement…' : e.ph ? '' : 'Pas encore de photo libre') + '</figcaption></figure>') + '</div>';
+    let h = '<button class="linkish en-back" data-act="en-back">‹ Encyclopédie</button>' + car +
+      '<div><h2>' + esc(e.n) + '</h2><div class="latin">' + esc(e.lat) + (d && d.a ? ' <span class="note">' + esc(d.a) + '</span>' : '') + '</div>' +
+      (e.alt.length ? '<p class="note" style="margin:0">Aussi appelé : ' + esc(e.alt.join(', ')) + '</p>' : '') +
+      (e.syn.length ? '<p class="note" style="margin:0">Anciens noms : ' + esc(e.syn.slice(0, 6).join(', ')) + '</p>' : '') + '</div>' +
+      '<div class="en-head">' + (e.tox ? DANGER_TAG[e.tox] : '') + '<span class="en-badge meh">Fiche non vérifiée</span>' + dexTag(e.id) + '</div>';
+    const src = d && d.ts === 'wd' ? 'Wikidata' : 'Wikipédia';
+    h += '<div class="warnbox ' + (e.tox ? 'danger' : '') + '">' +
+      (e.tox === 'm' ? '<b>Signalé mortel</b> (' + src + '). ' : e.tox === 't' ? '<b>Signalé toxique</b> (' + src + '). ' : '') +
+      '<b>Comestibilité non vérifiée par l\'appli : ne le consommez pas.</b> Photographiez-le, faites-le identifier par un pharmacien ou une société mycologique.' +
+      (e.risk === 'g' ? '<br>Son genre compte des espèces mortelles : aucune cueillette sans identification experte.' : e.risk === 'r' ? '<br>Son genre compte des espèces toxiques.' : '') + '</div>';
+    if (d && d.tx) h += '<div class="card en-c"><h3>Toxicité signalée</h3><p>' + esc(d.tx) + '</p><p class="note" style="margin:6px 0 0">D\'après Wikipédia (CC BY-SA).</p></div>';
+    if (d && d.ex) h += '<div class="card en-c"><h3>Présentation</h3><p>' + esc(d.ex) + '</p><p class="note" style="margin:6px 0 0">D\'après <a href="https://fr.wikipedia.org/wiki/' + encodeURIComponent(d.wp.replace(/ /g, '_')) + '" target="_blank" rel="noopener">Wikipédia</a> (CC BY-SA), sans les passages sur la comestibilité.</p></div>';
+    else if (d && d.wp) h += '<div class="card en-c"><h3>Présentation</h3><p><a href="https://fr.wikipedia.org/wiki/' + encodeURIComponent(d.wp.replace(/ /g, '_')) + '" target="_blank" rel="noopener">Article sur Wikipédia</a></p></div>';
+    // saison et départements (observations en France publiées sur GBIF)
+    const fr = e.mo ? { m: Object.fromEntries(e.mo.map((v, i) => [i + 1, v / 9])) } : null;
+    let w = '<div class="card en-c"><h3>Où et quand</h3><p>' + (e.obs ? e.obs.toLocaleString('fr-FR') + ' observation' + (e.obs > 1 ? 's' : '') + ' en France' + (d && d.nd ? ', dans ' + d.nd + ' département' + (d.nd > 1 ? 's' : '') : '') + '.' : 'Aucune observation en France publiée sur GBIF pour l\'instant.') + '</p>';
+    if (L.dep && e.obs) w += '<p>' + (cat.inDep(e, L.dep.code) ? '<b>Déjà observé ' + esc(depIn(L.dep)) + '.</b>' : 'Pas encore signalé ' + esc(depIn(L.dep)) + '.') + '</p>';
+    if (fr) w += frise(fr) + '<p class="note" style="margin:6px 0 0">Mois des observations en France.</p>';
+    else if (e.obs) w += '<p class="note">Trop peu d\'observations pour dessiner la saison.</p>';
+    w += (d && d.gb ? '<p class="note" style="margin:8px 0 0"><a href="https://www.gbif.org/species/' + d.gb + '" target="_blank" rel="noopener">Carte des observations sur GBIF</a></p>' : '') + '</div>';
+    h += w;
+    if (d && (d.f || d.o)) h += '<div class="card en-c"><h3>Classification</h3><dl class="kv en-kv">' + [['Genre', d.g], ['Famille', d.f], ['Ordre', d.o], ['Classe', d.k]].filter(r => r[1]).map(([k, v]) => '<dt>' + k + '</dt><dd>' + esc(v) + '</dd>').join('') + '</dl></div>';
+    h += findsHtml([e.id]);
+    h += '<p class="note">Fiche du catalogue, construite automatiquement à partir de TAXREF (MNHN), GBIF, Wikipédia et Wikidata. Elle sert à reconnaître et à noter vos trouvailles, pas à décider de ce qui se mange.</p>';
+    return h;
+  }
+  function dexTag(id) {
+    const per = S.prof && S.prof.stats && S.prof.stats.perSpecies; if (!per) return '';
+    return per[id] ? '<span class="tag ok">Déjà trouvé</span>' : '';
   }
 
   // ---------- quiz ----------
@@ -216,7 +362,11 @@ export function createLearn(x) {
   function act(a, t) {
     switch (a) {
       case 'learn-tab': L.view = t.dataset.v; store.set('cc.learn', L.view); if (L.view !== 'quiz') L.quiz = null; return 'top';
-      case 'en-filter': L.filter = t.dataset.v; return 'keep';
+      case 'en-filter': L.filter = t.dataset.v; L.more = 60; L.fiche = null; L.view = 'encyclo'; return 'keep';
+      case 'en-more': L.more += 60; return 'keep';
+      case 'en-season': L.season = !L.season; store.set('cc.cat.season', L.season); L.more = 60; return 'keep';
+      case 'en-near': L.near = !L.near; store.set('cc.cat.near', L.near); L.more = 60; return 'keep';
+      case 'en-find': if (x.newFind) x.newFind(t.dataset.id); return 'none';
       case 'en-open': L.view = 'encyclo'; L.fiche = t.dataset.id; return 'top';
       case 'en-open-from-quiz': L.ficheFromQuiz = L.quiz; L.quiz = null; L.view = 'encyclo'; L.fiche = t.dataset.id; return 'top';
       case 'en-back': if (L.ficheFromQuiz) { L.quiz = L.ficheFromQuiz; L.ficheFromQuiz = null; L.view = 'quiz'; } L.fiche = null; return 'top';
@@ -249,6 +399,9 @@ export function createLearn(x) {
   return {
     render, act, L,
     openFiche(id) { L.view = 'encyclo'; L.fiche = id; L.quiz = null; },
-    ficheForGame(gid) { const e = ENCYCLO.find(x2 => x2.game === gid); return e ? e.id : null; }
+    ficheForGame(gid) {
+      if (isCatId(gid)) { const c = cat && cat.get(gid); return c && c.fiche ? c.fiche : gid; }
+      const e = ENCYCLO.find(x2 => x2.game === gid); return e ? e.id : null;
+    }
   };
 }

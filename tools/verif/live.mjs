@@ -222,7 +222,22 @@ await step('Encyclopédie', async () => {
     const r = await fetch('icons/especes/phalloide.webp'), l = CC.Game.CATALOG.filter(s => s.id !== 'autre');
     return { titre: document.querySelector('.panel h2') && document.querySelector('.panel h2').textContent, photos: document.querySelectorAll('.en-carousel img').length, icone: r.ok, especes: l.length, aConnaitre: l.filter(s => s.cat !== 'c').length };
   });
-  check('Trouvailles élargies : 58 espèces dont 29 à connaître, fiche de la russule verdoyante en photos, icônes servies', ok2 && g.titre === 'Russule verdoyante' && g.photos >= 2 && g.icone && g.especes === 58 && g.aConnaitre === 29, g);
+  check('Trouvailles élargies : 118 espèces dont 59 à connaître, fiche de la russule verdoyante en photos, icônes servies', ok2 && g.titre === 'Russule verdoyante' && g.photos >= 2 && g.icone && g.especes === 118 && g.aConnaitre === 59, g);
+  // catalogue de France : chargement, recherche tolérante, fiche d'une espèce du catalogue avec sa photo
+  const c = await page.evaluate(async () => {
+    await CC.CATA.load();
+    const s1 = CC.CATA.search('girole')[0], s2 = CC.CATA.search('Polyporus umbellatus')[0], e = CC.CATA.C.list.find(x => !x.fiche && x.ph && x.obs > 50);
+    const d = e ? await CC.CATA.detail(e.id) : null;
+    return { n: CC.CATA.C.list.length, girole: s1 && s1.n, ombelle: s2 && s2.fiche, espece: e && e.id, resume: !!(d && (d.ex || d.wp)), photos: d ? d.ph.length : 0 };
+  });
+  check('Catalogue de France : ' + c.n + ' espèces, recherche avec fautes, fiche du polypore en ombelle reliée, détails', c.n > 1000 && /Girolle/.test(c.girole || '') && c.ombelle === 'polypore_ombelle' && c.photos >= 1, c);
+  if (c.espece) {
+    await page.evaluate(id => { document.querySelector('.tabs [data-tab="carte"]').click(); CC.learn.openFiche(id); document.querySelector('.tabs [data-tab="mycodex"]').click(); }, c.espece);
+    const ok3 = await wait(() => { const i = document.querySelector('.en-carousel img'); return i && i.complete && i.naturalWidth > 100; }, null, 20000);
+    const t = await page.evaluate(() => document.querySelector('.panel-inner').textContent);
+    await sleep(600); await shot('11-catalogue');
+    check('Catalogue de France : fiche non vérifiée avec photo libre et avertissement', ok3 && /Comestibilité non vérifiée/.test(t), { photo: ok3 });
+  }
   await page.evaluate(() => document.querySelector('.tabs [data-tab="carte"]').click());
 });
 

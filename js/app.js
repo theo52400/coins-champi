@@ -5,6 +5,7 @@ import * as Game from './game.js';
 import { connect } from './sync.js';
 import { createMap, POT_COL, SOIL_COLORS } from './map.js';
 import { createLearn } from './learn.js';
+import { createCatalogue } from './catalogue.js';
 import { pickImage, processPhoto } from './photos.js';
 import { FIREBASE_CONFIG } from '../config.js';
 
@@ -80,8 +81,9 @@ let Av = null;
 const avP = import('./avatar3d.js').then(m => { Av = m; onAvatarsReady(); return m; }).catch(e => { log('Avatars 3D indisponibles : ' + e.message); return null; });
 const avatarImg = (cfg, size) => Av ? Av.snapshot(cfg || {}, { size: size || 128 }) : 'data:image/gif;base64,R0lGODlhAQABAAAAACw=';
 // icônes des espèces : images fixes (tools/icones/especes.cjs), pour afficher les 60 espèces sans calcul 3D
-const speciesImg = id => 'icons/especes/' + (Game.SPECIES_BY_ID[id] || Game.SPECIES_BY_ID.autre).cap + '.webp';
-const catBadge = sp => sp && sp.cat && sp.cat !== 'c' ? '<span class="en-badge ' + ({ e: 'meh', t: 'tox', m: 'dead' })[sp.cat] + '">' + Game.CAT_LABEL[sp.cat] + '</span>' : '';
+// (espèces du catalogue de France : leur photo libre, ou l'icône « mystère »)
+const speciesImg = id => { const sp = Game.SPECIES_BY_ID[id] || Game.SPECIES_BY_ID.autre; return sp.cata && sp.thumb ? sp.thumb : 'icons/especes/' + sp.cap + '.webp'; };
+const catBadge = sp => sp && sp.cat && sp.cat !== 'c' ? '<span class="en-badge ' + ({ e: 'meh', t: 'tox', m: 'dead', n: 'meh' })[sp.cat] + '">' + Game.CAT_LABEL[sp.cat] + '</span>' : '';
 const normTxt = t => String(t || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 const spColor = id => { const sp = Game.SPECIES_BY_ID[id]; return Av && sp && Av.CAPS[sp.cap] ? Av.CAPS[sp.cap].tints[0] : '#4A2C8F'; };
 
@@ -89,10 +91,18 @@ const spColor = id => { const sp = Game.SPECIES_BY_ID[id]; return Av && sp && Av
 let M = null;
 // Données publiées avec le site ; dans l'appli Android, la météo du jour (elle change chaque matin) et les photos
 // de l'encyclopédie (lourdes) viennent du site publié
-const dataUrl = p => (IN_APP && /^data\/(meteo|encyclo)\//.test(p) ? SITE_URL + p : p);
+const dataUrl = p => (IN_APP && /^data\/(meteo|encyclo|catalogue)\//.test(p) ? SITE_URL + p : p);
+// Catalogue de toutes les espèces de France (catalogue.js) : chargé en arrière-plan, il donne leur nom aux trouvailles
+const CATA = createCatalogue({ dataUrl });
+function onCatalogue() {
+  Game.registerCatalog(CATA.C.list.map(e => ({ id: e.id, n: e.n, lat: e.lat, tox: e.tox, risk: e.risk, mo: e.mo, game: e.game, thumb: CATA.thumb(e) })));
+  onProfileData(); renderFinds();
+}
 // Onglet « Apprendre » : encyclopédie, quiz, Mycodex
 const learn = createLearn({
-  $, esc, store, S, MONTH, dataUrl,
+  $, esc, store, S, MONTH, dataUrl, catalogue: CATA, onCatalogue,
+  myPos: () => (GPS.fix ? [GPS.fix.lat, GPS.fix.lng] : M ? [M.map.getCenter().lat, M.map.getCenter().lng] : null),
+  newFind: id => openNewFind(null, id),
   mycodexHtml: () => mycodexHtml(),
   rerender: () => renderPanelIfOpen('mycodex'),
   onPoints: (pts, line) => celebrate(pts, line),
@@ -110,6 +120,7 @@ async function boot() {
   window.addEventListener('online', () => startSync());
   await startSync();
   if (S.sortie) resumeSortie();
+  setTimeout(() => { if (CATA.C.st !== 'ok') CATA.load().then(onCatalogue).catch(e => log('Catalogue de France indisponible : ' + e.message)); }, 1500);
   if (IN_APP) checkAppUpdate();
 }
 // Appli Android : une nouvelle version est-elle publiée ? (au plus une fois toutes les 6 heures)
@@ -1028,24 +1039,36 @@ function pickerSpecies(tab, q) {
   else list = bySeason(all.filter(s => tab === 'x' ? s.cat !== 'c' : s.cat === 'c'));
   return list.concat([Game.SPECIES_BY_ID.autre]);
 }
-const spButton = (s, sel) => '<button data-sp-id="' + s.id + '" aria-pressed="' + (sel === s.id) + '"' + (s.cat && s.cat !== 'c' ? ' class="sp-x sp-' + s.cat + '"' : '') + '><img alt="" loading="lazy" src="' + speciesImg(s.id) + '">' + esc(s.n) + (s.cat && s.cat !== 'c' ? '<span class="sp-cat">' + esc(Game.CAT_LABEL[s.cat]) + '</span>' : '') + '</button>';
+// espèces du catalogue de France qui répondent à la recherche (hors espèces du Mycodex, déjà proposées)
+function pickerCatalogue(q, inDex) {
+  if (!q || CATA.C.st !== 'ok') return [];
+  return CATA.search(q, { limit: 40 }).filter(e => !(e.game && inDex.has(e.game))).slice(0, 24).map(e => Game.SPECIES_BY_ID[e.id]);
+}
+const spButton = (s, sel) => '<button data-sp-id="' + s.id + '" aria-pressed="' + (sel === s.id) + '"' + (s.cat && s.cat !== 'c' ? ' class="sp-x sp-' + s.cat + '"' : '') + '><img alt="" loading="lazy"' + (s.cata ? ' class="sp-ph"' : '') + ' src="' + speciesImg(s.id) + '">' + esc(s.n) + (s.cata && s.lat ? '<small>' + esc(s.lat) + '</small>' : '') + (s.cat && s.cat !== 'c' ? '<span class="sp-cat">' + esc(Game.CAT_LABEL[s.cat]) + '</span>' : '') + '</button>';
 function findWarning(id) {
   const s = Game.SPECIES_BY_ID[id]; if (!s) return '';
   if (s.id === 'autre') return '<b>À faire identifier :</b> ne consommez jamais un champignon sans identification certaine. Une photo aidera le pharmacien ou la société mycologique.';
+  if (s.cata) {
+    const g = s.risk === 'g' ? ' Son genre compte des espèces mortelles.' : '';
+    if (s.cat === 'm') return '<b>Signalé mortel :</b> ne le cueillez pas, une photo suffit. Lavez-vous les mains si vous l\'avez touché.' + g;
+    if (s.cat === 't') return '<b>Signalé toxique :</b> pas dans le panier, une photo suffit.' + g;
+    return '<b>Comestibilité non vérifiée :</b> une photo suffit, ne le consommez pas.' + g;
+  }
   if (s.cat === 'm') return '<b>Mortel :</b> ne le cueillez pas, une photo suffit. Lavez-vous les mains si vous l\'avez touché.';
   if (s.cat === 't') return '<b>Toxique :</b> pas dans le panier, une photo suffit. Signalé au groupe, il évitera une confusion.';
   if (s.cat === 'e') return '<b>Non comestible :</b> une photo suffit, laissez-le sur place.';
   return '';
 }
-function openNewFind(preset) {
+function openNewFind(preset, spId) {
   if (!S.sync) { toast('Connexion au jeu en cours, réessayez dans un instant.'); return; }
   if (!S.me) { startOnboarding(); return; }
-  const d = { photo: null, species: S.sp !== 'all' ? (Game.CATALOG.find(x => x.core === S.sp) || {}).id || null : null, qty: 1, note: '', vis: S.gid ? S.settings.vis : 'prive', pos: preset ? { lat: preset.lat, lng: preset.lng, acc: 10, src: 'carte' } : null };
+  if (spId) spId = Game.canonSp(spId);
+  const d = { photo: null, species: spId || (S.sp !== 'all' ? (Game.CATALOG.find(x => x.core === S.sp) || {}).id || null : null), qty: 1, note: '', vis: S.gid ? S.settings.vis : 'prive', pos: preset ? { lat: preset.lat, lng: preset.lng, acc: 10, src: 'carte' } : null };
   const card = openModal(modalHead('Nouvelle trouvaille') +
     '<button class="photo-drop" data-act="nf-cam" id="nf-photo" aria-label="Prendre une photo"><span>Prendre la photo du coin</span></button>' +
     '<div class="photo-row"><button class="btn small" data-act="nf-cam">Appareil photo</button><button class="btn small" data-act="nf-gal">Galerie</button></div>' +
     '<div class="editor-sec" style="margin-top:12px"><h3>Espèce</h3>' +
-    '<input class="input" id="nf-q" type="search" enterkeyhint="search" autocomplete="off" placeholder="Chercher : coprin, amanite, bolet…" aria-label="Chercher une espèce">' +
+    '<input class="input" id="nf-q" type="search" enterkeyhint="search" autocomplete="off" placeholder="Chercher parmi toutes les espèces de France…" aria-label="Chercher une espèce">' +
     '<div class="seg sp-tabs" role="tablist" aria-label="Espèces">' + [['c', 'Comestibles'], ['x', 'À connaître']].map(([k, n]) => '<button role="tab" data-sp-tab="' + k + '" aria-selected="' + (k === 'c') + '">' + n + ' · ' + Game.CATALOG.filter(s => s.id !== 'autre' && (k === 'x' ? s.cat !== 'c' : s.cat === 'c')).length + '</button>').join('') + '</div>' +
     '<div class="sp-grid" id="nf-sp"></div><div class="warnbox danger" id="nf-warn" hidden style="margin-top:8px"></div></div>' +
     '<div class="editor-sec" id="nf-qty-sec"><h3>Quantité</h3><div class="opts" id="nf-qty">' + [1, 2, 3].map(q => '<button class="opt-chip" data-q="' + q + '" aria-pressed="' + (d.qty === q) + '">' + Game.QTY[q].n + '</button>').join('') + '</div></div>' +
@@ -1054,12 +1077,19 @@ function openNewFind(preset) {
     '<div class="editor-sec"><h3>Position</h3><div class="row"><span class="grow" id="nf-pos">Recherche de votre position…</span><button class="btn small" data-act="nf-map">Sur la carte</button></div></div>' +
     '<p class="note" id="nf-err" style="color:var(--danger)" hidden></p>' +
     '<div class="actions"><button class="btn primary block" data-act="nf-save">Enregistrer la trouvaille</button></div>');
-  let spTab = 'c';
+  let spTab = d.species && Game.SPECIES_BY_ID[d.species] && Game.SPECIES_BY_ID[d.species].cat !== 'c' ? 'x' : 'c';
   const drawSpecies = () => {
     const q = card.querySelector('#nf-q').value.trim(), list = pickerSpecies(spTab, q);
-    card.querySelector('#nf-sp').innerHTML = list.map(s => spButton(s, d.species)).join('') + (q && list.length === 1 ? '<p class="note" style="grid-column:1/-1;margin:4px 0 0">Aucune espèce ne correspond : choisissez « Autre, à identifier ».</p>' : '');
+    const dex = new Set(Game.CATALOG.map(s => s.id)), more = pickerCatalogue(q, dex);
+    // espèce choisie depuis une fiche du catalogue : montrée en tête
+    const pre = !q && d.species && Game.isCatId(d.species) ? [Game.SPECIES_BY_ID[d.species]] : [];
+    card.querySelector('#nf-sp').innerHTML = pre.map(s => spButton(s, d.species)).join('') + list.map(s => spButton(s, d.species)).join('') +
+      (more.length ? '<p class="sp-sub">Toutes les espèces de France</p>' + more.map(s => spButton(s, d.species)).join('') : '') +
+      (q && CATA.C.st === 'q' ? '<p class="note" style="grid-column:1/-1;margin:4px 0 0">Chargement du catalogue de France…</p>' : '') +
+      (q && list.length === 1 && !more.length ? '<p class="note" style="grid-column:1/-1;margin:4px 0 0">Aucune espèce ne correspond : choisissez « Autre, à identifier ».</p>' : '');
     card.querySelectorAll('[data-sp-tab]').forEach(b => b.setAttribute('aria-selected', String(!q && b.dataset.spTab === spTab)));
   };
+  if (CATA.C.st !== 'ok') CATA.load().then(() => { onCatalogue(); if (card.isConnected) drawSpecies(); }).catch(() => {});
   const showSpecies = () => {
     const w = findWarning(d.species), s = Game.SPECIES_BY_ID[d.species];
     const wb = card.querySelector('#nf-warn'); wb.innerHTML = w; wb.hidden = !w;
@@ -1227,7 +1257,7 @@ function onEvents(list) {
   }
   renderPanelIfOpen('groupe');
 }
-const findEvText = ev => { const sp = Game.SPECIES_BY_ID[ev.species] || {}; return sp.cat && sp.cat !== 'c' ? ev.name + ' signale : ' + sp.n + ' (' + Game.CAT_LABEL[sp.cat].toLowerCase() + ')' : ev.name + ' a trouvé : ' + (sp.n || 'un champignon'); };
+const findEvText = ev => { const sp = Game.SPECIES_BY_ID[ev.species] || {}; return sp.cat && sp.cat !== 'c' && sp.cat !== 'n' ? ev.name + ' signale : ' + sp.n + ' (' + Game.CAT_LABEL[sp.cat].toLowerCase() + ')' : ev.name + ' a trouvé : ' + (sp.n || 'un champignon'); };
 const evText = ev => ev.type === 'sos' ? 'SOS de ' + ev.name : ev.type === 'rally' ? ev.name + ' propose de se regrouper' : ev.type === 'look' ? ev.name + ' : « ' + (ev.msg || 'Venez voir !') + ' »' : ev.type === 'find' ? findEvText(ev) : ev.type === 'treasure' ? ev.name + ' a trouvé le cèpe d\'or !' : ev.type === 'hidden' ? ev.name + ' a caché un cèpe d\'or' : ev.name + ' : ' + (ev.msg || '');
 function notifyEvent(ev) {
   if (NativeApp && document.hidden) nativeNotify(ev);
@@ -1762,7 +1792,14 @@ function mycodexHtml() {
   return '<h2>Mycodex</h2><p class="lead">' + found + ' espèce' + (found > 1 ? 's' : '') + ' trouvée' + (found > 1 ? 's' : '') + ' sur ' + list.length + '. Chaque nouvelle espèce rapporte double.</p>' +
     '<div class="progress"><b style="width:' + Math.round(100 * found / list.length) + '%"></b></div>' +
     sec('Comestibles', '', list.filter(s => s.cat === 'c')) +
-    sec('À connaître', 'Toxiques, mortels ou sans intérêt : on les photographie, on ne les cueille pas.', list.filter(s => s.cat !== 'c'));
+    sec('À connaître', 'Toxiques, mortels ou sans intérêt : on les photographie, on ne les cueille pas.', list.filter(s => s.cat !== 'c')) + dexCatalogue(per);
+}
+// autres espèces du catalogue de France déjà trouvées (une fiche du catalogue chacune)
+function dexCatalogue(per) {
+  const ids = Object.keys(per).filter(Game.isCatId).sort((a, b) => per[b] - per[a]);
+  return '<h3 class="dex-h">Toutes les espèces de France <span class="tag">' + ids.length + '</span></h3><p class="note" style="margin:0 0 8px">Les autres espèces trouvées, choisies dans le catalogue de France (' + Game.CAT_PTS + ' points, doublés la première fois). Dix espèces : badge Naturaliste.</p>' +
+    (ids.length ? '<div class="dex">' + ids.map(id => { const s = Game.SPECIES_BY_ID[id]; return '<button data-act="en-open" data-id="' + esc(id) + '"><img alt="" loading="lazy" class="sp-ph" src="' + speciesImg(id) + '">' + esc(s.n) + '<small>' + per[id] + ' trouvaille' + (per[id] > 1 ? 's' : '') + '</small></button>'; }).join('') + '</div>'
+      : '<p class="note">Cherchez n\'importe quelle espèce au moment d\'enregistrer une trouvaille.</p>');
 }
 function renderMycodex() { renderPanelIfOpen('mycodex'); }
 function openSpecies(id) {
@@ -1990,4 +2027,4 @@ async function shareInvite() {
 
 window.addEventListener('beforeunload', () => { if (S.sortie) saveSortieState(); });
 boot().catch(e => { log('Démarrage : ' + e.message); console.error(e); });
-window.CC = { S, get M() { return M; }, Game, C, logs, learn };
+window.CC = { S, get M() { return M; }, Game, C, logs, learn, CATA };

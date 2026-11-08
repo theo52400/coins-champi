@@ -301,5 +301,303 @@
   0,
   6,
   4
+ ],
+ "polypore_ombelle": [
+  7,
+  14,
+  6
+ ],
+ "poule_bois": [
+  0,
+  7,
+  12
+ ],
+ "hydne_herisson": [
+  2,
+  0
+ ],
+ "pholiote_ridee": [
+  11,
+  9,
+  12
+ ],
+ "tete_moine": [
+  0,
+  4,
+  13
+ ],
+ "pied_violet": [
+  10,
+  9,
+  13
+ ],
+ "tricholome_pretentieux": [
+  8,
+  13,
+  7
+ ],
+ "lactaire_sanguin": [
+  6,
+  11,
+  12
+ ],
+ "vachotte": [
+  3,
+  2,
+  8
+ ],
+ "russule_vesca": [
+  6,
+  11,
+  9
+ ],
+ "hygrophore_pres": [
+  12,
+  9,
+  14
+ ],
+ "pleurote_panicaut": [
+  1,
+  10,
+  3
+ ],
+ "pleurote_corne": [
+  10,
+  13,
+  9
+ ],
+ "collybie_velue": [
+  10,
+  9,
+  4
+ ],
+ "agaric_jacheres": [
+  0,
+  11,
+  5
+ ],
+ "agaric_auguste": [
+  0,
+  8,
+  5
+ ],
+ "lepiote_deguenillee": [
+  8,
+  9,
+  14
+ ],
+ "morillon": [
+  0,
+  2,
+  12
+ ],
+ "pezize_orangee": [
+  0,
+  5,
+  10
+ ],
+ "bolet_bouviers": [
+  0,
+  14,
+  11
+ ],
+ "bolet_elegant": [
+  0,
+  3,
+  9
+ ],
+ "bolet_rude": [
+  0,
+  11,
+  6
+ ],
+ "bolet_appendicule": [
+  0,
+  7,
+  1
+ ],
+ "chanterelle_jaunissante": [
+  9,
+  14,
+  7
+ ],
+ "hydne_roux": [
+  3,
+  0,
+  5
+ ],
+ "vesse_perlee": [
+  1,
+  8,
+  0
+ ],
+ "truffe_noire": [
+  5,
+  0,
+  12
+ ],
+ "pholiote_peuplier": [
+  7,
+  2,
+  0
+ ],
+ "meunier": [
+  0,
+  7,
+  5
+ ],
+ "lactaire_saumon": [
+  0,
+  1,
+  9
+ ],
+ "craterelle_sinueuse": [
+  13,
+  0,
+  9
+ ],
+ "hydne_imbrique": [
+  1,
+  0,
+  7
+ ],
+ "amanite_jonquille": [
+  2,
+  0,
+  1
+ ],
+ "amanite_epaisse": [
+  1,
+  0,
+  8
+ ],
+ "amanite_vaginee": [
+  2,
+  9,
+  13
+ ],
+ "bolet_legal": [
+  11,
+  6,
+  2
+ ],
+ "bolet_pourpre": [
+  6,
+  5,
+  2
+ ],
+ "bolet_beau_pied": [
+  13,
+  7,
+  2
+ ],
+ "bolet_radicant": [
+  4,
+  3,
+  5
+ ],
+ "tricholome_tigre": [
+  8,
+  14,
+  0
+ ],
+ "tricholome_soufre": [
+  2,
+  0,
+  12
+ ],
+ "tricholome_savonneux": [
+  0,
+  8
+ ],
+ "hebelome": [
+  6,
+  11,
+  7
+ ],
+ "lepiote_cretee": [
+  12,
+  0,
+  2
+ ],
+ "pholiotine": [
+  0,
+  1,
+  6
+ ],
+ "gymnopile": [
+  2,
+  0,
+  7
+ ],
+ "clavaire_elegante": [
+  7,
+  8,
+  6
+ ],
+ "russule_fetide": [
+  0,
+  9,
+  14
+ ],
+ "lactaire_poivre": [
+  5,
+  13,
+  11
+ ],
+ "lactaire_plombe": [
+  3,
+  8,
+  4
+ ],
+ "coprin_noir": [
+  6,
+  1,
+  13
+ ],
+ "clathre_rouge": [
+  8,
+  3,
+  10
+ ],
+ "helvelle_crepue": [
+  6,
+  12,
+  0
+ ],
+ "verpe_boheme": [
+  0,
+  10,
+  2
+ ],
+ "ganoderme": [
+  0,
+  2,
+  4
+ ],
+ "polypore_bouleau": [
+  5,
+  9,
+  13
+ ],
+ "tremelle": [
+  6,
+  1,
+  8
+ ],
+ "xylaire": [
+  1,
+  4,
+  0
+ ],
+ "inocybe_fastigie": [
+  5,
+  10,
+  12
+ ],
+ "pholiote_ecailleuse": [
+  2,
+  0,
+  4
  ]
 }

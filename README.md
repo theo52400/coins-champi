@@ -4,14 +4,15 @@ Le jeu des chasseurs de champignons, partout en France métropolitaine et en Cor
 
 - **Carte des coins** : potentiel d'habitat de 10 champignons comestibles, calculé en direct à partir des peuplements forestiers de l'IGN (BD Forêt V2), du sol estimé d'après la roche du sous-sol (carte géologique de la France du BRGM) et des lisières, plus un indice de pousse d'après la météo des 14 derniers jours.
 - **Vue de loin « Ça pousse »** : en dézoomant jusqu'à la France entière, chaque case d'environ 5 km montre la part de bons coins (BD Forêt de tous les départements, sol, lisières) multipliée par la météo de pousse du jour, avec les meilleurs secteurs de la vue. Plus près, les coins s'affichent en cases d'environ 250 m.
-- **Apprendre** : encyclopédie de 61 champignons (32 comestibles, 29 toxiques ou non comestibles) avec photos libres, goût sur 5, cuisine, conservation, critères, saison et sosies face à face ; quiz photo, cartes mémoire, défi photo de la semaine et badges.
+- **Apprendre** : encyclopédie de 121 fiches vérifiées (62 comestibles, 59 toxiques, non comestibles ou à laisser) avec photos libres, goût sur 5, cuisine, conservation, critères, saison, sosies face à face et trouvailles du groupe ; quiz photo, cartes mémoire, défi photo de la semaine et badges.
+- **Catalogue de France** : toutes les espèces de champignons du référentiel national TAXREF qui ont un nom français, cherchées par nom français, latin ou ancien nom, sans accents et malgré les fautes de frappe. Pour chacune : photo libre, résumé de Wikipédia, mois et départements où elle est observée (GBIF), toxicité signalée. Leur comestibilité n'est jamais donnée : seules les fiches vérifiées le font. Toutes peuvent être enregistrées comme trouvailles.
 - **Mon champignon sur la carte** : dès l'ouverture, l'avatar suit vos pas, avec la direction de marche ; le bouton de localisation fait suivre la carte.
 - **Itinéraire dans l'appli** : vers un point, une trouvaille, un ami, une alerte ou la voiture. Le chemin à pied de l'IGN est tracé sur la carte avec la ligne droite, la distance restante et le temps de marche.
 - **Mode poche** : écran noir verrouillé qui reste allumé, pour garder le GPS et le partage de position pendant que le téléphone est dans la poche.
 - **Profil et avatar 3D** : chacun crée son champignon animé (espèce, couleur, yeux, bouche, accessoire, chapeau, écharpe).
 - **Sorties en direct** : pendant une sortie, les membres du groupe voient la position de chacun sur la carte. La trace est enregistrée, la voiture aussi (boussole « Retour à la voiture »).
 - **Trouvailles en photo** : photo du coin, espèce, quantité, note, et visibilité au choix : coin **secret**, **groupe**, ou groupe avec **position floutée** (environ 300 m).
-- **Jeu** : points, 10 niveaux, 22 badges, Mycodex de 58 espèces à débloquer (29 comestibles et 29 à connaître : toxiques, mortelles ou sans intérêt, qu'on photographie sans les cueillir), deux défis d'équipe par semaine, « bravos » sur les trouvailles des amis.
+- **Jeu** : points, 10 niveaux, 23 badges, Mycodex de 118 espèces à débloquer (59 comestibles et 59 à connaître : toxiques, mortelles ou sans intérêt, qu'on photographie sans les cueillir), plus toutes les espèces du catalogue de France (10 points, doublés la première fois), deux défis d'équipe par semaine, « bravos » sur les trouvailles des amis.
 - **Cèpes d'or** : un joueur cache un trésor dans la forêt, les autres voient une zone de 250 m et un indicateur chaud/froid ; le premier à moins de 25 m le ramasse (+100 points).
 - **Discussion de groupe** et **fiche de chaque joueur** : niveau, badges, statistiques, d'où viennent ses points et ses derniers gains (une trouvaille secrète reste anonyme).
 - **Alertes** : « Venez voir ! », « Regroupement ici », SOS, avec la position jointe.
@@ -75,7 +76,8 @@ Firestore Spark : 50 000 lectures, 20 000 écritures par jour et 1 Go de donnée
 | `js/core.js` | Modèle d'habitat (peuplements, sol, lisières, météo) |
 | `js/map.js` | Carte Leaflet, BD Forêt en direct (WFS Géoplateforme), sous-sol, communes, grille, brouillard, hors-ligne |
 | `js/far.js` | Vue de loin : carte de France « Ça pousse » et cases de 250 m (`data/foret`, `data/meteo`) |
-| `js/encyclo.js`, `js/learn.js` | Encyclopédie (fiches) et onglet Apprendre (quiz, cartes mémoire, défi photo) |
+| `js/encyclo.js`, `js/learn.js` | Encyclopédie (fiches vérifiées) et onglet Apprendre (recherche, quiz, cartes mémoire, défi photo) |
+| `js/catalogue.js` | Catalogue de France : chargement, recherche tolérante aux fautes, détails par paquets, départements |
 | `js/game.js` | Règles : points, niveaux, badges, défis, traces |
 | `js/avatar3d.js` | Avatars champignons en 3D (three.js) |
 | `js/sync.js` | Synchronisation Firestore (et base locale du mode solo, `js/localstore.js`) |
@@ -86,7 +88,8 @@ Firestore Spark : 50 000 lectures, 20 000 écritures par jour et 1 Go de donnée
 | `data/foret/` | Forêts de France : carreaux de 1° (cases de 1/400°, peuplement dominant et lisière) et carte de France au 1/20°, construits par `tools/foret/build.py` (`foret-france.yml`) |
 | `data/meteo/pousse.json` | Météo de pousse, un point tous les 0,5°, recalculée chaque matin par `meteo-france.yml` |
 | `data/encyclo/` | Photos de l'encyclopédie (Wikimedia Commons) choisies dans `tools/photos/choix.json`, construites par `photos-encyclo.yml` |
-| `icons/especes/` | Icônes des 58 espèces du Mycodex (chapeaux 3D figés en WebP), produites par `tools/icones/especes.cjs` à relancer après toute retouche des espèces |
+| `data/catalogue/` | Catalogue de France : `index.json` (recherche) et `d/<n>.json` (détails), reconstruit chaque mois par `tools/catalogue/build.mjs` (`catalogue-france.yml`) ; rapport dans `rapport.txt` |
+| `icons/especes/` | Icônes des 118 espèces du Mycodex (chapeaux 3D figés en WebP), produites par `tools/icones/especes.cjs` à relancer après toute retouche des espèces |
 | `.github/workflows/geol-france.yml` | Reconstruit `data/geol` sur les machines de GitHub (lecture de la carte géologique) |
 | `.github/workflows/verif-live.yml` | Après chaque mise en ligne, ouvre le site publié dans un navigateur et vérifie les services ; rapport sur la branche `sondes` |
 
@@ -95,4 +98,4 @@ Firestore Spark : 50 000 lectures, 20 000 écritures par jour et 1 Go de donnée
 
 ## Sources et licences
 
-BD Forêt® V2, Plan IGN, photographies aériennes, altimétrie et itinéraires piétons © IGN — Géoplateforme (licence ouverte Etalab). Sous-sol : carte géologique de la France au 1/1 000 000 © BRGM (CC BY 4.0), lue via Macrostrat (cartes voisines aux frontières : Allemagne, Suisse, Espagne) ; cartes géologiques au 1/50 000 © BRGM. Communes : API Découpage administratif, geo.api.gouv.fr (licence ouverte). Météo : Open-Meteo.com (CC BY 4.0). Photos de l'encyclopédie : Wikimedia Commons, auteur et licence (CC BY, CC BY-SA, CC0 ou domaine public) indiqués sous chaque photo et dans `data/encyclo/photos.json`. Fond de carte © contributeurs OpenStreetMap (ODbL). Bibliothèques : Leaflet (BSD-2), three.js (MIT), Firebase JS SDK (Apache 2.0). Polices : Alegreya et Atkinson Hyperlegible (SIL OFL).
+BD Forêt® V2, Plan IGN, photographies aériennes, altimétrie et itinéraires piétons © IGN — Géoplateforme (licence ouverte Etalab). Sous-sol : carte géologique de la France au 1/1 000 000 © BRGM (CC BY 4.0), lue via Macrostrat (cartes voisines aux frontières : Allemagne, Suisse, Espagne) ; cartes géologiques au 1/50 000 © BRGM. Communes : API Découpage administratif, geo.api.gouv.fr (licence ouverte). Météo : Open-Meteo.com (CC BY 4.0). Photos de l'encyclopédie : Wikimedia Commons, auteur et licence (CC BY, CC BY-SA, CC0 ou domaine public) indiqués sous chaque photo et dans `data/encyclo/photos.json`. Catalogue de France : TAXREF © MNHN (licence ouverte Etalab, via GBIF), observations GBIF.org, résumés Wikipédia (CC BY-SA), Wikidata (CC0), photos Wikimedia Commons et iNaturalist (CC0 ou CC BY, auteur sous chaque photo). Fond de carte © contributeurs OpenStreetMap (ODbL). Bibliothèques : Leaflet (BSD-2), three.js (MIT), Firebase JS SDK (Apache 2.0). Polices : Alegreya et Atkinson Hyperlegible (SIL OFL).

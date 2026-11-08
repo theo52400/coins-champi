@@ -29,6 +29,14 @@ export const CATALOG = [
   { id: 'leccinum', pts: 20 }, { id: 'pied_rouge', pts: 15 }, { id: 'russule_verte', pts: 20 }, { id: 'bolet_jaune', pts: 10 },
   { id: 'polypore_soufre', pts: 15 }, { id: 'langue_boeuf', n: 'Langue de bœuf', pts: 15 }, { id: 'oreille_judas', pts: 10 },
   { id: 'laccaire', pts: 5 }, { id: 'truffe', pts: 60 },
+  { id: 'polypore_ombelle', pts: 30 }, { id: 'poule_bois', pts: 30 }, { id: 'hydne_herisson', pts: 40 }, { id: 'pholiote_ridee', pts: 20 },
+  { id: 'tete_moine', pts: 15 }, { id: 'pied_violet', pts: 15 }, { id: 'tricholome_pretentieux', pts: 20 }, { id: 'lactaire_sanguin', pts: 20 },
+  { id: 'vachotte', pts: 15 }, { id: 'russule_vesca', pts: 10 }, { id: 'hygrophore_pres', pts: 15 }, { id: 'pleurote_panicaut', pts: 25 },
+  { id: 'pleurote_corne', pts: 15 }, { id: 'collybie_velue', pts: 15 }, { id: 'agaric_jacheres', pts: 15 }, { id: 'agaric_auguste', pts: 25 },
+  { id: 'lepiote_deguenillee', pts: 10 }, { id: 'morillon', pts: 20 }, { id: 'pezize_orangee', pts: 10 }, { id: 'bolet_bouviers', pts: 10 },
+  { id: 'bolet_elegant', pts: 10 }, { id: 'bolet_rude', pts: 10 }, { id: 'bolet_appendicule', pts: 25 }, { id: 'chanterelle_jaunissante', pts: 20 },
+  { id: 'hydne_roux', pts: 15 }, { id: 'vesse_perlee', pts: 10 }, { id: 'truffe_noire', pts: 60 }, { id: 'pholiote_peuplier', pts: 15 },
+  { id: 'meunier', pts: 20 }, { id: 'lactaire_saumon', pts: 15 }, { id: 'craterelle_sinueuse', pts: 15 }, { id: 'hydne_imbrique', pts: 15 },
   // à connaître : toxiques et non comestibles (une photo suffit, on ne les cueille pas)
   { id: 'phalloide', pts: 15 }, { id: 'amanite_blanche', n: 'Amanite blanche mortelle', pts: 15 }, { id: 'cortinaire', n: 'Cortinaire mortel', pts: 15 },
   { id: 'lepiote', n: 'Petite lépiote mortelle', pts: 10 }, { id: 'galere', pts: 10 }, { id: 'gyromitre', pts: 15 }, { id: 'inocybe', pts: 10 },
@@ -37,6 +45,13 @@ export const CATALOG = [
   { id: 'jaunissant', pts: 5 }, { id: 'toison', pts: 5 }, { id: 'emetique', pts: 5 }, { id: 'clitocybe_nebuleux', pts: 5 },
   { id: 'scleroderme', pts: 5 }, { id: 'mycene_pure', pts: 5 }, { id: 'faussegirolle', pts: 5 }, { id: 'amer', pts: 5 },
   { id: 'amanite_citrine', pts: 5 }, { id: 'amadouvier', pts: 5 }, { id: 'satyre', pts: 10 }, { id: 'anthurus', pts: 15 }, { id: 'armillaire', pts: 5 },
+  { id: 'amanite_jonquille', pts: 10 }, { id: 'amanite_epaisse', pts: 5 }, { id: 'amanite_vaginee', pts: 5 }, { id: 'bolet_legal', pts: 15 },
+  { id: 'bolet_pourpre', pts: 15 }, { id: 'bolet_beau_pied', pts: 10 }, { id: 'bolet_radicant', pts: 10 }, { id: 'tricholome_tigre', pts: 10 },
+  { id: 'tricholome_soufre', pts: 5 }, { id: 'tricholome_savonneux', pts: 5 }, { id: 'hebelome', pts: 5 }, { id: 'lepiote_cretee', pts: 5 },
+  { id: 'pholiotine', pts: 10 }, { id: 'gymnopile', pts: 10 }, { id: 'clavaire_elegante', pts: 10 }, { id: 'russule_fetide', pts: 5 },
+  { id: 'lactaire_poivre', pts: 5 }, { id: 'lactaire_plombe', pts: 5 }, { id: 'coprin_noir', pts: 10 }, { id: 'clathre_rouge', pts: 15 },
+  { id: 'helvelle_crepue', pts: 10 }, { id: 'verpe_boheme', pts: 15 }, { id: 'ganoderme', pts: 5 }, { id: 'polypore_bouleau', pts: 5 },
+  { id: 'tremelle', pts: 5 }, { id: 'xylaire', pts: 5 }, { id: 'inocybe_fastigie', pts: 5 }, { id: 'pholiote_ecailleuse', pts: 5 },
   { id: 'autre', n: 'Autre, à identifier', lat: '—', cap: 'inconnu', pts: 5, core: null, cat: null,
     hab: 'Une trouvaille à faire identifier par un pharmacien ou une société mycologique.', conf: 'Ne consommez jamais un champignon sans identification certaine.', m: {} }
 ];
@@ -56,9 +71,33 @@ for (const s of CATALOG) {
   s.alias = ENCYCLO.filter(e => e.game === s.id).map(e => e.n + ', ' + (e.alias || '')).join(', ');
   if (!s.conf && f) s.conf = s.cat === 'c' ? f.sosies.map(x => x[1]).slice(0, 2).join(' ') : f.tox + (f.sosies.length ? ' Ne la confondez pas : ' + f.sosies[0][1] : '');
 }
-export const SPECIES_BY_ID = Object.fromEntries(CATALOG.map(s => [s.id, s]));
+// Espèces du catalogue de France (identifiant « t » + numéro TAXREF, voir catalogue.js) : on peut les enregistrer
+// comme trouvaille ; leur comestibilité n'est pas vérifiée (cat n), sauf danger connu (t, m). Points fixes, connus
+// même avant le chargement du catalogue, pour que le score ne dépende pas du réseau.
+export const CAT_PTS = 10;
+export const isCatId = id => /^t\d+$/.test(String(id || ''));
+const CAT_SP = new Map(), CAT_ALIAS = new Map();
+const catSpecies = id => { let s = CAT_SP.get(id); if (!s) { s = { id, n: 'Espèce du catalogue', lat: '', cap: 'inconnu', pts: CAT_PTS, cat: 'n', core: null, m: {}, hab: '', conf: '', cata: true }; CAT_SP.set(id, s); } return s; };
+// list : [{ id, n, lat, tox ('', 't', 'm'), risk, mo, game (espèce du Mycodex quand l'espèce a une fiche vérifiée) }]
+export function registerCatalog(list) {
+  for (const e of list) {
+    if (e.game && RAW[e.game]) { CAT_ALIAS.set(e.id, e.game); continue; }
+    const m = {}; if (e.mo) e.mo.forEach((v, i) => { if (v) m[i + 1] = v / 9; });
+    Object.assign(catSpecies(e.id), { n: e.n, lat: e.lat, cat: e.tox || 'n', risk: e.risk || '', m, thumb: e.thumb || null });
+  }
+}
+// identifiant de référence (une espèce du catalogue qui a depuis une fiche vérifiée compte pour l'espèce du Mycodex)
+export const canonSp = id => CAT_ALIAS.get(id) || id;
+const RAW = Object.fromEntries(CATALOG.map(s => [s.id, s]));
+export const SPECIES_BY_ID = new Proxy(RAW, {
+  get(t, k) {
+    if (typeof k !== 'string' || k in t) return t[k];
+    if (isCatId(k)) { const a = CAT_ALIAS.get(k); return a ? t[a] : catSpecies(k); }
+    return undefined;
+  }
+});
 export const isEdibleSp = id => { const s = SPECIES_BY_ID[id]; return !!s && s.cat === 'c'; };
-export const CAT_LABEL = { c: 'Comestible', e: 'Non comestible', t: 'Toxique', m: 'Mortel' };
+export const CAT_LABEL = { c: 'Comestible', e: 'Non comestible', t: 'Toxique', m: 'Mortel', n: 'Non vérifiée' };
 // quantité (et points de panier) seulement pour ce qui se mange : on ne remplit pas un panier d'amanites.
 // Les anciennes trouvailles « Autre, à identifier » gardent leurs points de panier (les nouvelles n'en ont plus).
 const withQty = id => { const s = SPECIES_BY_ID[id]; return !s || s.cat === 'c' || s.cat == null; };
@@ -96,7 +135,8 @@ export function computeProfile(finds, sorties, me) {
   const perSpecies = {};
   // détail des points (montré aux autres membres du groupe) et derniers gains
   const pts = { trouvailles: 0, nouvelles: 0, photos: 0, paniers: 0, partage: 0, sorties: 0, tresors: 0, caches: 0, defis: 0, quiz: 0 }, hist = [];
-  for (const f of sorted) {
+  for (const f0 of sorted) {
+    const f = f0.species && CAT_ALIAS.has(f0.species) ? Object.assign({}, f0, { species: canonSp(f0.species) }) : f0;
     const first = !seen.has(f.species);
     if (f.species && f.species !== 'autre') seen.add(f.species);
     const sp = SPECIES_BY_ID[f.species] || SPECIES_BY_ID.autre, isNew = first && f.species !== 'autre';
@@ -128,7 +168,8 @@ export function computeProfile(finds, sorties, me) {
   ((me && me.quiz && me.quiz.w) || []).forEach(key => hist.push({ ts: weekOfKey(key), k: 'quiz', n: 'Défi photo réussi', p: QUIZ_WEEK_PTS }));
   if (qz.mastered) hist.push({ ts: 0, k: 'quiz', n: qz.mastered + ' espèce' + (qz.mastered > 1 ? 's' : '') + ' maîtrisée' + (qz.mastered > 1 ? 's' : '') + ' au quiz', p: 5 * qz.mastered });
   hist.sort((a, b) => b.ts - a.ts);
-  const stats = { finds: finds.length, species: [...seen], perSpecies, km, sorties: sorties.length, photos, privees, partagees, paniers, communes: communes.size, matinal, treasures: found.length, hidden: hidden.length, challenges: claimed.length, quiz: qz.mastered, quizWeeks: qz.weeks, deadlyAll: qz.deadlyAll };
+  const catalogue = [...seen].filter(isCatId).length;
+  const stats = { finds: finds.length, species: [...seen], perSpecies, catalogue, km, sorties: sorties.length, photos, privees, partagees, paniers, communes: communes.size, matinal, treasures: found.length, hidden: hidden.length, challenges: claimed.length, quiz: qz.mastered, quizWeeks: qz.weeks, deadlyAll: qz.deadlyAll };
   const badges = BADGES.filter(b => b.test(stats)).map(b => b.id);
   return Object.assign({ xp, badges, stats, pts, hist }, levelOf(xp));
 }
@@ -155,7 +196,8 @@ export const BADGES = [
   { id: 'quiz10', n: 'Apprenti mycologue', d: 'Maîtriser 10 espèces au quiz', icon: 'book', test: s => s.quiz >= 10 },
   { id: 'quiz30', n: 'Œil de mycologue', d: 'Maîtriser 30 espèces au quiz', icon: 'eye', test: s => s.quiz >= 30 },
   { id: 'gardefou', n: 'Garde-fou', d: 'Reconnaître toutes les espèces mortelles', icon: 'shield', test: s => s.deadlyAll },
-  { id: 'quizweek', n: 'Défi photo', d: 'Réussir le défi photo de la semaine', icon: 'camera', test: s => s.quizWeeks >= 1 }
+  { id: 'quizweek', n: 'Défi photo', d: 'Réussir le défi photo de la semaine', icon: 'camera', test: s => s.quizWeeks >= 1 },
+  { id: 'naturaliste', n: 'Naturaliste', d: 'Dix espèces du catalogue de France hors Mycodex', icon: 'book', test: s => (s.catalogue || 0) >= 10 }
 ];
 
 // Libellés du détail des points

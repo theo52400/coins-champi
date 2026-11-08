@@ -488,3 +488,25 @@ textarea.input{min-height:70px;resize:vertical}
 
 /* photos de l'encyclopédie entières (jamais recadrées) sur un fond neutre */
 .en-card img,.en-carousel img,.vs-pair img,.qz-photo img,.fc-front img{background:#1f2420}
+
+/* catalogue de France : listes de résultats, fiches non vérifiées, trouvailles du groupe */
+.panel-inner .stack{display:grid;gap:12px}
+.cat-list{display:grid;gap:6px}
+.cat-row{display:flex;align-items:center;gap:10px;width:100%;border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:6px 10px 6px 6px;text-align:left;color:inherit;font:inherit;cursor:pointer;min-width:0}
+.cat-row img,.cat-row .en-noimg{width:58px;height:58px;border-radius:9px;object-fit:cover;flex:none;background-color:var(--surface-2)}
+.cat-row-t{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1}
+.cat-row-t b{font-size:14.5px;line-height:1.2}
+.cat-row-t i{font-size:12.5px;color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cat-tags{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+.cat-tags .en-badge{font-size:10.5px;padding:1px 6px}
+.cat-tags .en-stars{font-size:12px}
+.cat-obs{flex:none;font-size:11.5px;color:var(--ink-3);text-align:right;max-width:72px}
+.en-badge.ver{background:var(--surface);color:var(--good);border-color:var(--good)}
+.en-finds{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:6px;margin-top:8px}
+.en-finds button{padding:0;border:0;background:none;cursor:pointer;border-radius:10px;overflow:hidden}
+.en-finds img{width:100%;aspect-ratio:1;object-fit:cover;display:block}
+.sp-grid button img.sp-ph{border-radius:50%;object-fit:cover}
+.sp-sub{grid-column:1/-1;margin:8px 0 0;font-size:13px;color:var(--ink-2);font-weight:700}
+.sp-grid button.sp-n .sp-cat{background:var(--surface-2);color:var(--ink-2)}
+.sp-grid button small{display:block;font-size:11px;color:var(--ink-3);font-style:italic;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+.dex button img.sp-ph{object-fit:cover;border-radius:50%;width:64px;height:64px;margin:6px}
