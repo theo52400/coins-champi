@@ -42,8 +42,22 @@ const gbif = p => get('https://api.gbif.org/v1/' + p);
 const qs = o => Object.entries(o).map(([k, v]) => encodeURIComponent(k) + '=' + encodeURIComponent(v)).join('&');
 
 // ---------------------------------------------------------------- 1. TAXREF : espèces de champignons à nom français
-const KEEP_CLASS = new Set(['Agaricomycetes', 'Tremellomycetes', 'Dacrymycetes', 'Pezizomycetes', 'Leotiomycetes', 'Sordariomycetes', 'Geoglossomycetes']);
-const DROP_ORDER = new Set(['Erysiphales', 'Phacidiales', 'Rhytismatales', 'Lichenomphaliales']);
+// on écarte les lichens, les rouilles, charbons, oïdiums, cloques, levures, moisissures et micro-champignons des feuilles,
+// d'après n'importe quel rang de la classification (certaines espèces de TAXREF n'ont pas de classe renseignée)
+const DROP = new Set(['Lecanoromycetes', 'Arthoniomycetes', 'Lichinomycetes', 'Candelariomycetes', 'Coniocybomycetes', 'Dothideomycetes', 'Taphrinomycetes',
+  'Saccharomycetes', 'Pucciniomycetes', 'Ustilaginomycetes', 'Exobasidiomycetes', 'Microbotryomycetes', 'Laboulbeniomycetes', 'Chytridiomycota', 'Mucoromycota',
+  'Zoopagomycota', 'Glomeromycota', 'Blastocladiomycota', 'Microsporidia', 'Cryptomycota', 'Entomophthoromycota',
+  'Lecanorales', 'Peltigerales', 'Teloschistales', 'Ostropales', 'Pertusariales', 'Umbilicariales', 'Caliciales', 'Arthoniales', 'Verrucariales', 'Lichinales',
+  'Baeomycetales', 'Acarosporales', 'Candelariales', 'Gyalectales', 'Lecideales', 'Rhizocarpales', 'Trapeliales', 'Agyriales', 'Graphidales', 'Pyrenulales',
+  'Sarrameanales', 'Lichenomphaliales', 'Pucciniales', 'Ustilaginales', 'Urocystidales', 'Entylomatales', 'Tilletiales', 'Exobasidiales', 'Microbotryales',
+  'Taphrinales', 'Erysiphales', 'Rhytismatales', 'Phacidiales', 'Capnodiales', 'Pleosporales', 'Mycosphaerellales', 'Hysteriales', 'Mytilinidiales',
+  'Dothideales', 'Botryosphaeriales', 'Venturiales', 'Eurotiales', 'Onygenales', 'Chaetothyriales', 'Saccharomycetales', 'Mucorales', 'Peronosporales']);
+const keepTaxon = r => {
+  const names = [r.phylum, r.class, r.order, r.family, ...Object.values(r.higherClassificationMap || {})].filter(Boolean);
+  if (names.includes('Elaphomycetaceae') || names.includes('Elaphomycetales')) return true;   // truffes des cerfs
+  if (names.includes('Eurotiomycetes')) return false;
+  return !names.some(n => DROP.has(n));
+};
 const kingdoms = await gbif('species/search?' + qs({ datasetKey: TAXREF, rank: 'KINGDOM', limit: 20 }));
 const FUNGI = kingdoms.results.find(k => /^Fungi/.test(k.scientificName)).key;
 const accepted = [];
@@ -60,28 +74,25 @@ let SP = [];
 for (const r of accepted) {
   const fr = [...new Set(frName(r))];
   if (!fr.length) continue;
-  const cls = r.class || '?';
-  const keep = (KEEP_CLASS.has(cls) && !DROP_ORDER.has(r.order)) || r.order === 'Elaphomycetales' || r.family === 'Elaphomycetaceae';
+  const cls = r.class || r.order || '?';
+  const keep = keepTaxon(r);
   byClass[cls] = byClass[cls] || [0, 0]; byClass[cls][keep ? 0 : 1]++;
   if (!keep || !r.taxonID) continue;
   SP.push({ id: +r.taxonID, key: r.key, nub: r.nubKey, lat: r.canonicalName, auth: r.authorship || '', genus: r.genus || '', fam: r.family || '', ord: r.order || '', cls,
     fr: fr.map(s => s.charAt(0).toUpperCase() + s.slice(1)), syn: [] });
 }
-say('Avec un nom français, par classe (gardées / écartées) : ' + Object.entries(byClass).sort((a, b) => b[1][0] + b[1][1] - a[1][0] - a[1][1]).map(([c, [a, b]]) => c + ' ' + a + '/' + b).join(', '));
+say('Avec un nom français, par classe ou ordre (gardées / écartées) : ' + Object.entries(byClass).sort((a, b) => b[1][0] + b[1][1] - a[1][0] - a[1][1]).map(([c, [a, b]]) => c + ' ' + a + '/' + b).join(', '));
 say('Espèces gardées : ' + SP.length);
 const BYKEY = new Map(SP.map(s => [s.key, s]));
 
-// anciens noms : tous les synonymes de rang espèce, rattachés à l'espèce acceptée
+// anciens noms : les synonymes de chaque espèce
 let nsyn = 0;
-for (let off = 0; ; off += 1000) {
-  const p = await gbif('species/search?' + qs({ datasetKey: TAXREF, higherTaxonKey: FUNGI, rank: 'SPECIES', status: 'SYNONYM', limit: 1000, offset: off }));
-  if (!p) { say('synonymes : arrêt à ' + off); break; }
-  for (const r of p.results) {
-    const s = BYKEY.get(r.acceptedKey);
-    if (s && r.canonicalName && r.canonicalName !== s.lat && !s.syn.includes(r.canonicalName)) { s.syn.push(r.canonicalName); nsyn++; }
+await pool(SP, 8, async s => {
+  const p = await gbif('species/' + s.key + '/synonyms?limit=100');
+  for (const r of (p && p.results) || []) {
+    if (r.canonicalName && r.canonicalName !== s.lat && /^\S+ \S+$/.test(r.canonicalName) && !s.syn.includes(r.canonicalName)) { s.syn.push(r.canonicalName); nsyn++; }
   }
-  if (p.endOfRecords || !p.results.length) break;
-}
+});
 say('Anciens noms latins rattachés : ' + nsyn);
 
 // ---------------------------------------------------------------- 2. GBIF : observations en France
@@ -110,7 +121,7 @@ const flat = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLow
 const DEPBYNAME = new Map(DEP.map(([c, n], i) => [flat(n), i]));
 DEPBYNAME.set(flat('Ville de Paris'), DEPBYNAME.get('paris')); DEPBYNAME.set(flat('Territoire-de-Belfort'), DEPBYNAME.get(flat('Territoire de Belfort')));
 const gids = [...GADM.keys()];
-await pool(gids, 4, async g => { const r = await gbif('geocode/gadm/' + g); GADM.set(g, r ? DEPBYNAME.get(flat(r.name)) : undefined); if (r && GADM.get(g) == null) say('département inconnu : ' + g + ' ' + r.name); });
+await pool(gids, 4, async g => { const r = await gbif('geocode/gadm/' + g); GADM.set(g, r ? DEPBYNAME.get(flat(r.name)) : undefined); if (r && GADM.get(g) == null && /^FRA\./.test(g)) say('département inconnu : ' + g + ' ' + r.name); });
 const b64 = bytes => Buffer.from(bytes).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 for (const s of SP) {
   const bits = new Uint8Array(12); let nd = 0;

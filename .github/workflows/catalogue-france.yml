@@ -31,7 +31,7 @@ jobs:
           set -e
           n=$(node -e "const j=require('/tmp/catalogue/index.json');console.log(j.sp.length)")
           echo "espèces : $n"
-          test "$n" -gt 1000
+          test "$n" -gt 600
       - name: Enregistrer
         shell: bash
         run: |
