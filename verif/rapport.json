@@ -1,12 +1,12 @@
 {
  "site": "https://theo52400.github.io/coins-champi/",
- "date": "2026-11-07T15:13:42.170Z",
+ "date": "2026-11-08T08:06:46.522Z",
  "checks": [
   {
    "name": "L'appli démarre",
    "ok": true,
    "detail": {
-    "version": "v2026-11-07-6f7c3d8b"
+    "version": "v2026-11-08-88b414f6"
    }
   },
   {
@@ -14,7 +14,7 @@
    "ok": true,
    "detail": {
     "kind": "firebase",
-    "uid": "3T7l4Z",
+    "uid": "kDnHWY",
     "banner": null
    }
   },
@@ -24,7 +24,7 @@
    "detail": {
     "ecriture": true,
     "relu": "Vérification",
-    "ms": 2315
+    "ms": 2314
    }
   },
   {
@@ -128,7 +128,7 @@
      "wait": 0
     },
     "bandeau": "Ça pousse en ce moment (météo du 7 novembre) · zoomez sur une région",
-    "today": "2026-11-07"
+    "today": "2026-11-08"
    }
   },
   {
@@ -136,7 +136,7 @@
    "ok": true,
    "detail": {
     "meteo": "2026-11-07",
-    "aujourdhui": "2026-11-07"
+    "aujourdhui": "2026-11-08"
    }
   },
   {
@@ -164,14 +164,33 @@
    }
   },
   {
-   "name": "Trouvailles élargies : 58 espèces dont 29 à connaître, fiche de la russule verdoyante en photos, icônes servies",
+   "name": "Trouvailles élargies : 118 espèces dont 59 à connaître, fiche de la russule verdoyante en photos, icônes servies",
    "ok": true,
    "detail": {
     "titre": "Russule verdoyante",
     "photos": 3,
     "icone": true,
-    "especes": 58,
-    "aConnaitre": 29
+    "especes": 118,
+    "aConnaitre": 59
+   }
+  },
+  {
+   "name": "Catalogue de France : 1177 espèces, recherche avec fautes, fiche du polypore en ombelle reliée, détails",
+   "ok": true,
+   "detail": {
+    "n": 1177,
+    "girole": "Girolle",
+    "ombelle": "polypore_ombelle",
+    "espece": "t44911",
+    "resume": true,
+    "photos": 2
+   }
+  },
+  {
+   "name": "Catalogue de France : fiche non vérifiée avec photo libre et avertissement",
+   "ok": false,
+   "detail": {
+    "photo": true
    }
   },
   {
@@ -194,23 +213,23 @@
  ],
  "console": [
   "warning Info: The current domain is not authorized for OAuth operations. This will prevent signInWithPopup, signInWithRedirect, linkWithPopup and linkWithRedirect from working. Add your domain (theo52400.github.io) to the OAuth redirect domains list in the Firebase console -> Authentication -> Settings -> A",
-  "warning [GroupMarkerNotSet(crbug.com/242999)!:A0601C002C1D0000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.",
-  "warning [GroupMarkerNotSet(crbug.com/242999)!:A0901C002C1D0000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.",
-  "warning [.WebGL-0x37c01710e00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
-  "warning [.WebGL-0x37c01710e00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
-  "warning [.WebGL-0x37c01710e00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
-  "warning [.WebGL-0x37c01710e00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)",
-  "warning [GroupMarkerNotSet(crbug.com/242999)!:A0E07E012C1D0000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.",
-  "warning [GroupMarkerNotSet(crbug.com/242999)!:A0B07E012C1D0000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content."
+  "warning [GroupMarkerNotSet(crbug.com/242999)!:A0601C00441C0000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.",
+  "warning [GroupMarkerNotSet(crbug.com/242999)!:A0901C00441C0000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.",
+  "warning [.WebGL-0x2104017d0e00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+  "warning [.WebGL-0x2104017d0e00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+  "warning [.WebGL-0x2104017d0e00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels",
+  "warning [.WebGL-0x2104017d0e00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)",
+  "warning [GroupMarkerNotSet(crbug.com/242999)!:A0601C00441C0000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content.",
+  "warning [GroupMarkerNotSet(crbug.com/242999)!:A0F06A03441C0000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader flag to opt in to lower security guarantees for trusted content."
  ],
  "http": [],
  "counts": {
   "sous-sol": 11,
-  "Firebase": 35,
+  "Firebase": 49,
   "météo": 10,
-  "communes": 17,
-  "tuiles IGN": 94,
-  "BD Forêt (WFS)": 8,
+  "tuiles IGN": 71,
+  "communes": 18,
+  "BD Forêt (WFS)": 17,
   "altitude IGN": 1,
   "itinéraire IGN": 4
  },
@@ -738,11 +757,11 @@
  ],
  "compteDejaSupprime": true,
  "logs": [
-  "15:13:43 Connecté (firebase), joueur 3T7l4ZYK",
-  "15:13:45 Source forêts : LANDCOVER.FORESTINVENTORY.V2:formation_vegetale",
-  "15:13:57 GPS : ",
-  "15:14:01 Écran allumé : Wake Lock permission request denied"
+  "08:06:48 Connecté (firebase), joueur kDnHWYwq",
+  "08:06:48 Source forêts : LANDCOVER.FORESTINVENTORY.V2:formation_vegetale",
+  "08:07:02 GPS : ",
+  "08:07:06 Écran allumé : Wake Lock permission request denied"
  ],
  "compte": "supprimé (test des comptes)",
- "resume": "22/22 vérifications réussies"
+ "resume": "23/24 vérifications réussies"
 }
