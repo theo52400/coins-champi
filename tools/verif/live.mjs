@@ -233,7 +233,7 @@ await step('Encyclopédie', async () => {
   check('Catalogue de France : ' + c.n + ' espèces, recherche avec fautes, fiche du polypore en ombelle reliée, détails', c.n > 1000 && /Girolle/.test(c.girole || '') && c.ombelle === 'polypore_ombelle' && c.photos >= 1, c);
   if (c.espece) {
     await page.evaluate(id => { document.querySelector('.tabs [data-tab="carte"]').click(); CC.learn.openFiche(id); document.querySelector('.tabs [data-tab="mycodex"]').click(); }, c.espece);
-    const ok3 = await wait(() => { const i = document.querySelector('.en-carousel img'); return i && i.complete && i.naturalWidth > 100; }, null, 20000);
+    const ok3 = await wait(() => { const p = document.querySelector('.panel-inner'), i = document.querySelector('.en-carousel img'); return p && /Fiche non vérifiée/.test(p.textContent) && i && i.complete && i.naturalWidth > 100; }, null, 20000);
     const t = await page.evaluate(() => document.querySelector('.panel-inner').textContent);
     await sleep(600); await shot('11-catalogue');
     check('Catalogue de France : fiche non vérifiée avec photo libre et avertissement', ok3 && /Comestibilité non vérifiée/.test(t), { photo: ok3 });

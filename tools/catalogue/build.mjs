@@ -256,7 +256,7 @@ for (const s of SP) {
   s.ex = sum.text; s.wp = p && p.title; s.q = w && w.q;
   s.tox = '';
   if (labels.some(l => /deadly/.test(l))) s.tox = 'm';
-  else if (labels.some(l => /poison|psychoactive|caution|allergen/.test(l))) s.tox = 't';
+  else if (labels.some(l => /poison|psychoactive/.test(l))) s.tox = 't';
   s.toxSrc = s.tox ? 'wd' : '';
   if (sum.flag && !s.tox) { s.tox = 't'; s.toxSrc = 'wp'; }
   s.toxTxt = sum.tox;
