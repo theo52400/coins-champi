@@ -132,6 +132,8 @@ body.panel-open .leaflet-control-container{visibility:hidden}
 .peek-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .peek-title{font:700 19px/1.2 var(--font-display);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pill{flex:none;font-size:12.5px;font-weight:700;line-height:1;padding:5px 9px;border-radius:999px;border:1.5px solid currentColor;white-space:nowrap}
+button.pill{background:none;font-family:inherit;cursor:pointer}
+.wx-why{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap;margin:0 0 10px;line-height:1.45}
 .pill.good{color:var(--good)} .pill.mid{color:var(--mid)} .pill.low{color:var(--low)} .pill.off{color:var(--ink-3)}
 .status{margin-top:5px;font-size:13.5px;color:var(--ink-2);display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center}
 .linkish{border:0;background:none;padding:0;color:var(--accent);font-weight:700;text-decoration:underline}

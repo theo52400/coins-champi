@@ -401,12 +401,13 @@ export const Core = (() => {
     return { id: String(id), code: code == null ? '' : String(code), label: label == null ? '' : String(label), ess: ess == null ? '' : String(ess), g: groupOf(code, label, ess), rings, bb };
   }
 
+  const W_MAX = 60; // réserve d'eau utile du sol forestier retenue, en mm
   function summarizeWeather(j, todayISO) {
     const d = j && j.daily;
     if (!d || !Array.isArray(d.time)) return null;
     let t = d.time.indexOf(todayISO);
     if (t < 0) t = Math.min(d.time.length - 1, 21);
-    const P = d.precipitation_sum || [], Tm = d.temperature_2m_mean || [], Tn = d.temperature_2m_min || [], Tx = d.temperature_2m_max || [];
+    const P = d.precipitation_sum || [], Tm = d.temperature_2m_mean || [], Tn = d.temperature_2m_min || [], Tx = d.temperature_2m_max || [], E = d.et0_fao_evapotranspiration || [];
     const v = (a, i) => (i < 0 || i >= a.length || a[i] == null || isNaN(a[i])) ? null : +a[i];
     const mean = i => { let m = v(Tm, i); if (m == null) { const a = v(Tn, i), b = v(Tx, i); if (a != null && b != null) m = (a + b) / 2; } return m; };
     let r14 = 0, n14 = 0, r3 = 0, ts = 0, tn = 0, frost5 = 0, f7 = 0, fs = 0, fn = 0;
@@ -414,17 +415,49 @@ export const Core = (() => {
     for (let i = t - 7; i < t; i++) { const x = mean(i); if (x != null) { ts += x; tn++; } }
     for (let i = t - 5; i <= t; i++) { const x = v(Tn, i); if (x != null && x < -0.5) frost5++; }
     for (let i = t; i < t + 7 && i < d.time.length; i++) { const x = v(P, i); if (x != null) f7 += x; const y = mean(i); if (y != null) { fs += y; fn++; } }
-    return { r14, r3, t7: tn ? ts / tn : null, frost5, f7, ft7: fn ? fs / fn : null, ok: n14 >= 10 };
+    // Réserve d'eau du sol (mm) : pluie moins évaporation, jour après jour, plafonnée à W_MAX. Elle se vide lentement quand il fait
+    // froid, au lieu d'oublier d'un coup une grosse pluie sortie de la fenêtre des 14 jours. Dernier épisode pluvieux d'au moins 15 mm.
+    let w = 0, wn = 0, spell = 0, spellEnd = null, last = null;
+    for (let i = 0; i < t; i++) {
+      const p = v(P, i); if (p == null) continue;
+      let e = v(E, i); if (e == null) { const m = mean(i); e = m == null ? 1 : clamp(0.1 * (m + 5), 0.3, 3); }
+      w = clamp(w + p - 0.8 * e, 0, W_MAX); wn++;
+      if (p >= 1) { spell += p; spellEnd = d.time[i]; } else { if (spell >= 15) last = { d: spellEnd, p: spell }; spell = 0; }
+    }
+    if (spell >= 15) last = { d: spellEnd, p: spell };
+    return { r14, r3, t7: tn ? ts / tn : null, frost5, f7, ft7: fn ? fs / fn : null, ok: n14 >= 10, w: wn >= 25 ? w : null, last };
   }
 
   function pousse(sp, wx, month) {
     const season = seasonOf(sp, month);
     if (!wx || !wx.ok) return { season, idx: null };
-    const rf = Math.pow(clamp(wx.r14 / sp.w.rain, 0, 1), 0.8);
+    // humidité : surtout la réserve d'eau du sol, un peu la pluie des 14 derniers jours (seule si la réserve est inconnue)
+    const hf = x => Math.pow(clamp(x / sp.w.rain, 0, 1), 0.8);
+    const rf = wx.w != null ? 0.75 * hf(wx.w) + 0.25 * hf(wx.r14) : hf(wx.r14);
     const t = wx.t7;
     const tf = t == null ? 0.7 : t < sp.w.tlo ? clamp(1 - (sp.w.tlo - t) / 6, 0, 1) : t > sp.w.thi ? clamp(1 - (t - sp.w.thi) / 6, 0, 1) : 1;
     const ff = wx.frost5 >= 3 ? sp.w.frost * sp.w.frost : wx.frost5 >= 1 ? sp.w.frost : 1;
     return { season, rf, tf, ff, idx: season * rf * tf * ff };
+  }
+  // Ce qui limite la pousse, en clair (le facteur le plus bas)
+  function pousseWhy(sp, r, wx) {
+    if (r.season <= 0) return 'Hors saison.';
+    if (r.idx == null) return '';
+    const f1 = v => (Math.round(v * 10) / 10).toLocaleString('fr-FR');
+    const fs = [['season', r.season], ['rain', r.rf], ['temp', r.tf], ['frost', r.ff]].sort((a, b) => a[1] - b[1]);
+    if (fs[0][1] >= 0.8) return 'Humidité et température favorables.';
+    switch (fs[0][0]) {
+      case 'season': return 'Fin ou début de saison.';
+      case 'rain': {
+        const dl = wx.last ? new Date(wx.last.d + 'T12:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' }) : null;
+        if (r.rf >= 0.55 && wx.w != null) return wx.r14 < 0.3 * sp.w.rain
+          ? 'Sol encore humide' + (dl ? ' grâce aux pluies du ' + dl : '') + ', mais presque rien depuis (' + f1(wx.r14) + ' mm en 14 jours) : sans nouvelle pluie, la pousse va ralentir.'
+          : 'Humidité un peu juste : ' + f1(wx.r14) + ' mm de pluie en 14 jours.';
+        return 'Trop sec : ' + f1(wx.r14) + ' mm de pluie en 14 jours' + (wx.w != null ? ', sol sec' : '') + (dl ? ' (dernière bonne pluie le ' + dl + ')' : '') + '.';
+      }
+      case 'temp': return wx.t7 < sp.w.tlo ? 'Trop froid : ' + f1(wx.t7) + ' °C en moyenne sur 7 jours, la pousse ralentit (idéal à partir de ' + sp.w.tlo + ' °C).' : 'Trop chaud : ' + f1(wx.t7) + ' °C en moyenne sur 7 jours.';
+      default: return 'Gelées récentes : ' + wx.frost5 + ' nuit(s) sous zéro.';
+    }
   }
   function pousseLabel(r) {
     if (r.season <= 0) return { t: 'Hors saison', c: 'off' };
@@ -437,6 +470,6 @@ export const Core = (() => {
 
   return { R, HALF, mx, my, lonOf, latOf, clamp, l93ToLonLat, GROUPS, GKEYS, GIDX, TFV, groupOf, norm, LITHO, SPECIES, LEVELS,
     edgeF, cellGround, makeGrid, rasterize, pointInRings, chamfer, computeLayers, potentials, seasonOf, bestOf, levelOf,
-    toMerc, detectMode, normalizeFeature, summarizeWeather, pousse, pousseLabel, prop };
+    toMerc, detectMode, normalizeFeature, summarizeWeather, pousse, pousseLabel, pousseWhy, prop, W_MAX };
 })();
 export default Core;

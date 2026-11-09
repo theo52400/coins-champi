@@ -49,13 +49,13 @@ export function createFar(o) {
     if (F.wxSt) return;
     F.wxSt = 'q';
     fetch(dataUrl('data/meteo/pousse.json'), { cache: 'no-cache' }).then(r => (r.ok ? r.json() : Promise.reject(new Error('HTTP ' + r.status)))).then(j => {
-      const step = j.step || 0.5, pts = j.pts || [];
+      const step = j.step || 0.5, pts = j.pts || [], cols = j.cols || [], iw = cols.indexOf('w');
       const lat0 = Math.min(...pts.map(p => p[0])), lon0 = Math.min(...pts.map(p => p[1]));
       const nr = Math.round((Math.max(...pts.map(p => p[0])) - lat0) / step) + 1, nc = Math.round((Math.max(...pts.map(p => p[1])) - lon0) / step) + 1;
       const grid = new Array(nr * nc).fill(null);
       for (const p of pts) {
         if (!p[8]) continue;
-        const w = { r14: p[2], r3: p[3], t7: p[4], frost5: p[5], f7: p[6], ft7: p[7], ok: true };
+        const w = { r14: p[2], r3: p[3], t7: p[4], frost5: p[5], f7: p[6], ft7: p[7], ok: true, w: iw >= 0 ? p[iw] : null };
         grid[Math.round((p[0] - lat0) / step) * nc + Math.round((p[1] - lon0) / step)] = w;
       }
       // indice de pousse de chaque espèce en chaque point

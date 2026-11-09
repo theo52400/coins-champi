@@ -436,7 +436,9 @@ export function createMap(el, deps) {
     }
     if (!p.f) for (const ft of feats.values()) if (x >= ft.bb[0] && x <= ft.bb[2] && y >= ft.bb[1] && y <= ft.bb[3] && C.pointInRings(ft.rings, x, y)) { p.f = ft; break; }
     if (G && p.k != null && G.layers.kn[p.k] && G.layers.gi[p.k]) {
-      p.edge = G.layers.open[p.k] ? 0 : Math.round(G.layers.dist[p.k] * G.cg);
+      const dd = G.layers.dist[p.k];
+      // aucune case ouverte dans la zone calculée : distance inconnue (et non 10 milliards de mètres)
+      if (!G.layers.open[p.k] && dd >= 1e8) p.edgeFar = true; else p.edge = G.layers.open[p.k] ? 0 : Math.round(dd * G.cg);
       p.eco = G.layers.eco[p.k];
       p.pots = C.SPECIES.map((s, i) => ({ id: s.id, n: s.n, v: G.pots[i][p.k], season: C.seasonOf(s, MONTH) }));
       p.cell = G.cg;

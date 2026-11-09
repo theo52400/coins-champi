@@ -1,4 +1,4 @@
-// Météo de pousse pour toute la France : un point tous les 0,5°, résumé des 3 dernières semaines et de la semaine à venir.
+// Météo de pousse pour toute la France : un point tous les 0,5°, résumé des 6 dernières semaines (réserve d'eau du sol) et de la semaine à venir.
 // Lancé chaque matin par .github/workflows/meteo-france.yml ; écrit data/meteo/pousse.json, lu par la carte « Ça pousse ».
 // Usage : node tools/meteo/pousse.mjs [sortie.json]
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
@@ -22,10 +22,10 @@ for (let la = 41.25; la < 51.6; la += STEP) for (let lo = -5.25; lo < 10; lo += 
 console.log(pts.length + ' points (masque ' + mask.src + ')');
 
 const todayISO = new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Paris' });
-const DAILY = 'precipitation_sum,temperature_2m_mean,temperature_2m_min,temperature_2m_max';
+const DAILY = 'precipitation_sum,temperature_2m_mean,temperature_2m_min,temperature_2m_max,et0_fao_evapotranspiration';
 async function batch(list, tries = 4) {
   const url = 'https://api.open-meteo.com/v1/forecast?latitude=' + list.map(p => p[0]).join(',') + '&longitude=' + list.map(p => p[1]).join(',') +
-    '&daily=' + DAILY + '&past_days=21&forecast_days=7&timezone=Europe%2FParis';
+    '&daily=' + DAILY + '&past_days=45&forecast_days=7&timezone=Europe%2FParis';
   for (let k = 1; ; k++) {
     try {
       const r = await fetch(url, { headers: { 'User-Agent': 'CoinsAChampi/1.0 (https://github.com/theo52400/coins-champi)' }, signal: AbortSignal.timeout(60000) });
@@ -47,11 +47,11 @@ for (let i = 0; i < pts.length; i += 50) {
   res.forEach((j, k) => {
     const w = C.summarizeWeather(j, todayISO);
     if (w && w.ok) okN++;
-    out.push(w ? [part[k][0], part[k][1], r1(w.r14), r1(w.r3), r1(w.t7), w.frost5, r1(w.f7), r1(w.ft7), w.ok ? 1 : 0] : [part[k][0], part[k][1], null, null, null, 0, null, null, 0]);
+    out.push(w ? [part[k][0], part[k][1], r1(w.r14), r1(w.r3), r1(w.t7), w.frost5, r1(w.f7), r1(w.ft7), w.ok ? 1 : 0, r1(w.w)] : [part[k][0], part[k][1], null, null, null, 0, null, null, 0, null]);
   });
 }
 if (okN < pts.length * 0.8) throw new Error('trop de points sans météo : ' + okN + '/' + pts.length);
-const doc = { v: todayISO, gen: new Date().toISOString(), step: STEP, cols: ['lat', 'lon', 'r14', 'r3', 't7', 'frost5', 'f7', 'ft7', 'ok'], pts: out };
+const doc = { v: todayISO, gen: new Date().toISOString(), step: STEP, cols: ['lat', 'lon', 'r14', 'r3', 't7', 'frost5', 'f7', 'ft7', 'ok', 'w'], pts: out };
 mkdirSync(dirname(OUT), { recursive: true });
 writeFileSync(OUT, JSON.stringify(doc));
 console.log('écrit ' + OUT + ' : ' + out.length + ' points, ' + okN + ' complets, ' + (JSON.stringify(doc).length / 1024).toFixed(1) + ' Ko');

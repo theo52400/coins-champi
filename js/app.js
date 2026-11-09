@@ -699,6 +699,7 @@ function updatePeek() {
   $('#peek-title').textContent = S.mode === 'bio' ? 'Peuplements forestiers' : sp ? sp.n : 'Coins de saison';
   const pill = $('#peek-pill'), lab = wxLabel();
   pill.textContent = lab.t; pill.className = 'pill ' + lab.c; pill.hidden = S.mode === 'bio';
+  pill.title = 'Météo des derniers jours : pourquoi ?';
   const st = $('#status');
   if (M.map.getZoom() < M.DATA_Z) { st.innerHTML = farStatus(); return; }
   const tc = M.tileCounts(), parts = [];
@@ -750,17 +751,26 @@ function farBest() {
     return '<button class="li far-li" data-act="far-go" data-lat="' + p.lat.toFixed(4) + '" data-lon="' + p.lon.toFixed(4) + '"><b class="far-n">' + (i + 1) + '</b><div class="grow">' + esc(nm ? 'Autour de ' + nm : 'Secteur ' + p.lat.toFixed(2) + ', ' + p.lon.toFixed(2)) + '<small>' + lab + '</small></div><span class="note">Voir</span></button>';
   }).join('') + '</div>';
 }
-function refreshMore() { if (!M) return; renderWx(); renderSp(); renderLegend(); if (S.point) renderPoint(); }
+function refreshMore() {
+  if (!M) return; renderWx(); renderSp(); renderLegend();
+  // le point touché est réanalysé quand les forêts finissent de charger (lisière, potentiels)
+  if (S.point) { const np = M.analyze(S.point); if (np.pots || !S.point.pots) S.point = np; renderPoint(); }
+}
 function renderWx() {
   const el = $('#sec-wx'), sp = spObj(), wx = S.wx;
   let h = '<h3>Conditions de pousse</h3>';
   if (!wx) { el.innerHTML = h + '<p class="note">' + (S.wxErr ? 'Météo indisponible pour le moment (' + esc(S.wxErr) + ').' : 'Chargement de la météo du secteur…') + '</p>'; return; }
   const f = v => v == null ? '—' : (Math.round(v * 10) / 10).toLocaleString('fr-FR');
-  h += '<dl class="kv"><dt>Pluie 14 derniers jours</dt><dd>' + f(wx.r14) + ' mm</dd><dt>Dont 3 derniers jours</dt><dd>' + f(wx.r3) + ' mm</dd><dt>Température moy. 7 jours</dt><dd>' + f(wx.t7) + ' °C</dd><dt>Gelées (5 jours)</dt><dd>' + (wx.frost5 ? wx.frost5 + ' nuit(s)' : 'aucune') + '</dd><dt>Pluie prévue 7 jours</dt><dd>' + f(wx.f7) + ' mm</dd></dl>';
   const list = sp ? [sp] : C.SPECIES.filter(s => C.seasonOf(s, MONTH) > 0);
-  if (list.length) {
-    h += '<div class="bars" style="margin-top:12px">' + list.map(s => ({ s, r: C.pousse(s, wx, MONTH) })).sort((a, b) => (b.r.idx || 0) - (a.r.idx || 0)).map(({ s, r }) => { const v = Math.round(100 * (r.idx || 0)); return '<div class="bar"><span class="t' + (r.season ? '' : ' off') + '">' + esc(s.n) + '</span><i><b style="width:' + v + '%;background:' + (v >= 55 ? 'var(--good)' : v >= 30 ? 'var(--mid)' : 'var(--low)') + '"></b></i><span class="v">' + v + '</span></div>'; }).join('') + '</div>';
-    h += '<p class="note" style="margin-top:8px">Indice 0–100 : saison × pluie des 14 jours × température × gel, pour ' + esc(S.wxAt || 'le centre de la carte') + '.</p>';
+  const rows = list.map(s => ({ s, r: C.pousse(s, wx, MONTH) })).sort((a, b) => (b.r.idx || 0) - (a.r.idx || 0));
+  // pourquoi ce verdict : ce qui limite l'espèce choisie (ou la mieux placée)
+  if (rows.length) { const top = rows[0], lab = C.pousseLabel(top.r); h += '<p class="wx-why"><span class="pill ' + lab.c + '">' + esc(lab.t) + '</span> ' + (sp ? '' : esc(top.s.n) + ' : ') + esc(C.pousseWhy(top.s, top.r, wx)) + '</p>'; }
+  const soil = wx.w == null ? '' : '<dt>Réserve d\'eau du sol</dt><dd>' + f(wx.w) + ' mm sur ' + C.W_MAX + ' <span class="note">(' + (wx.w >= 35 ? 'humide' : wx.w >= 15 ? 'moyenne' : 'sèche') + ')</span></dd>';
+  const last = wx.last ? '<dt>Dernière bonne pluie</dt><dd>' + esc(new Date(wx.last.d + 'T12:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })) + ' (' + f(wx.last.p) + ' mm)</dd>' : '';
+  h += '<dl class="kv">' + soil + '<dt>Pluie 14 derniers jours</dt><dd>' + f(wx.r14) + ' mm</dd>' + last + '<dt>Température moy. 7 jours</dt><dd>' + f(wx.t7) + ' °C</dd><dt>Gelées (5 jours)</dt><dd>' + (wx.frost5 ? wx.frost5 + ' nuit(s)' : 'aucune') + '</dd><dt>Pluie prévue 7 jours</dt><dd>' + f(wx.f7) + ' mm</dd></dl>';
+  if (rows.length) {
+    h += '<div class="bars" style="margin-top:12px">' + rows.map(({ s, r }) => { const v = Math.round(100 * (r.idx || 0)); return '<div class="bar"><span class="t' + (r.season ? '' : ' off') + '">' + esc(s.n) + '</span><i><b style="width:' + v + '%;background:' + (v >= 55 ? 'var(--good)' : v >= 30 ? 'var(--mid)' : 'var(--low)') + '"></b></i><span class="v">' + v + '</span></div>'; }).join('') + '</div>';
+    h += '<p class="note" style="margin-top:8px">Indice 0–100 : saison × humidité (réserve d\'eau du sol et pluie des 14 jours) × température × gel, pour ' + esc(S.wxAt || 'le centre de la carte') + '. La couleur de la carte, elle, dit si le terrain convient, quelle que soit la météo.</p>';
   }
   el.innerHTML = h;
 }
@@ -830,7 +840,7 @@ function renderPoint() {
   h += '<dt>Sol estimé</dt><dd>' + esc(L0.n) + (p.rock ? '' : ' <span class="note">— ' + esc(L0.d) + '</span>') + '</dd>';
   if (p.rock) h += '<dt>Sous-sol</dt><dd>' + esc(p.rock.n) + (p.rock.a ? ' <span class="note">(' + esc(p.rock.a) + ')</span>' : '') + '</dd>';
   if (p.commune) h += '<dt>Commune</dt><dd>' + esc(p.commune) + '</dd>';
-  if (p.edge != null) h += '<dt>Lisière</dt><dd>' + (p.edge <= p.cell ? 'en lisière' : 'à ≈ ' + p.edge + ' m') + (p.eco ? ' · transition de peuplements' : '') + '</dd>';
+  if (p.edge != null || p.edgeFar) h += '<dt>Lisière</dt><dd>' + (p.edgeFar ? 'aucune dans la zone affichée' : p.edge <= p.cell ? 'en lisière' : 'à ≈ ' + p.edge.toLocaleString('fr-FR') + ' m') + (p.eco ? ' · transition de peuplements' : '') + '</dd>';
   h += '<dt>Altitude</dt><dd>' + (p.alt === undefined ? '…' : p.alt === null ? '—' : p.alt + ' m') + '</dd>';
   if (S.gps && S.gps.fix) h += '<dt>Distance</dt><dd>' + fmtKm(Game.haversine([S.gps.fix.lat, S.gps.fix.lng], [p.lat, p.lng])) + ' de vous</dd>';
   h += '</dl>';
@@ -850,7 +860,7 @@ async function loadWeather(force) {
   wxBusy = true;
   try {
     const [la, lo] = key.split(',');
-    const r = await fetch('https://api.open-meteo.com/v1/forecast?latitude=' + la + '&longitude=' + lo + '&daily=precipitation_sum,temperature_2m_mean,temperature_2m_min,temperature_2m_max&past_days=21&forecast_days=7&timezone=Europe%2FParis');
+    const r = await fetch('https://api.open-meteo.com/v1/forecast?latitude=' + la + '&longitude=' + lo + '&daily=precipitation_sum,temperature_2m_mean,temperature_2m_min,temperature_2m_max,et0_fao_evapotranspiration&past_days=45&forecast_days=7&timezone=Europe%2FParis');
     if (!r.ok) throw new Error('HTTP ' + r.status);
     const sum = C.summarizeWeather(await r.json(), TODAY);
     if (!sum) throw new Error('réponse inattendue');
@@ -1942,6 +1952,7 @@ function wireUi() {
         setTimeout(() => { if (M.map.getZoom() < M.DATA_Z) M.map.setZoom(M.DATA_Z); }, 400);
       } break;
       case 'retry': M.retry(); break;
+      case 'wx-why': setSheet('open'); setTimeout(() => { const w = $('#sec-wx'); if (w) w.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 250); break;
       case 'diag': openDrawer(true); break;
       case 'group-choose': openGroupChooser(false); break;
       case 'acc-protect': e.preventDefault(); openProtect(); break;
