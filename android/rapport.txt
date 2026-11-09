@@ -1,5 +1,5 @@
-2026-11-08T08:10:18.035Z
-13/13 vérifications réussies, 8 min
+2026-11-09T19:33:45.484Z
+9/12 vérifications réussies, 9 min
 
 OK     L'appli démarre et se connecte au jeu (Firebase)
          {"pont":true,"natif":true,"kind":"firebase","url":"https://localhost/","sw":"https://localhost/sw.js?native=1"}
@@ -8,30 +8,25 @@ OK     À l'ouverture, la carte vient sur ma position
 OK     Sous-sol lu dans l'appli (Vosges du Nord : grès)
          {"c":1,"n":"Grès, conglomérats et quartzites","a":"Trias inférieur"}
 OK     Profil créé, groupe de test créé
-         {"gid":"V48NMJWQ"}
+         {"gid":"8Q5TZ6DY"}
 OK     Sortie lancée : suivi natif (la notification apparaît quand l'appli passe en arrière-plan)
          {"native":true}
 OK     Au premier plan : la trace avance
-         {"trace":3,"fix":[49.0407698,7.5207653]}
+         {"trace":6,"fix":[49.0407556,7.5207466]}
 OK     Écran éteint : la notification de suivi est toujours là
 OK     Écran éteint : l'alerte d'un autre joueur arrive en notification
          "alerte envoyée"
 OK     Écran éteint : les autres joueurs voient ma position avancer (lue sur le serveur)
-         {"presence":{"lat":49.045268,"lng":7.522945,"ts":1794125817791},"dernierePosition":[49.0453,7.52296],"minutesApresExtinction":5.7}
-OK     Écran éteint : la trace a continué (positions enregistrées pendant 6 min)
-         {"points":22,"pendantEcranEteint":19}
-OK     De retour dans l'appli : position partagée à jour
-         {"presence":{"lat":49.045311,"lng":7.522966,"ts":1794125872909},"derniere":[49.0453,7.52296]}
-OK     Fin de sortie : suivi natif arrêté, notification retirée
-         {"native":false,"sortie":false}
-OK     Données de test effacées de Firebase
-         {"presence":"ok","membre":"ok","groupe":"ok","profil":"ok","compte":"ok"}
+         {"presence":{"lat":49.045274,"lng":7.522948,"ts":1794253243434},"dernierePosition":[49.0453,7.52296],"minutesApresExtinction":5.7}
+ÉCHEC  Retour dans l'appli
+         "exception : androidDevice.webView: Timeout 90000ms exceeded while waiting for event \"webview\""
+ÉCHEC  Fin de sortie
+         "exception : Cannot read properties of null (reading 'evaluate')"
+ÉCHEC  Nettoyage
+         "exception : Cannot read properties of null (reading 'evaluate')"
 
 Déroulé :
-08:11:16 écran éteint, application en arrière-plan
-08:16:17 alerte du robot envoyée
+19:35:01 écran éteint, application en arrière-plan
+19:40:03 alerte du robot envoyée
 
 Journal de l'appli :
-08:10:48 Connecté (firebase), joueur 7uyvlkZP
-08:10:52 Source forêts : LANDCOVER.FORESTINVENTORY.V2:formation_vegetale
-08:10:58 Suivi natif démarré (écran éteint possible)

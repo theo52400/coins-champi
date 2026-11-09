@@ -1,5 +1,5 @@
 {
- "date": "2026-11-08T08:10:18.035Z",
+ "date": "2026-11-09T19:33:45.484Z",
  "checks": [
   {
    "name": "L'appli démarre et se connecte au jeu (Firebase)",
@@ -40,7 +40,7 @@
    "name": "Profil créé, groupe de test créé",
    "ok": true,
    "detail": {
-    "gid": "V48NMJWQ"
+    "gid": "8Q5TZ6DY"
    }
   },
   {
@@ -54,10 +54,10 @@
    "name": "Au premier plan : la trace avance",
    "ok": true,
    "detail": {
-    "trace": 3,
+    "trace": 6,
     "fix": [
-     49.0407698,
-     7.5207653
+     49.0407556,
+     7.5207466
     ]
    }
   },
@@ -75,9 +75,9 @@
    "ok": true,
    "detail": {
     "presence": {
-     "lat": 49.045268,
-     "lng": 7.522945,
-     "ts": 1794125817791
+     "lat": 49.045274,
+     "lng": 7.522948,
+     "ts": 1794253243434
     },
     "dernierePosition": [
      49.0453,
@@ -87,56 +87,24 @@
    }
   },
   {
-   "name": "Écran éteint : la trace a continué (positions enregistrées pendant 6 min)",
-   "ok": true,
-   "detail": {
-    "points": 22,
-    "pendantEcranEteint": 19
-   }
+   "name": "Retour dans l'appli",
+   "ok": false,
+   "detail": "exception : androidDevice.webView: Timeout 90000ms exceeded while waiting for event \"webview\""
   },
   {
-   "name": "De retour dans l'appli : position partagée à jour",
-   "ok": true,
-   "detail": {
-    "presence": {
-     "lat": 49.045311,
-     "lng": 7.522966,
-     "ts": 1794125872909
-    },
-    "derniere": [
-     49.0453,
-     7.52296
-    ]
-   }
+   "name": "Fin de sortie",
+   "ok": false,
+   "detail": "exception : Cannot read properties of null (reading 'evaluate')"
   },
   {
-   "name": "Fin de sortie : suivi natif arrêté, notification retirée",
-   "ok": true,
-   "detail": {
-    "native": false,
-    "sortie": false
-   }
-  },
-  {
-   "name": "Données de test effacées de Firebase",
-   "ok": true,
-   "detail": {
-    "presence": "ok",
-    "membre": "ok",
-    "groupe": "ok",
-    "profil": "ok",
-    "compte": "ok"
-   }
+   "name": "Nettoyage",
+   "ok": false,
+   "detail": "exception : Cannot read properties of null (reading 'evaluate')"
   }
  ],
  "notes": [
-  "08:11:16 écran éteint, application en arrière-plan",
-  "08:16:17 alerte du robot envoyée"
+  "19:35:01 écran éteint, application en arrière-plan",
+  "19:40:03 alerte du robot envoyée"
  ],
- "logsAppli": [
-  "08:10:48 Connecté (firebase), joueur 7uyvlkZP",
-  "08:10:52 Source forêts : LANDCOVER.FORESTINVENTORY.V2:formation_vegetale",
-  "08:10:58 Suivi natif démarré (écran éteint possible)"
- ],
- "resume": "13/13 vérifications réussies, 8 min"
+ "resume": "9/12 vérifications réussies, 9 min"
 }
